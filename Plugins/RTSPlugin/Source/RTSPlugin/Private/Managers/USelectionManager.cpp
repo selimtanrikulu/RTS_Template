@@ -1,0 +1,88 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "Managers/USelectionManager.h"
+
+#include "ActorsAndComponents/SelectBox.h"
+#include "Kismet/GameplayStatics.h"
+#include "Managers/LogManager.h"
+#include "Managers/RTSGameInstance.h"
+#include "Managers/RTSPawn.h"
+#include "Utility/Util.h"
+
+USelectionManager::USelectionManager()
+{
+}
+
+USelectionManager::~USelectionManager()
+{
+}
+
+void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
+{
+	World = world;
+
+
+	//Get dependencies
+	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World,0);
+	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
+	
+	LogManager = GameInstance->LogManager;
+	//
+	
+	RTSPawn = Cast<ARTSPawn>(Util::GetActorOfClass(world,ARTSPawn::StaticClass()));
+
+
+	//Bind Inputs
+	RTSPawn->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftClicked);
+	RTSPawn->OnMouseLeftReleasedDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftReleased);
+
+	
+	SelectBoxBP = selectBoxBP;
+}
+
+void USelectionManager::Tick(float DeltaTime)
+{
+	
+}
+
+void USelectionManager::OnMouseLeftClicked()
+{
+	if(CurrentSelectBox)
+	{
+		LogManager->EditorLog
+		(FText::FromString(TEXT("Select box already exist")),ELogVerbosity::Warning);
+		return;
+	}
+	
+	CreateSelectBox();
+}
+
+void USelectionManager::OnMouseLeftReleased()
+{
+	if(!CurrentSelectBox)
+	{
+		LogManager->EditorLog
+		(FText::FromString(TEXT("Select box does not exist")),ELogVerbosity::Warning);
+		return;
+	}
+		
+	DestroySelectBox();
+}
+
+void USelectionManager::CreateSelectBox()
+{
+	const FHitResult Hit = RTSPawn->LookForFloor();
+
+	const FVector Location = Hit.Location;
+	const FRotator Rotation(0);
+	
+	AActor* SpawnedActor = World->SpawnActor<AActor>(SelectBoxBP,Location,Rotation);
+	CurrentSelectBox = Cast<ASelectBox>(SpawnedActor);
+}
+
+void USelectionManager::DestroySelectBox()
+{
+	World->DestroyActor(CurrentSelectBox);
+	CurrentSelectBox = nullptr;
+}
