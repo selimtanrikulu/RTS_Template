@@ -3,6 +3,53 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Util.generated.h"
+
+
+USTRUCT(BlueprintType)
+struct FSourceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FString SourceName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int Amount;
+};
+
+
+
+USTRUCT(BlueprintType)
+struct FBuildingData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> BP;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString Path;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSourceData> Cost;
+	
+};
+
+
+
+USTRUCT(BlueprintType)
+struct FBuildingManagerConfig
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FBuildingData> BuildingsData;
+	
+};
 
 /**
  * 

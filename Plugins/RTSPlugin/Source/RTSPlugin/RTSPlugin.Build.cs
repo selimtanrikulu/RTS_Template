@@ -25,7 +25,7 @@ public class RTSPlugin : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core",
+				"Core", "CoreUObject", "Engine", "InputCore","UMG" 
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);

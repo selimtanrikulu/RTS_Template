@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class ARTSHUD;
+class UBuildingManager;
 class USelectionManager;
 class ULogManager;
 /**
@@ -25,6 +28,8 @@ public:
 	//Managers
 	UPROPERTY() ULogManager* LogManager;
 	UPROPERTY() USelectionManager* SelectionManager;
+	UPROPERTY() UBuildingManager* BuildingManager;
+	UPROPERTY() ARTSHUD* RTSHUD;
 
 private:
 	
@@ -36,6 +41,10 @@ private:
 	void OnTick(float DeltaTime);
 
 
+	//Building Manager Config
+	UPROPERTY(EditDefaultsOnly)
+	FBuildingManagerConfig BuildingManagerConfig;
+	
 
 
 	//Tool (To be moved to configs)
