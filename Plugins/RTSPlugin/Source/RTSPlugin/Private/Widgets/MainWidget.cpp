@@ -32,6 +32,10 @@ void UMainWidget::OnSelectionChanged()
 	BuildingsTileView->ClearListItems();
 	UnitsTileView->ClearListItems();
 
+	BuildingsTileView->SetVisibility(ESlateVisibility::Hidden);
+	UnitsTileView->SetVisibility(ESlateVisibility::Hidden);
+	
+
 	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
 	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
 	
@@ -102,6 +106,8 @@ void UMainWidget::CreateUnitEntries(TArray<FUnitData> &UnitsData,UUnitGenerator*
 		
 		UnitsTileView->AddItem(UnitEntryArgument);
 	}
+
+	UnitsTileView->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMainWidget::CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const
@@ -114,4 +120,6 @@ void UMainWidget::CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) co
 		BuildingEntryArgument->BuildingData = BuildingData;
 		BuildingsTileView->AddItem(BuildingEntryArgument);
 	}
+
+	BuildingsTileView->SetVisibility(ESlateVisibility::Visible);
 }
