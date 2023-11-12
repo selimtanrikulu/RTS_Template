@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "MainWidget.generated.h"
 
+class USelectionManager;
 class UBuildingManager;
 class UTileView;
 /**
@@ -29,7 +30,10 @@ private:
 
 	//Dependencies
 	UPROPERTY() UBuildingManager* BuildingManager;
+	UPROPERTY() USelectionManager* SelectionManager;
 
-
+	//Selection Manager Listener
+	UFUNCTION()
+	void OnSelectionChanged();
 	
 };

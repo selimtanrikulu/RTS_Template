@@ -70,6 +70,15 @@ void USelectionManager::OnMouseLeftReleased()
 	DestroySelectBox();
 }
 
+void USelectionManager::OnOverlapChanged()
+{
+	//Update selection
+	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
+	
+	//Fire main delegate
+	OnSelectionChangedDelegate.Broadcast();
+}
+
 void USelectionManager::CreateSelectBox()
 {
 	const FHitResult Hit = RTSPawn->LookForFloor();
@@ -79,10 +88,21 @@ void USelectionManager::CreateSelectBox()
 	
 	AActor* SpawnedActor = World->SpawnActor<AActor>(SelectBoxBP,Location,Rotation);
 	CurrentSelectBox = Cast<ASelectBox>(SpawnedActor);
+	
+	//Load overlaps to select box
+	CurrentSelectBox->OverlappingBuildings = SelectedBuildings;
+	
+	CurrentSelectBox->OnOverlapChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnOverlapChanged);
 }
 
 void USelectionManager::DestroySelectBox()
 {
+	CurrentSelectBox->OnOverlapChangedDelegate.RemoveDynamic(this,&USelectionManager::OnOverlapChanged);
 	World->DestroyActor(CurrentSelectBox);
 	CurrentSelectBox = nullptr;
+}
+
+TArray<ABuilding*> USelectionManager::GetSelectedBuildings() const
+{
+	return SelectedBuildings;
 }

@@ -2,6 +2,8 @@
 
 
 #include "Managers/BuildingManager.h"
+
+#include "ActorsAndComponents/Building.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/RTSPawn.h"
@@ -73,7 +75,7 @@ TArray<FBuildingData> UBuildingManager::GetBuildingsData() const
 }
 void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 {
-	DraftingBuilding = World->SpawnActor(BuildingData.BP);
+	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.BP));
 	
 }
 void UBuildingManager::UpdateDraftingBuildingLocation() const

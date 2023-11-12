@@ -6,6 +6,7 @@
 #include "Utility/Util.h"
 #include "BuildingManager.generated.h"
 
+class ABuilding;
 class ARTSPawn;
 /**
  * 
@@ -43,7 +44,7 @@ private:
 	
 	FBuildingManagerConfig BuildingManagerConfig;
 
-	UPROPERTY() AActor* DraftingBuilding;
+	UPROPERTY() ABuilding* DraftingBuilding;
 
 
 	void UpdateDraftingBuildingLocation() const;

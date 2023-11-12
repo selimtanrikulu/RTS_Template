@@ -3,6 +3,7 @@
 
 #include "ActorsAndComponents/SelectBox.h"
 
+#include "ActorsAndComponents/Building.h"
 #include "Managers/RTSPawn.h"
 #include "Utility/Util.h"
 
@@ -26,6 +27,7 @@ void ASelectBox::BeginPlay()
 
 	
 	StartLocation = GetActorLocation();
+
 }
 
 // Called every frame
@@ -35,6 +37,7 @@ void ASelectBox::Tick(float DeltaTime)
 
 
 	UpdateLocationAndScale();
+	UpdateOverlaps();
 }
 
 void ASelectBox::UpdateLocationAndScale()
@@ -48,5 +51,55 @@ void ASelectBox::UpdateLocationAndScale()
 
     FVector NewLocation = StartLocation + (DeltaLocation/2);
     SetActorLocation(NewLocation);
+}
+
+void ASelectBox::UpdateOverlaps()
+{
+	//Check overlapping grid objects (Different dimensions' objects may cause that overlap)
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, UStaticMeshComponent::StaticClass());
+	
+
+	bool ChangedFlag = false;
+
+
+	//Check new
+	for(AActor* OverlappingActor : OverlappingActors)
+	{
+		if(ABuilding* Building = Cast<ABuilding>(OverlappingActor))
+		{
+			if(!OverlappingBuildings.Contains(Building))
+			{
+				OverlappingBuildings.Add(Building);
+				ChangedFlag = true;
+			}
+		}
+	}
+
+
+	//Check existence
+	TArray<ABuilding*> BuildingsToRemove;
+	for(ABuilding* OverlappingBuilding : OverlappingBuildings)
+	{
+		
+		if(!OverlappingActors.Contains(OverlappingBuilding))
+		{
+			BuildingsToRemove.Add(OverlappingBuilding);
+			ChangedFlag = true;
+		}
+	}
+	for(ABuilding* BuildingToRemove : BuildingsToRemove)
+	{
+		OverlappingBuildings.Remove(BuildingToRemove);
+	}
+
+	
+
+	
+	if(ChangedFlag)
+	{
+		OnOverlapChangedDelegate.Broadcast();
+	}
+	
 }
 

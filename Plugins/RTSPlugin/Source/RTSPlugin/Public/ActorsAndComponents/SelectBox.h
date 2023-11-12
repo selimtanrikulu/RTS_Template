@@ -4,9 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Managers/USelectionManager.h"
 #include "SelectBox.generated.h"
 
+class ABuilding;
 class ARTSPawn;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOverlapChanged);
 
 UCLASS()
 class RTSPLUGIN_API ASelectBox : public AActor
@@ -26,6 +30,9 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
+	TArray<ABuilding*> OverlappingBuildings;
+	
+	UPROPERTY(BlueprintAssignable) FOnOverlapChanged OnOverlapChangedDelegate;
 
 private:
 
@@ -37,6 +44,12 @@ private:
 
 
 	void UpdateLocationAndScale();
+	void UpdateOverlaps();
+	
+
+	
+	
+	
 
 	
 };

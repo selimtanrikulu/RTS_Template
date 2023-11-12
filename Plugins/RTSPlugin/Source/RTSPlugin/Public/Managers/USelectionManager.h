@@ -7,6 +7,9 @@
 #include "CoreMinimal.h"
 #include "USelectionManager.generated.h"
 
+class ABuilding;
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
+
 
 class ULogManager;
 class ASelectBox;
@@ -28,6 +31,11 @@ public:
 	void Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP);
 	void Tick(float DeltaTime);
 
+
+	TArray<ABuilding*> GetSelectedBuildings() const;
+
+	UPROPERTY(BlueprintAssignable) FOnSelectionChanged OnSelectionChangedDelegate;
+
 private:
 
 	//Dependencies
@@ -41,12 +49,22 @@ private:
 	void OnMouseLeftClicked();
 	UFUNCTION()
 	void OnMouseLeftReleased();
+
+	//Select Box Listeners
+	UFUNCTION()
+	void OnOverlapChanged();
+
+
+
 	
 	TSubclassOf<AActor> SelectBoxBP;
 
 
 	//Utility
 	UPROPERTY() ASelectBox* CurrentSelectBox;
+
+
+	TArray<ABuilding*> SelectedBuildings;
 	
 	
 	void CreateSelectBox();
