@@ -228,12 +228,12 @@ void UStoreManager::CreateImages()
 		FVector ForwardVector = CaptureComponent->GetForwardVector();
 
 
-		float Distance = CaptureComponent->GetRelativeLocation().X;
+		const float Distance = CaptureComponent->GetRelativeLocation().X;
 
 		// Calculate the horizontal and vertical extents of the view
-		float HalfFOV = FMath::DegreesToRadians(CaptureComponent->FOVAngle) / 2.0f;
-		float TanHalfFOV = FMath::Tan(HalfFOV);
-		float VerticalExtent = TanHalfFOV * Distance; // 1000 units is the distance from the camera
+		const float HalfFOV = FMath::DegreesToRadians(CaptureComponent->FOVAngle) / 2.0f;
+		const float TanHalfFOV = FMath::Tan(HalfFOV);
+		const float VerticalExtent = TanHalfFOV * Distance; // 1000 units is the distance from the camera
 
 
 		
@@ -241,19 +241,11 @@ void UStoreManager::CreateImages()
 		FVector MiddleBottomPoint = CameraLocation +
 			ForwardVector * Distance -
 					FVector::UpVector * VerticalExtent;
-		
-		float ForwardBias = BoxExtent2.X / 2;
+
+		const float ForwardBias = BoxExtent2.X / 2;
 		FVector Bias(0,0,ForwardBias);
 		
 		EntityActor->SetActorLocation(MiddleBottomPoint + Bias);
-
-		UE_LOG(LogTemp,Display,TEXT("Location : %s"),*MiddleBottomPoint.ToString());
-
-
-		//FVector Location = EntityActor->GetActorLocation();
-		//EntityActor->SetActorLocation(Location + FVector(0, 0, -BoxExtent2.Z));
-
-	
 		
 		//Capture and save
 		CaptureComponent->TextureTarget = RenderTarget;
