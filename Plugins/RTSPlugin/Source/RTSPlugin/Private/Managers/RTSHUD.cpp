@@ -17,9 +17,7 @@ ARTSHUD::ARTSHUD()
 void ARTSHUD::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
-	SetWidget(EWidgetType::Main);
 }
 
 

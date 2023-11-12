@@ -21,33 +21,66 @@ struct FSourceData
 
 
 USTRUCT(BlueprintType)
-struct FBuildingData
+struct FEntityData
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> BP;
-
-	UPROPERTY(EditDefaultsOnly)
-	FString Path;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FString Name;
 	
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FSourceData> Cost;
+
+	UPROPERTY()
+	UMaterialInstanceDynamic* ImageMaterial;
+	
+};
+
+
+USTRUCT(BlueprintType)
+struct FBuildingData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FEntityData EntityData;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString Path;
+	
+	
 	
 };
 
 
 
+
+
 USTRUCT(BlueprintType)
-struct FBuildingManagerConfig
+struct FUnitData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FEntityData EntityData;
+};
+
+
+
+USTRUCT(BlueprintType)
+struct FStoreManagerConfig
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FBuildingData> BuildingsData;
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FUnitData> UnitsData;
 	
 };
 

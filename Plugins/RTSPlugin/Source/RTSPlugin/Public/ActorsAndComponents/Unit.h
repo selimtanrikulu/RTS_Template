@@ -4,17 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "TeamEntity.h"
-#include "GameFramework/Actor.h"
-#include "Building.generated.h"
+#include "Unit.generated.h"
 
 UCLASS()
-class RTSPLUGIN_API ABuilding : public ATeamEntity
+class RTSPLUGIN_API AUnit : public ATeamEntity
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ABuilding();
+
+public:
+	// Sets default values for this character's properties
+	AUnit();
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,4 +24,5 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 
+	
 };

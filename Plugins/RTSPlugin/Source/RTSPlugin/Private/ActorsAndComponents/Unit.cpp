@@ -1,28 +1,28 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/Unit.h"
 
 // Sets default values
-ABuilding::ABuilding()
+AUnit::AUnit()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+ 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 }
 
 // Called when the game starts or when spawned
-void ABuilding::BeginPlay()
+void AUnit::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
 
 // Called every frame
-void ABuilding::Tick(float DeltaTime)
+void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
-
 

@@ -4,6 +4,7 @@
 #include "ActorsAndComponents/SelectBox.h"
 
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/Unit.h"
 #include "Managers/RTSPawn.h"
 #include "Utility/Util.h"
 
@@ -38,6 +39,8 @@ void ASelectBox::Tick(float DeltaTime)
 
 	UpdateLocationAndScale();
 	UpdateOverlaps();
+
+
 }
 
 void ASelectBox::UpdateLocationAndScale()
@@ -74,14 +77,22 @@ void ASelectBox::UpdateOverlaps()
 				ChangedFlag = true;
 			}
 		}
+
+		if(AUnit* Unit = Cast<AUnit>(OverlappingActor))
+		{
+			if(!OverlappingUnits.Contains(Unit))
+			{
+				OverlappingUnits.Add(Unit);
+				ChangedFlag = true;
+			}
+		}
 	}
 
 
-	//Check existence
+	//Check existence (Buildings)
 	TArray<ABuilding*> BuildingsToRemove;
 	for(ABuilding* OverlappingBuilding : OverlappingBuildings)
 	{
-		
 		if(!OverlappingActors.Contains(OverlappingBuilding))
 		{
 			BuildingsToRemove.Add(OverlappingBuilding);
@@ -93,13 +104,27 @@ void ASelectBox::UpdateOverlaps()
 		OverlappingBuildings.Remove(BuildingToRemove);
 	}
 
-	
+	//Check existence (Units)
+	TArray<AUnit*> UnitsToRemove;
+	for(AUnit* OverlappingUnit : OverlappingUnits)
+	{
+		if(!OverlappingActors.Contains(OverlappingUnit))
+		{
+			UnitsToRemove.Add(OverlappingUnit);
+			ChangedFlag = true;
+		}
+	}
+	for(AUnit* UnitToRemove : UnitsToRemove)
+	{
+		OverlappingUnits.Remove(UnitToRemove);
+	}
+
 
 	
 	if(ChangedFlag)
 	{
 		OnOverlapChangedDelegate.Broadcast();
 	}
-	
 }
+
 

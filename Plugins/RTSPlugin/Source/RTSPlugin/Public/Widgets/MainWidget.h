@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MainWidget.generated.h"
 
+class UStoreManager;
 class USelectionManager;
-class UBuildingManager;
 class UTileView;
 /**
  * 
@@ -22,14 +22,16 @@ public:
 
 	virtual void NativeConstruct() override;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Store Widget")
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
 	UTileView* BuildingsTileView;
 
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UTileView* UnitsTileView;
 
 private:
 
 	//Dependencies
-	UPROPERTY() UBuildingManager* BuildingManager;
+	UPROPERTY() UStoreManager* StoreManager;
 	UPROPERTY() USelectionManager* SelectionManager;
 
 	//Selection Manager Listener

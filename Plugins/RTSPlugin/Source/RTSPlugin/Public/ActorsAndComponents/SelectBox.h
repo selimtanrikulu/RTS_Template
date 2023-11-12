@@ -31,6 +31,7 @@ public:
 
 
 	TArray<ABuilding*> OverlappingBuildings;
+	TArray<AUnit*> OverlappingUnits;
 	
 	UPROPERTY(BlueprintAssignable) FOnOverlapChanged OnOverlapChangedDelegate;
 
@@ -46,7 +47,6 @@ private:
 	void UpdateLocationAndScale();
 	void UpdateOverlaps();
 	
-
 	
 	
 	

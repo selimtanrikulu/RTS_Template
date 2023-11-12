@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class UStoreManager;
 class ARTSHUD;
 class UBuildingManager;
 class USelectionManager;
@@ -30,6 +31,7 @@ public:
 	UPROPERTY() USelectionManager* SelectionManager;
 	UPROPERTY() UBuildingManager* BuildingManager;
 	UPROPERTY() ARTSHUD* RTSHUD;
+	UPROPERTY() UStoreManager* StoreManager;
 
 private:
 	
@@ -43,12 +45,17 @@ private:
 
 	//Building Manager Config
 	UPROPERTY(EditDefaultsOnly)
-	FBuildingManagerConfig BuildingManagerConfig;
+	FStoreManagerConfig StoreManagerConfig;
 	
 
 
 	//Tool (To be moved to configs)
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> SelectBoxBP;
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> StudioBP;
+	
 	
 };

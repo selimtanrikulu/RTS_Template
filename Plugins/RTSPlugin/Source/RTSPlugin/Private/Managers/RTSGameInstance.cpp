@@ -7,6 +7,7 @@
 #include "Managers/BuildingManager.h"
 #include "Managers/LogManager.h"
 #include "Managers/RTSHud.h"
+#include "Managers/StoreManager.h"
 #include "Managers/USelectionManager.h"
 
 void URTSGameInstance::Init()
@@ -16,6 +17,7 @@ void URTSGameInstance::Init()
 	LogManager = NewObject<ULogManager>();
 	SelectionManager = NewObject<USelectionManager>();
 	BuildingManager = NewObject<UBuildingManager>();
+	StoreManager = NewObject<UStoreManager>();
 }
 
 void URTSGameInstance::OnBeginPlay()
@@ -32,7 +34,9 @@ void URTSGameInstance::OnBeginPlay()
 	
 	
 	SelectionManager->Begin(World,SelectBoxBP);
-	BuildingManager->Begin(World,BuildingManagerConfig);
+	BuildingManager->Begin(World);
+
+	StoreManager->Begin(StoreManagerConfig,StudioBP,World);
 }
 
 void URTSGameInstance::OnTick(float DeltaTime)

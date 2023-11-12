@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "USelectionManager.generated.h"
 
+class AUnit;
 class ABuilding;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
 
@@ -33,6 +34,7 @@ public:
 
 
 	TArray<ABuilding*> GetSelectedBuildings() const;
+	TArray<AUnit*> GetSelectedUnits() const;
 
 	UPROPERTY(BlueprintAssignable) FOnSelectionChanged OnSelectionChangedDelegate;
 
@@ -55,7 +57,7 @@ private:
 	void OnOverlapChanged();
 
 
-
+	void UpdateCircles();
 	
 	TSubclassOf<AActor> SelectBoxBP;
 
@@ -65,6 +67,7 @@ private:
 
 
 	TArray<ABuilding*> SelectedBuildings;
+	TArray<AUnit*> SelectedUnits;
 	
 	
 	void CreateSelectBox();

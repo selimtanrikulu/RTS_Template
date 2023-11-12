@@ -5,22 +5,21 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Utility/Util.h"
-#include "BuildingEntry.generated.h"
+#include "UnitEntry.generated.h"
 
 
-class UImage;
-class UBuildingManager;
 class UButton;
 class UTextBlock;
+class UImage;
 
 UCLASS(BlueprintType)
-class RTSPLUGIN_API UBuildingEntryArgument : public UObject
+class RTSPLUGIN_API UUnitEntryArgument : public UObject
 {
 	GENERATED_BODY()
 
 public:
 	//Building dependent
-	FBuildingData BuildingData;
+	FUnitData UnitData;
 	
 };
 
@@ -29,10 +28,9 @@ public:
  * 
  */
 UCLASS()
-class RTSPLUGIN_API UBuildingEntry : public UUserWidget
+class RTSPLUGIN_API UUnitEntry : public UUserWidget
 {
 	GENERATED_BODY()
-
 
 
 public:
@@ -40,27 +38,24 @@ public:
 	virtual void NativeConstruct() override;
 	
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Store Widget")
-	UTextBlock* BuildingNameText;
+	UTextBlock* UnitNameText;
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Store Widget")
-	UImage* BuildingImage;
+	UImage* UnitImage;
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Store Widget")
 	UButton* EntryButton;
 
 private:
-
+	
 	//Dependencies
-	UPROPERTY() UBuildingManager* BuildingManager;
 
-
-	UBuildingEntryArgument* BuildingEntryArgument;
+	UUnitEntryArgument* UnitEntryArgument;
 	
 	UFUNCTION(BlueprintCallable)
-	void StartEntry(UBuildingEntryArgument* buildingEntryArgument);
+	void StartEntry(UUnitEntryArgument* unitEntryArgument);
 
 	UFUNCTION()
 	void OnEntryButtonClicked();
-
 	
 };

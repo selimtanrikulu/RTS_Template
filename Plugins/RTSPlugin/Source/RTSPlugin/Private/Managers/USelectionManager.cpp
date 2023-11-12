@@ -9,6 +9,9 @@
 #include "Managers/RTSGameInstance.h"
 #include "Managers/RTSPawn.h"
 #include "Utility/Util.h"
+#include "SceneManagement.h"
+#include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/Unit.h"
 
 USelectionManager::USelectionManager()
 {
@@ -43,7 +46,7 @@ void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
 
 void USelectionManager::Tick(float DeltaTime)
 {
-	
+	UpdateCircles();
 }
 
 void USelectionManager::OnMouseLeftClicked()
@@ -74,9 +77,47 @@ void USelectionManager::OnOverlapChanged()
 {
 	//Update selection
 	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
-	
+	SelectedUnits = CurrentSelectBox->OverlappingUnits;
+
 	//Fire main delegate
 	OnSelectionChangedDelegate.Broadcast();
+}
+
+void USelectionManager::UpdateCircles()
+{
+	for(const ABuilding* SelectedBuilding : SelectedBuildings)
+	{
+		DrawCircle(World,
+		SelectedBuilding->MeshComponent->GetComponentLocation(),
+		FVector::RightVector,
+		FVector::ForwardVector,
+		FColor::Blue,
+		SelectedBuilding->Extent,
+		300,
+		false,
+		-1,
+		0,
+		20
+		);
+	}
+
+
+	for(const AUnit* SelectedUnit : SelectedUnits)
+	{
+		DrawCircle(World,
+		SelectedUnit->MeshComponent->GetComponentLocation(),
+		FVector::RightVector,
+		FVector::ForwardVector,
+		FColor::Yellow,
+		SelectedUnit->Extent,
+		300,
+		false,
+		-1,
+		0,
+		20
+		);
+	}
+
 }
 
 void USelectionManager::CreateSelectBox()
@@ -91,6 +132,7 @@ void USelectionManager::CreateSelectBox()
 	
 	//Load overlaps to select box
 	CurrentSelectBox->OverlappingBuildings = SelectedBuildings;
+	CurrentSelectBox->OverlappingUnits = SelectedUnits;
 	
 	CurrentSelectBox->OnOverlapChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnOverlapChanged);
 }
@@ -105,4 +147,9 @@ void USelectionManager::DestroySelectBox()
 TArray<ABuilding*> USelectionManager::GetSelectedBuildings() const
 {
 	return SelectedBuildings;
+}
+
+TArray<AUnit*> USelectionManager::GetSelectedUnits() const
+{
+	return SelectedUnits;
 }

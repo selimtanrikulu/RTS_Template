@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/TeamEntity.h"
 
 // Sets default values
-ABuilding::ABuilding()
+ATeamEntity::ATeamEntity()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -12,17 +12,20 @@ ABuilding::ABuilding()
 }
 
 // Called when the game starts or when spawned
-void ABuilding::BeginPlay()
+void ATeamEntity::BeginPlay()
 {
 	Super::BeginPlay();
+
+	MeshComponent = FindComponentByClass<UMeshComponent>();
 	
+	BoxExtent = MeshComponent->GetLocalBounds().BoxExtent;
+	Extent = FMath::Sqrt(BoxExtent.X*BoxExtent.X + BoxExtent.Y*BoxExtent.Y);
 }
 
 // Called every frame
-void ABuilding::Tick(float DeltaTime)
+void ATeamEntity::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
-
 

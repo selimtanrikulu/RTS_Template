@@ -7,8 +7,10 @@
 #include "Kismet/GameplayStatics.h"
 #include "Managers/BuildingManager.h"
 #include "Managers/RTSGameInstance.h"
+#include "Managers/StoreManager.h"
 #include "Managers/USelectionManager.h"
 #include "Widgets/BuildingEntry.h"
+#include "Widgets/UnitEntry.h"
 
 void UMainWidget::NativeConstruct()
 {
@@ -18,11 +20,11 @@ void UMainWidget::NativeConstruct()
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 
 	SelectionManager = GameInstance->SelectionManager;
-	BuildingManager = GameInstance->BuildingManager;
+	StoreManager = GameInstance->StoreManager;
 	
 	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&UMainWidget::OnSelectionChanged);
 	
-	TArray<FBuildingData> BuildingsData = BuildingManager->GetBuildingsData();
+	TArray<FBuildingData> BuildingsData = StoreManager->GetCurrentBuildings();
 	for(const FBuildingData &BuildingData : BuildingsData)
 	{
 		UBuildingEntryArgument* BuildingEntryArgument =
@@ -31,11 +33,28 @@ void UMainWidget::NativeConstruct()
 		BuildingEntryArgument->BuildingData = BuildingData;
 		BuildingsTileView->AddItem(BuildingEntryArgument);
 	}
+
+
+
+	TArray<FUnitData> UnitsData = StoreManager->GetCurrentUnits();
+	for(const FUnitData &UnitData : UnitsData)
+	{
+		UUnitEntryArgument* UnitEntryArgument =
+			NewObject<UUnitEntryArgument>();
+		
+		UnitEntryArgument->UnitData = UnitData;
+		UnitsTileView->AddItem(UnitEntryArgument);
+	}
 	
 }
 
 void UMainWidget::OnSelectionChanged()
 {
 	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
-	UE_LOG(LogTemp,Display,TEXT("Selection Changed. Buildings : %d"),SelectedBuildings.Num());
+	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
+
+	
+	UE_LOG(LogTemp,Display,TEXT("Selection Changed. Buildings : %d Units %d"),
+		SelectedBuildings.Num(),
+		SelectedUnits.Num());
 }

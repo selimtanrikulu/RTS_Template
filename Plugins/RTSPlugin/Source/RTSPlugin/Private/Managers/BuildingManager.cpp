@@ -8,9 +8,8 @@
 #include "Managers/RTSGameInstance.h"
 #include "Managers/RTSPawn.h"
 
-void UBuildingManager::Begin(UWorld* world, const FBuildingManagerConfig& buildingManagerConfig)
+void UBuildingManager::Begin(UWorld* world)
 {
-	BuildingManagerConfig = buildingManagerConfig;
 	World = world;
 
 
@@ -69,13 +68,9 @@ void UBuildingManager::OnMouseWheelDown()
 }
 
 
-TArray<FBuildingData> UBuildingManager::GetBuildingsData() const
-{
-	return BuildingManagerConfig.BuildingsData;
-}
 void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 {
-	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.BP));
+	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.EntityData.BP));
 	
 }
 void UBuildingManager::UpdateDraftingBuildingLocation() const

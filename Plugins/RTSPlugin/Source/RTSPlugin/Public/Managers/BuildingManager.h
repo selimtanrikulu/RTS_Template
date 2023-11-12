@@ -19,11 +19,8 @@ class RTSPLUGIN_API UBuildingManager : public UObject
 
 public:
 
-	void Begin(UWorld* world,const FBuildingManagerConfig& buildingManagerConfig);
+	void Begin(UWorld* world);
 	void Tick(float DeltaTime);
-
-	TArray<FBuildingData> GetBuildingsData() const;
-
 
 
 	void DraftBuilding(const FBuildingData& BuildingData);
@@ -41,8 +38,6 @@ private:
 	UFUNCTION() void OnMouseWheelDown();
 	
 
-	
-	FBuildingManagerConfig BuildingManagerConfig;
 
 	UPROPERTY() ABuilding* DraftingBuilding;
 

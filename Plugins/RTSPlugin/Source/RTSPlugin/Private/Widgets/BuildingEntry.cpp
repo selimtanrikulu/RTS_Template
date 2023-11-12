@@ -4,6 +4,7 @@
 #include "Widgets/BuildingEntry.h"
 
 #include "Components/Button.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/BuildingManager.h"
@@ -26,7 +27,21 @@ void UBuildingEntry::NativeConstruct()
 void UBuildingEntry::StartEntry(UBuildingEntryArgument* buildingEntryArgument)
 {
 	BuildingEntryArgument = buildingEntryArgument;
-	BuildingNameText->SetText(FText::FromString(buildingEntryArgument->BuildingData.Name));
+
+	
+
+	BuildingNameText->SetText(FText::FromString(buildingEntryArgument->BuildingData.EntityData.Name));
+
+
+	if(BuildingEntryArgument->BuildingData.EntityData.ImageMaterial)
+	{
+		BuildingImage->SetBrushFromMaterial(Cast<UMaterialInterface>
+		(BuildingEntryArgument->BuildingData.EntityData.ImageMaterial));
+	}
+	else
+	{
+		UE_LOG(LogTemp,Warning,TEXT("Image material not exist"));
+	}
 }
 
 void UBuildingEntry::OnEntryButtonClicked()
