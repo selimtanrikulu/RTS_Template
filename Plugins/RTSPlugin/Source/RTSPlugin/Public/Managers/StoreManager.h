@@ -28,8 +28,8 @@ public:
 	           TSubclassOf<AActor> studioBP,
 	           UWorld* world);
 	
-	void StartShopping();
-	void StopShopping();
+	void OpenWorkerRoot();
+	void CloseWorker();
 	void SelectNextCategory(const FString& Category);
 	void SelectPreviousCategory();
 	void SetDraftingBuilding(FBuildingData& BuildingData);
@@ -37,7 +37,6 @@ public:
 	TArray<FString> GetCurrentChildren() const;
 	TArray<FBuildingData> GetCurrentBuildings() const;
 
-	TArray<FUnitData> GetCurrentUnits() const;
 
 	TArray<FString> GetCurrentPath() const;
 
@@ -45,9 +44,13 @@ public:
 	void CancelDraftingObject();
 
 
+	FBuildingData* GetBuildingByName(const FString& BuildingName);
+	FUnitData *GetUnitByName(const FString& UnitName);
+
 private:
 
 	UPROPERTY() FStoreManagerConfig StoreManagerConfig;
+	
 	
 	//Dependencies
 	UPROPERTY() UWorld* World;
@@ -60,11 +63,15 @@ private:
 	FBuildingData* DraftingBuilding;
 
 
+	void SetIDs();
+	void FindExistingEntities();
 	void CreateImages();
-	
 	void CreateStoreTree();
+
+	TArray<FEntityData*> GetEntitiesData();
 	
 
+	
 
 	//Screenshot capture
 	UPROPERTY() class UMaterial* BaseMaterial;

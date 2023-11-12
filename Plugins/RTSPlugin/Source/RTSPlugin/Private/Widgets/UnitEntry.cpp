@@ -44,5 +44,5 @@ void UUnitEntry::StartEntry(UUnitEntryArgument* unitEntryArgument)
 
 void UUnitEntry::OnEntryButtonClicked()
 {
-	
+	UnitEntryArgument->UnitGenerator->SpawnUnit(UnitEntryArgument->UnitData);
 }

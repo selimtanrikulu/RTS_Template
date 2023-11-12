@@ -6,6 +6,9 @@
 #include "Util.generated.h"
 
 
+class AUnit;
+class ABuilding;
+
 USTRUCT(BlueprintType)
 struct FSourceData
 {
@@ -36,6 +39,9 @@ struct FEntityData
 
 	UPROPERTY()
 	UMaterialInstanceDynamic* ImageMaterial;
+
+	UPROPERTY()
+	int EntityID;
 	
 };
 
@@ -74,7 +80,7 @@ USTRUCT(BlueprintType)
 struct FStoreManagerConfig
 {
 	GENERATED_BODY()
-
+	
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FBuildingData> BuildingsData;
 
@@ -95,6 +101,11 @@ public:
 
 
 	static AActor* GetActorOfClass(const UObject* WorldContextObject,
+							  TSubclassOf<AActor> ActorClass);
+
+
+
+	static TArray<AActor*> GetActorsOfClass(const UObject* WorldContextObject,
 							  TSubclassOf<AActor> ActorClass);
 
 	

@@ -18,25 +18,22 @@ void URTSGameInstance::Init()
 	SelectionManager = NewObject<USelectionManager>();
 	BuildingManager = NewObject<UBuildingManager>();
 	StoreManager = NewObject<UStoreManager>();
+
 }
+
 
 void URTSGameInstance::OnBeginPlay()
 {
 	UWorld* World = GetWorld();
-
-
-
-	
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	PlayerController->SetShowMouseCursor(true);
-	
 	RTSHUD = Cast<ARTSHUD>(PlayerController->GetHUD());
-	
 	
 	SelectionManager->Begin(World,SelectBoxBP);
 	BuildingManager->Begin(World);
-
 	StoreManager->Begin(StoreManagerConfig,StudioBP,World);
+
+
 }
 
 void URTSGameInstance::OnTick(float DeltaTime)

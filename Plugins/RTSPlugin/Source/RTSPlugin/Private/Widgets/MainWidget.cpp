@@ -3,9 +3,11 @@
 
 #include "Widgets/MainWidget.h"
 
+#include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/UnitGenerator.h"
+#include "ActorsAndComponents/Worker.h"
 #include "Components/TileView.h"
 #include "Kismet/GameplayStatics.h"
-#include "Managers/BuildingManager.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/StoreManager.h"
 #include "Managers/USelectionManager.h"
@@ -23,8 +25,87 @@ void UMainWidget::NativeConstruct()
 	StoreManager = GameInstance->StoreManager;
 	
 	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&UMainWidget::OnSelectionChanged);
+}
+
+void UMainWidget::OnSelectionChanged()
+{
+	BuildingsTileView->ClearListItems();
+	UnitsTileView->ClearListItems();
+
+	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
+	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
 	
-	TArray<FBuildingData> BuildingsData = StoreManager->GetCurrentBuildings();
+
+	const ESelectionState SelectionState = SelectionManager->GetSelectionState();
+
+	if(SelectionState == ESelectionState::BuildingSingle)
+	{
+		if(SelectedBuildings.Num() != 1)
+		{
+			UE_LOG(LogTemp,Error,TEXT("Selection State Does not match with selection"));
+			return;
+		}
+
+		const ABuilding* SelectedBuilding = SelectedBuildings[0];
+
+		UUnitGenerator* UnitGenerator = SelectedBuilding->FindComponentByClass<UUnitGenerator>();
+
+		if(UnitGenerator)
+		{
+			CreateUnitEntries(UnitGenerator->GetUnits(),UnitGenerator);
+		}
+		
+	}
+	else if(SelectionState == ESelectionState::UnitSingle ||
+		SelectionState == ESelectionState::UnitMass)
+	{
+		if(SelectedUnits.Num() == 0)
+		{
+			UE_LOG(LogTemp,Error,TEXT("Selection State Does not match with selection"));
+			return;
+		}
+
+		AUnit* Unit = SelectedUnits[0];
+
+		AWorker* Worker = Cast<AWorker>(Unit);
+
+		if(Worker)
+		{
+			StoreManager->OpenWorkerRoot();
+
+			TArray<FBuildingData> BuildingsData = StoreManager->GetCurrentBuildings();
+			CreateBuildingEntries(BuildingsData);
+		}
+		
+	}
+	
+	
+	
+	UE_LOG(LogTemp,Display,TEXT("Selection Changed. Buildings : %d Units %d"),
+		SelectedBuildings.Num(),
+		SelectedUnits.Num());
+
+
+	UE_LOG(LogTemp,Display,TEXT("Selection State : %s"),
+		*UEnum::GetValueAsString(SelectionState));
+}
+
+void UMainWidget::CreateUnitEntries(TArray<FUnitData> &UnitsData,UUnitGenerator* UnitGenerator) const
+{
+	for(const FUnitData &UnitData : UnitsData)
+	{
+		UUnitEntryArgument* UnitEntryArgument =
+			NewObject<UUnitEntryArgument>();
+		
+		UnitEntryArgument->UnitData = UnitData;
+		UnitEntryArgument->UnitGenerator = UnitGenerator;
+		
+		UnitsTileView->AddItem(UnitEntryArgument);
+	}
+}
+
+void UMainWidget::CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const
+{
 	for(const FBuildingData &BuildingData : BuildingsData)
 	{
 		UBuildingEntryArgument* BuildingEntryArgument =
@@ -33,28 +114,4 @@ void UMainWidget::NativeConstruct()
 		BuildingEntryArgument->BuildingData = BuildingData;
 		BuildingsTileView->AddItem(BuildingEntryArgument);
 	}
-
-
-
-	TArray<FUnitData> UnitsData = StoreManager->GetCurrentUnits();
-	for(const FUnitData &UnitData : UnitsData)
-	{
-		UUnitEntryArgument* UnitEntryArgument =
-			NewObject<UUnitEntryArgument>();
-		
-		UnitEntryArgument->UnitData = UnitData;
-		UnitsTileView->AddItem(UnitEntryArgument);
-	}
-	
-}
-
-void UMainWidget::OnSelectionChanged()
-{
-	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
-	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
-
-	
-	UE_LOG(LogTemp,Display,TEXT("Selection Changed. Buildings : %d Units %d"),
-		SelectedBuildings.Num(),
-		SelectedUnits.Num());
 }

@@ -79,6 +79,8 @@ void USelectionManager::OnOverlapChanged()
 	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
 	SelectedUnits = CurrentSelectBox->OverlappingUnits;
 
+	UpdateSelectionState();
+	
 	//Fire main delegate
 	OnSelectionChangedDelegate.Broadcast();
 }
@@ -91,7 +93,7 @@ void USelectionManager::UpdateCircles()
 		SelectedBuilding->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
-		FColor::Blue,
+		FColor::Black,
 		SelectedBuilding->Extent,
 		300,
 		false,
@@ -108,16 +110,72 @@ void USelectionManager::UpdateCircles()
 		SelectedUnit->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
-		FColor::Yellow,
+		FColor::White,
 		SelectedUnit->Extent,
 		300,
 		false,
 		-1,
 		0,
-		20
+		5
 		);
 	}
 
+}
+
+void USelectionManager::UpdateSelectionState()
+{
+	if(SelectedUnits.Num() == 0)
+	{
+		if(SelectedBuildings.Num() == 0)
+		{
+			SelectionState = ESelectionState::None;
+		}
+		else if(SelectedBuildings.Num() == 1)
+		{
+			SelectionState = ESelectionState::BuildingSingle;
+		}
+		else
+		{
+			if(AreSameBuildings(SelectedBuildings))
+			{
+				SelectionState = ESelectionState::BuildingMass;
+			}
+			else
+			{
+				SelectionState = ESelectionState::BuildingMixed;
+			}
+			
+		}
+	}
+	else if(SelectedUnits.Num() == 1)
+	{
+		if(SelectedBuildings.Num() == 0)
+		{
+			SelectionState = ESelectionState::UnitSingle;
+		}
+		else
+		{
+			SelectionState = ESelectionState::AllMixed;
+		}
+	}
+	else
+	{
+		if(SelectedBuildings.Num() == 0)
+		{
+			if(AreSameUnits(SelectedUnits))
+			{
+				SelectionState = ESelectionState::UnitMass;
+			}
+			else
+			{
+				SelectionState = ESelectionState::UnitMixed;
+			}
+		}
+		else
+		{
+			SelectionState = ESelectionState::AllMixed;
+		}
+	}
 }
 
 void USelectionManager::CreateSelectBox()
@@ -152,4 +210,42 @@ TArray<ABuilding*> USelectionManager::GetSelectedBuildings() const
 TArray<AUnit*> USelectionManager::GetSelectedUnits() const
 {
 	return SelectedUnits;
+}
+
+ESelectionState USelectionManager::GetSelectionState() const
+{
+	return SelectionState;
+}
+
+
+bool USelectionManager::AreSameBuildings(TArray<ABuilding*> Buildings)
+{
+	if(Buildings.Num() == 0)return true;
+
+	const int BuildingID = Buildings[0]->BuildingData.EntityData.EntityID;
+	for(const ABuilding* Building : Buildings)
+	{
+		if(BuildingID != Building->BuildingData.EntityData.EntityID)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool USelectionManager::AreSameUnits(TArray<AUnit*> Units)
+{
+	if(Units.Num() == 0)return true;
+
+	const int UnitID = Units[0]->UnitData.EntityData.EntityID;
+	for(const AUnit* Unit : Units)
+	{
+		if(UnitID != Unit->UnitData.EntityData.EntityID)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }

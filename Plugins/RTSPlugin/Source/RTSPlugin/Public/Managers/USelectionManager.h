@@ -20,6 +20,23 @@ class ARTSPawn;
  */
 
 
+UENUM(BlueprintType)
+enum class ESelectionState : uint8
+{
+	None,
+	UnitSingle,
+	UnitMass,
+	UnitMixed,
+	BuildingSingle,
+	BuildingMass,
+	BuildingMixed,
+	AllMixed,
+};
+
+
+
+
+
 UCLASS()
 class RTSPLUGIN_API USelectionManager : public UObject
 {
@@ -35,6 +52,10 @@ public:
 
 	TArray<ABuilding*> GetSelectedBuildings() const;
 	TArray<AUnit*> GetSelectedUnits() const;
+
+
+	ESelectionState GetSelectionState() const;
+	
 
 	UPROPERTY(BlueprintAssignable) FOnSelectionChanged OnSelectionChangedDelegate;
 
@@ -58,12 +79,15 @@ private:
 
 
 	void UpdateCircles();
+	void UpdateSelectionState();
 	
 	TSubclassOf<AActor> SelectBoxBP;
 
 
 	//Utility
 	UPROPERTY() ASelectBox* CurrentSelectBox;
+
+	ESelectionState SelectionState;
 
 
 	TArray<ABuilding*> SelectedBuildings;
@@ -72,5 +96,10 @@ private:
 	
 	void CreateSelectBox();
 	void DestroySelectBox();
+
+	//Utility functions
+	bool AreSameBuildings(TArray<ABuilding*> Buildings);
+	bool AreSameUnits(TArray<AUnit*> Units);
+	
 	
 };

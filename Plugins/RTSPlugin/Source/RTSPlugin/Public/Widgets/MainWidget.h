@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Utility/Util.h"
 #include "MainWidget.generated.h"
 
+class UUnitGenerator;
+struct FUnitData;
 class UStoreManager;
 class USelectionManager;
 class UTileView;
@@ -37,5 +40,9 @@ private:
 	//Selection Manager Listener
 	UFUNCTION()
 	void OnSelectionChanged();
+
+
+	void CreateUnitEntries(TArray<FUnitData> &UnitsData,UUnitGenerator* UnitGenerator) const;
+	void CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const;
 	
 };

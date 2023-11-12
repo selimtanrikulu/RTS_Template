@@ -3,6 +3,8 @@
 
 #include "RTSPlugin/Public/Managers/StoreManager.h"
 
+#include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/Unit.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
@@ -52,10 +54,16 @@ void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,
 	BuildingManager = GameInstance->BuildingManager;
 	//------
 
+	
+	
 
+	SetIDs();
 	CreateImages();
-	CreateStoreTree();
 
+	FindExistingEntities();
+	
+	
+	CreateStoreTree();
 
 
 	//Temporarily
@@ -64,6 +72,58 @@ void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,
 }
 
 
+void UStoreManager::SetIDs()
+{
+	int NextID = 1;
+
+	TArray<FEntityData*> EntitiesData = GetEntitiesData();
+	
+	for(FEntityData* EntityData : EntitiesData)
+	{
+		EntityData->EntityID = NextID++;
+	}
+}
+
+void UStoreManager::FindExistingEntities()
+{
+	for(const FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
+	{
+		const TSubclassOf<AActor> ActorClass = BuildingData.EntityData.BP;
+		TArray<AActor*> FoundActors = Util::GetActorsOfClass(World,ActorClass);
+
+		for(AActor* FoundActor : FoundActors)
+		{
+			ABuilding* Building = Cast<ABuilding>(FoundActor);
+
+			if(!Building)
+			{
+				UE_LOG(LogTemp,Error,TEXT("Found actor is not a building"));
+				continue;
+			}
+
+			Building->BuildingData = BuildingData;
+		}
+	}
+
+	for(const FUnitData &UnitData : StoreManagerConfig.UnitsData)
+	{
+		const TSubclassOf<AActor> ActorClass = UnitData.EntityData.BP;
+		TArray<AActor*> FoundActors = Util::GetActorsOfClass(World,ActorClass);
+		
+		for(AActor* FoundActor : FoundActors)
+		{
+			AUnit* Unit = Cast<AUnit>(FoundActor);
+
+			if(!Unit)
+			{
+				UE_LOG(LogTemp,Error,TEXT("Found actor is not a building"));
+				continue;
+			}
+
+			Unit->UnitData = UnitData;
+		}
+	}
+}
 
 void UStoreManager::CreateImages()
 {
@@ -112,18 +172,7 @@ void UStoreManager::CreateImages()
 	}
 
 
-	TArray<FEntityData*> EntitiesToCapture;
-
-	for(FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
-	{
-		EntitiesToCapture.Add(&BuildingData.EntityData);
-	}
-	for(FUnitData &UnitData : StoreManagerConfig.UnitsData)
-	{
-		EntitiesToCapture.Add(&UnitData.EntityData);
-	}
-
-	
+	TArray<FEntityData*> EntitiesToCapture = GetEntitiesData();
 
 	for (FEntityData* EntityData : EntitiesToCapture)
 	{
@@ -169,17 +218,40 @@ void UStoreManager::CreateImages()
 
 		
 		const FVector BoxExtent2 = MeshComponent->Bounds.BoxExtent;
-		FVector Location = EntityActor->GetActorLocation();
 
-		FVector DeltaMesh(0);
-		//If mesh is not the root
-		if(MeshComponent->GetAttachmentRoot() != Cast<USceneComponent>(MeshComponent))
-		{
-			DeltaMesh = MeshComponent->GetRelativeLocation();
-		}
+
 		
+		// Get the camera location and rotation
+		FVector CameraLocation = CaptureComponent->GetComponentLocation();
+
+		// Calculate the forward and right vectors based on the camera's rotation
+		FVector ForwardVector = CaptureComponent->GetForwardVector();
+
+
+		float Distance = CaptureComponent->GetRelativeLocation().X;
+
+		// Calculate the horizontal and vertical extents of the view
+		float HalfFOV = FMath::DegreesToRadians(CaptureComponent->FOVAngle) / 2.0f;
+		float TanHalfFOV = FMath::Tan(HalfFOV);
+		float VerticalExtent = TanHalfFOV * Distance; // 1000 units is the distance from the camera
+
+
 		
-		EntityActor->SetActorLocation(Location + FVector(0, 0, -BoxExtent2.Z) - DeltaMesh);
+		// Calculate the middle-bottom point
+		FVector MiddleBottomPoint = CameraLocation +
+			ForwardVector * Distance -
+					FVector::UpVector * VerticalExtent;
+		
+		float ForwardBias = BoxExtent2.X / 2;
+		FVector Bias(0,0,ForwardBias);
+		
+		EntityActor->SetActorLocation(MiddleBottomPoint + Bias);
+
+		UE_LOG(LogTemp,Display,TEXT("Location : %s"),*MiddleBottomPoint.ToString());
+
+
+		//FVector Location = EntityActor->GetActorLocation();
+		//EntityActor->SetActorLocation(Location + FVector(0, 0, -BoxExtent2.Z));
 
 	
 		
@@ -208,13 +280,61 @@ void UStoreManager::CreateStoreTree()
 	CurrentTree = StoreTreeRoot;
 
 	
-	for (FBuildingData BuildingData : StoreManagerConfig.BuildingsData)
+	for (FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
 	{
 		TArray<FString> Path;
 		BuildingData.Path.ParseIntoArray(Path, TEXT("/"));
 		StoreTreeRoot->AddCategory(Path, BuildingData);
 	}
 }
+
+
+TArray<FEntityData*> UStoreManager::GetEntitiesData()
+{
+	TArray<FEntityData*> EntitiesData;
+	
+	for(FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
+	{
+		EntitiesData.Add(&BuildingData.EntityData);
+	}
+	for(FUnitData &UnitData : StoreManagerConfig.UnitsData)
+	{
+		EntitiesData.Add(&UnitData.EntityData);
+	}
+
+	return EntitiesData;
+}
+
+FBuildingData* UStoreManager::GetBuildingByName(const FString& BuildingName)
+{
+	for(FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
+	{
+		if(BuildingData.EntityData.Name == BuildingName)
+		{
+			return &BuildingData;
+		}
+	}
+
+	UE_LOG(LogTemp,Error,TEXT("Building with name : %s does not exist "),*(BuildingName));
+
+	return nullptr;
+}
+
+FUnitData* UStoreManager::GetUnitByName(const FString& UnitName)
+{
+	for(FUnitData &UnitData : StoreManagerConfig.UnitsData)
+	{
+		if(UnitData.EntityData.Name == UnitName)
+		{
+			return &UnitData;
+		}
+	}
+
+	UE_LOG(LogTemp,Error,TEXT("Unit with name : %s does not exist "),*(UnitName));
+
+	return nullptr;
+}
+
 TArray<FString> UStoreManager::GetCurrentChildren() const
 {
 	if (!CurrentTree)
@@ -236,15 +356,6 @@ TArray<FBuildingData> UStoreManager::GetCurrentBuildings() const
 	return CurrentTree->Node->ContainingBuildings;
 }
 
-TArray<FUnitData> UStoreManager::GetCurrentUnits() const
-{
-	if (!CurrentTree)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Current Tree not found"))
-	}
-
-	return StoreManagerConfig.UnitsData;
-}
 
 TArray<FString> UStoreManager::GetCurrentPath() const
 {
@@ -289,7 +400,7 @@ void UStoreManager::SelectPreviousCategory()
 	if (CurrentTree == StoreTreeRoot)
 	{
 		UE_LOG(LogTemp, Display, TEXT("Already in root category"));
-		StopShopping();
+		CloseWorker();
 		return;
 	}
 
@@ -299,7 +410,7 @@ void UStoreManager::SelectPreviousCategory()
 void UStoreManager::SetDraftingBuilding(FBuildingData& BuildingData)
 {
 	//On grid object selected
-	StopShopping();
+	CloseWorker();
 	BuildingManager->DraftBuilding(BuildingData);
 	DraftingBuilding = &BuildingData;
 }
@@ -318,12 +429,12 @@ bool UStoreManager::EndOfTree() const
 {
 	return CurrentTree->Children.Num() == 0;
 }
-void UStoreManager::StartShopping()
+void UStoreManager::OpenWorkerRoot()
 {
 	CurrentTree = StoreTreeRoot;
 	
 }
-void UStoreManager::StopShopping()
+void UStoreManager::CloseWorker()
 {
 	CurrentTree = StoreTreeRoot;
 }

@@ -15,6 +15,7 @@ class ULogManager;
 /**
  * 
  */
+
 UCLASS()
 class RTSPLUGIN_API URTSGameInstance : public UGameInstance
 {
@@ -46,7 +47,6 @@ private:
 	//Building Manager Config
 	UPROPERTY(EditDefaultsOnly)
 	FStoreManagerConfig StoreManagerConfig;
-	
 
 
 	//Tool (To be moved to configs)

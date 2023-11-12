@@ -28,3 +28,11 @@ AActor* Util::GetActorOfClass(const UObject* WorldContextObject,
 
 	return FoundActors[0];
 }
+
+TArray<AActor*> Util::GetActorsOfClass(const UObject* WorldContextObject, TSubclassOf<AActor> ActorClass)
+{
+	TArray<AActor*> FoundActors;
+	UGameplayStatics::GetAllActorsOfClass(WorldContextObject, ActorClass, FoundActors);
+	
+	return FoundActors;
+}

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ActorsAndComponents/UnitGenerator.h"
 #include "Blueprint/UserWidget.h"
 #include "Utility/Util.h"
 #include "UnitEntry.generated.h"
@@ -20,6 +21,9 @@ class RTSPLUGIN_API UUnitEntryArgument : public UObject
 public:
 	//Building dependent
 	FUnitData UnitData;
+
+
+	UPROPERTY() UUnitGenerator* UnitGenerator;
 	
 };
 

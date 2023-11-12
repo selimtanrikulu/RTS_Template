@@ -71,7 +71,8 @@ void UBuildingManager::OnMouseWheelDown()
 void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 {
 	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.EntityData.BP));
-	
+
+	DraftingBuilding->BuildingData = BuildingData;
 }
 void UBuildingManager::UpdateDraftingBuildingLocation() const
 {
