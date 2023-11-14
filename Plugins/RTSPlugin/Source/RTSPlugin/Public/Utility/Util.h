@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AIController.h"
 #include "Util.generated.h"
 
 
@@ -87,6 +88,19 @@ struct FStoreManagerConfig
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FUnitData> UnitsData;
+	
+};
+
+
+USTRUCT(BlueprintType)
+struct FAssetManagerConfig
+{
+	GENERATED_BODY()
+
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AAIController> AIControllerBP;
+	
 	
 };
 

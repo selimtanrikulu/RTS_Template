@@ -72,6 +72,8 @@ private:
 	void OnMouseLeftClicked();
 	UFUNCTION()
 	void OnMouseLeftReleased();
+	UFUNCTION()
+	void OnMouseRightClicked();
 
 	//Select Box Listeners
 	UFUNCTION()

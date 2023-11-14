@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class UAsset_Manager;
 class UStoreManager;
 class ARTSHUD;
 class UBuildingManager;
@@ -33,7 +34,10 @@ public:
 	UPROPERTY() UBuildingManager* BuildingManager;
 	UPROPERTY() ARTSHUD* RTSHUD;
 	UPROPERTY() UStoreManager* StoreManager;
+	UPROPERTY() UAsset_Manager* AssetManager;
 
+
+	
 private:
 	
 	//Level Calls
@@ -44,10 +48,13 @@ private:
 	void OnTick(float DeltaTime);
 
 
-	//Building Manager Config
+	//Store Manager Config
 	UPROPERTY(EditDefaultsOnly)
 	FStoreManagerConfig StoreManagerConfig;
 
+	//Asset Manager Config
+	UPROPERTY(EditDefaultsOnly)
+	FAssetManagerConfig AssetManagerConfig;
 
 	//Tool (To be moved to configs)
 	UPROPERTY(EditDefaultsOnly)

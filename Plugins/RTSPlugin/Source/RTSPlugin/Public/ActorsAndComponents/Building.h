@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TeamEntity.h"
 #include "GameFramework/Actor.h"
+#include "Utility/Util.h"
 #include "Building.generated.h"
 
 UCLASS()
-class RTSPLUGIN_API ABuilding : public ATeamEntity
+class RTSPLUGIN_API ABuilding : public AActor
 {
 	GENERATED_BODY()
 	
@@ -26,6 +26,9 @@ public:
 	
 	FBuildingData BuildingData;
 
-
+	//Components
+	UPROPERTY() UMeshComponent* MeshComponent;
+	FVector BoxExtent;
+	float Extent;
 	
 };

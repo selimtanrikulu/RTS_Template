@@ -4,6 +4,7 @@
 #include "Managers/RTSGameInstance.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Managers/Asset_Manager.h"
 #include "Managers/BuildingManager.h"
 #include "Managers/LogManager.h"
 #include "Managers/RTSHud.h"
@@ -18,7 +19,9 @@ void URTSGameInstance::Init()
 	SelectionManager = NewObject<USelectionManager>();
 	BuildingManager = NewObject<UBuildingManager>();
 	StoreManager = NewObject<UStoreManager>();
+	AssetManager = NewObject<UAsset_Manager>();
 
+	AssetManager->Begin(AssetManagerConfig);
 }
 
 
@@ -32,8 +35,7 @@ void URTSGameInstance::OnBeginPlay()
 	SelectionManager->Begin(World,SelectBoxBP);
 	BuildingManager->Begin(World);
 	StoreManager->Begin(StoreManagerConfig,StudioBP,World);
-
-
+	
 }
 
 void URTSGameInstance::OnTick(float DeltaTime)

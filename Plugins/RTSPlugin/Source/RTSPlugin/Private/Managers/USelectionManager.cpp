@@ -12,6 +12,7 @@
 #include "SceneManagement.h"
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/Unit.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 USelectionManager::USelectionManager()
 {
@@ -39,7 +40,8 @@ void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
 	//Bind Inputs
 	RTSPawn->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftClicked);
 	RTSPawn->OnMouseLeftReleasedDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftReleased);
-
+	RTSPawn->OnMouseRightClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseRightClicked);
+	
 	
 	SelectBoxBP = selectBoxBP;
 }
@@ -71,6 +73,16 @@ void USelectionManager::OnMouseLeftReleased()
 	}
 		
 	DestroySelectBox();
+}
+
+void USelectionManager::OnMouseRightClicked()
+{
+	const FHitResult Hit = RTSPawn->LookForFloor();
+	
+	for(AUnit* SelectedUnit : SelectedUnits)
+	{
+		SelectedUnit->SetTargetLocation(Hit.Location);
+	}
 }
 
 void USelectionManager::OnOverlapChanged()

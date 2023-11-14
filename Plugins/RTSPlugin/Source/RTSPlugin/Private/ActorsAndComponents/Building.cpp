@@ -16,6 +16,14 @@ void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	MeshComponent = FindComponentByClass<UMeshComponent>();
+    
+    
+    if(MeshComponent)
+    {
+    	BoxExtent = MeshComponent->GetLocalBounds().BoxExtent;
+    	Extent = FMath::Sqrt(BoxExtent.X*BoxExtent.X + BoxExtent.Y*BoxExtent.Y);
+    }
 }
 
 // Called every frame

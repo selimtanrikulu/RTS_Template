@@ -3,11 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TeamEntity.h"
+#include "GameFramework/Character.h"
+#include "Utility/Util.h"
 #include "Unit.generated.h"
 
+class UAsset_Manager;
+
 UCLASS()
-class RTSPLUGIN_API AUnit : public ATeamEntity
+class RTSPLUGIN_API AUnit : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -22,7 +25,21 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+
+	void SetTargetLocation(FVector TargetLocation);
 	
 	FUnitData UnitData;
-	
+
+
+	//Components
+	UPROPERTY() UMeshComponent* MeshComponent;
+	FVector BoxExtent;
+	float Extent;
+
+private:
+
+	//Dependencies
+	UPROPERTY() UAsset_Manager* AssetManager;
+
 };
