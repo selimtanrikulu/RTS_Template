@@ -56,13 +56,5 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	FAssetManagerConfig AssetManagerConfig;
 
-	//Tool (To be moved to configs)
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> SelectBoxBP;
-
-
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> StudioBP;
-	
 	
 };

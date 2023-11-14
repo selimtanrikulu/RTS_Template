@@ -32,9 +32,9 @@ void URTSGameInstance::OnBeginPlay()
 	PlayerController->SetShowMouseCursor(true);
 	RTSHUD = Cast<ARTSHUD>(PlayerController->GetHUD());
 	
-	SelectionManager->Begin(World,SelectBoxBP);
+	SelectionManager->Begin(World);
 	BuildingManager->Begin(World);
-	StoreManager->Begin(StoreManagerConfig,StudioBP,World);
+	StoreManager->Begin(StoreManagerConfig,World);
 	
 }
 

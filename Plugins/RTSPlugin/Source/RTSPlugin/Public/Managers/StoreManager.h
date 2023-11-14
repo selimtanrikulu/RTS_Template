@@ -7,6 +7,7 @@
 #include "../Utility//Util.h"
 #include "StoreManager.generated.h"
 
+class UAsset_Manager;
 class UBuildingManager;
 
 class StoreTree;
@@ -25,7 +26,6 @@ public:
 
 	
 	void Begin(const FStoreManagerConfig &storeManagerConfig,
-	           TSubclassOf<AActor> studioBP,
 	           UWorld* world);
 	
 	void OpenWorkerRoot();
@@ -55,6 +55,7 @@ private:
 	//Dependencies
 	UPROPERTY() UWorld* World;
 	UPROPERTY() UBuildingManager* BuildingManager;
+	UPROPERTY() UAsset_Manager* AssetManager;
 	
 
 	//Utility
@@ -75,9 +76,7 @@ private:
 
 	//Screenshot capture
 	UPROPERTY() class UMaterial* BaseMaterial;
-
-
-	UPROPERTY() TSubclassOf<AActor> StudioBP;
+	
 	
 
 };

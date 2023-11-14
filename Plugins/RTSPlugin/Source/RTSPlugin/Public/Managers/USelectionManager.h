@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "USelectionManager.generated.h"
 
+class UAsset_Manager;
 class AUnit;
 class ABuilding;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
@@ -46,7 +47,7 @@ public:
 	USelectionManager();
 	~USelectionManager();
 
-	void Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP);
+	void Begin(UWorld* world);
 	void Tick(float DeltaTime);
 
 
@@ -65,6 +66,7 @@ private:
 	UPROPERTY() UWorld* World;
 	UPROPERTY() ARTSPawn* RTSPawn;
 	UPROPERTY() ULogManager* LogManager;
+	UPROPERTY() UAsset_Manager* AssetManager;
 	
 
 	//Input listeners
@@ -83,8 +85,6 @@ private:
 	void UpdateCircles();
 	void UpdateSelectionState();
 	
-	TSubclassOf<AActor> SelectBoxBP;
-
 
 	//Utility
 	UPROPERTY() ASelectBox* CurrentSelectBox;

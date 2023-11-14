@@ -100,7 +100,12 @@ struct FAssetManagerConfig
 
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AAIController> AIControllerBP;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> SelectBoxBP;
 	
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<AActor> StudioBP;
 	
 };
 

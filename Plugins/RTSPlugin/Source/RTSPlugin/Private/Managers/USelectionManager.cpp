@@ -13,6 +13,7 @@
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/Unit.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Managers/Asset_Manager.h"
 
 USelectionManager::USelectionManager()
 {
@@ -22,7 +23,7 @@ USelectionManager::~USelectionManager()
 {
 }
 
-void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
+void USelectionManager::Begin(UWorld* world)
 {
 	World = world;
 
@@ -32,6 +33,7 @@ void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 	
 	LogManager = GameInstance->LogManager;
+	AssetManager = GameInstance->AssetManager;
 	//
 	
 	RTSPawn = Cast<ARTSPawn>(Util::GetActorOfClass(world,ARTSPawn::StaticClass()));
@@ -41,9 +43,7 @@ void USelectionManager::Begin(UWorld* world,TSubclassOf<AActor> selectBoxBP)
 	RTSPawn->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftClicked);
 	RTSPawn->OnMouseLeftReleasedDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftReleased);
 	RTSPawn->OnMouseRightClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseRightClicked);
-	
-	
-	SelectBoxBP = selectBoxBP;
+
 }
 
 void USelectionManager::Tick(float DeltaTime)
@@ -197,7 +197,7 @@ void USelectionManager::CreateSelectBox()
 	const FVector Location = Hit.Location;
 	const FRotator Rotation(0);
 	
-	AActor* SpawnedActor = World->SpawnActor<AActor>(SelectBoxBP,Location,Rotation);
+	AActor* SpawnedActor = World->SpawnActor<AActor>(AssetManager->GetSelectBoxBP(),Location,Rotation);
 	CurrentSelectBox = Cast<ASelectBox>(SpawnedActor);
 	
 	//Load overlaps to select box

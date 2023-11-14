@@ -9,6 +9,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Engine/TextureRenderTarget2D.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managers/Asset_Manager.h"
 #include "Managers/BuildingManager.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/RTSHUD.h"
@@ -33,13 +34,10 @@ UStoreManager::UStoreManager()
 }
 
 // Called when the game starts or when spawned
-void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,
-			   TSubclassOf<AActor> studioBP,
-			   UWorld* world)
+void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,UWorld* world)
 {
 	World = world;
 	StoreManagerConfig = storeManagerConfig;
-	StudioBP = studioBP;
 
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World,0);
@@ -52,6 +50,7 @@ void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,
 	
 	//Get dependencies
 	BuildingManager = GameInstance->BuildingManager;
+	AssetManager = GameInstance->AssetManager;
 	//------
 
 	
@@ -133,16 +132,9 @@ void UStoreManager::CreateImages()
 		return;
 	}
 
-	if (!StudioBP)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Camera studio cannot be found"));
-		return;
-	}
-
-
 	//Create Studio
 	const FVector SpawnLocation(0, 0, 5000);
-	AActor* Studio = World->SpawnActor<AActor>(StudioBP, SpawnLocation, FRotator(0));
+	AActor* Studio = World->SpawnActor<AActor>(AssetManager->GetStudioBP(), SpawnLocation, FRotator(0));
 	
 
 	USceneCaptureComponent2D* CaptureComponent = nullptr;
@@ -199,7 +191,7 @@ void UStoreManager::CreateImages()
 		AActor* EntityActor = MeshComponent->GetOwner();
 
 		MeshComponent->SetCastShadow(false);
-		MeshComponent->SetRelativeRotation(FRotator());
+		//MeshComponent->SetRelativeRotation(FRotator());
 
 		const FVector BoxExtent1 = MeshComponent->Bounds.BoxExtent;
 		
@@ -245,7 +237,7 @@ void UStoreManager::CreateImages()
 		const float ForwardBias = BoxExtent2.X / 2;
 		FVector Bias(0,0,ForwardBias);
 		
-		EntityActor->SetActorLocation(MiddleBottomPoint + Bias);
+		MeshComponent->SetWorldLocation(MiddleBottomPoint + Bias);
 		
 		//Capture and save
 		CaptureComponent->TextureTarget = RenderTarget;

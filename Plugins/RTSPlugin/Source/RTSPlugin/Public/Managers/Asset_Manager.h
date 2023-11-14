@@ -21,7 +21,8 @@ public:
 
 	void Begin(FAssetManagerConfig assetManagerConfig);
 
-
+	TSubclassOf<AActor> GetSelectBoxBP() const;
+	TSubclassOf<AActor> GetStudioBP() const;
 	TSubclassOf<AAIController> GetAIControllerBP() const;
 	
 	FAssetManagerConfig AssetManagerConfig;

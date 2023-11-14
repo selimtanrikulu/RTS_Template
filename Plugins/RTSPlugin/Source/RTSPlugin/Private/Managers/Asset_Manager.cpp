@@ -8,6 +8,16 @@ void UAsset_Manager::Begin(FAssetManagerConfig assetManagerConfig)
 	AssetManagerConfig = assetManagerConfig;
 }
 
+TSubclassOf<AActor> UAsset_Manager::GetSelectBoxBP() const
+{
+	return AssetManagerConfig.SelectBoxBP;
+}
+
+TSubclassOf<AActor> UAsset_Manager::GetStudioBP() const
+{
+	return AssetManagerConfig.StudioBP;
+}
+
 TSubclassOf<AAIController> UAsset_Manager::GetAIControllerBP() const
 {
 	return AssetManagerConfig.AIControllerBP;
