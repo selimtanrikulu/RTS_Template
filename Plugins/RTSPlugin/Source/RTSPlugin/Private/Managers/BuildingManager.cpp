@@ -4,6 +4,7 @@
 #include "Managers/BuildingManager.h"
 
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/RTSPawn.h"
@@ -73,6 +74,8 @@ void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.EntityData.BP));
 
 	DraftingBuilding->BuildingData = BuildingData;
+
+	DraftingBuilding->SetDraft();
 }
 void UBuildingManager::UpdateDraftingBuildingLocation() const
 {
@@ -82,6 +85,7 @@ void UBuildingManager::UpdateDraftingBuildingLocation() const
 }
 void UBuildingManager::LocateBuilding()
 {
+	DraftingBuilding->SetCache();
 	DraftingBuilding = nullptr;
 }
 void UBuildingManager::CancelDraft()

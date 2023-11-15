@@ -24,6 +24,9 @@ public:
 	TSubclassOf<AActor> GetSelectBoxBP() const;
 	TSubclassOf<AActor> GetStudioBP() const;
 	TSubclassOf<AAIController> GetAIControllerBP() const;
+
+	UMaterialInterface* GetDraftMaterial() const;
+	UMaterialInterface* GetErrorMaterial() const;
 	
 	FAssetManagerConfig AssetManagerConfig;
 

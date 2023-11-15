@@ -4,7 +4,7 @@
 #include "ActorsAndComponents/UnitGenerator.h"
 
 #include "ActorsAndComponents/Building.h"
-#include "ActorsAndComponents/Unit.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/StoreManager.h"
@@ -67,7 +67,7 @@ TArray<FUnitData>& UUnitGenerator::GetUnits()
 
 
 // Function to check if a location is occupied
-bool UUnitGenerator::IsLocationOccupied(const FVector& Location, float Radius)
+bool UUnitGenerator::IsLocationOccupied(const FVector& Location, float Radius) const
 {
     FHitResult HitResult;
     FCollisionQueryParams CollisionParams;
@@ -84,12 +84,12 @@ bool UUnitGenerator::IsLocationOccupied(const FVector& Location, float Radius)
 }
 
 // Function to find the closest empty location near a building
-FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent)
+FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent) const
 {
 	const FVector BuildingLocation = GetOwner()->GetActorLocation();
 	
 
-	const float BuildingExtent = OwnerBuilding->Extent;
+	const float BuildingExtent = OwnerBuilding->TeamEntity->Extent;
 	constexpr float Bias = 10;
 
 	const float SearchRadius = BuildingExtent + UnitExtent + Bias;
@@ -124,9 +124,9 @@ FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent)
 }
 
 // Function to spawn a unit at the closest empty location
-void UUnitGenerator::SpawnUnit(const FUnitData& UnitData)
+void UUnitGenerator::SpawnUnit(const FUnitData& UnitData) const
 {
-	float UnitExtent = 100;
+	constexpr float UnitExtent = 100;
 	const TSubclassOf<AActor> UnitBP = UnitData.EntityData.BP;
 	const FVector SpawnLocation = FindClosestEmptyLocation(UnitExtent);
 

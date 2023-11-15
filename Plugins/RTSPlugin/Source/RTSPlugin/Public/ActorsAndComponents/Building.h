@@ -7,6 +7,9 @@
 #include "Utility/Util.h"
 #include "Building.generated.h"
 
+class UAsset_Manager;
+class UTeamEntity;
+
 UCLASS()
 class RTSPLUGIN_API ABuilding : public AActor
 {
@@ -26,9 +29,23 @@ public:
 	
 	FBuildingData BuildingData;
 
-	//Components
+
+	UPROPERTY() UTeamEntity* TeamEntity;
+
+	
+
+	void SetError() const;
+	void SetDraft() const;
+	void SetCache();
+	void CacheMaterials();
+
+
+private:
+
+	//Dependencies
+	UPROPERTY() UAsset_Manager* AssetManager;
+
 	UPROPERTY() UMeshComponent* MeshComponent;
-	FVector BoxExtent;
-	float Extent;
+	UPROPERTY() TArray<UMaterialInterface*> CachedMaterials;
 	
 };

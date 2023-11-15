@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "Unit.generated.h"
 
+class UTeamEntity;
 class UAsset_Manager;
 
 UCLASS()
@@ -31,15 +32,15 @@ public:
 	
 	FUnitData UnitData;
 
-
-	//Components
-	UPROPERTY() UMeshComponent* MeshComponent;
-	FVector BoxExtent;
-	float Extent;
+	UPROPERTY() UTeamEntity* TeamEntity;
+	
 
 private:
 
 	//Dependencies
 	UPROPERTY() UAsset_Manager* AssetManager;
+
+
+	
 
 };

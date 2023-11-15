@@ -22,3 +22,13 @@ TSubclassOf<AAIController> UAsset_Manager::GetAIControllerBP() const
 {
 	return AssetManagerConfig.AIControllerBP;
 }
+
+UMaterialInterface* UAsset_Manager::GetDraftMaterial() const
+{
+	return AssetManagerConfig.DraftMaterial;
+}
+
+UMaterialInterface* UAsset_Manager::GetErrorMaterial() const
+{
+	return AssetManagerConfig.ErrorMaterial;
+}

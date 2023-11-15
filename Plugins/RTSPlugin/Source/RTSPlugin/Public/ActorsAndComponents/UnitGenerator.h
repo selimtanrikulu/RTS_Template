@@ -29,7 +29,7 @@ public:
 
 
 	TArray<FUnitData>& GetUnits();
-	void SpawnUnit(const FUnitData& UnitData);
+	void SpawnUnit(const FUnitData& UnitData) const;
 
 
 private:
@@ -46,8 +46,8 @@ private:
 
 
 	//Unit Generation
-	bool IsLocationOccupied(const FVector& Location, float Radius);
-	FVector FindClosestEmptyLocation(float UnitExtent);
+	bool IsLocationOccupied(const FVector& Location, float Radius) const;
+	FVector FindClosestEmptyLocation(float UnitExtent) const;
 
 	
 

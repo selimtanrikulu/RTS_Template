@@ -4,6 +4,7 @@
 #include "ActorsAndComponents/Unit.h"
 
 #include "AIController.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
@@ -16,6 +17,9 @@ AUnit::AUnit()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+
+	TeamEntity = CreateDefaultSubobject<UTeamEntity>(TEXT("Team Entity"));
+	
 
 	AutoPossessAI = EAutoPossessAI::Disabled;
 }
@@ -38,14 +42,7 @@ void AUnit::BeginPlay()
 	SpawnedAIController->Possess(this);
 	
 
-	MeshComponent = FindComponentByClass<UMeshComponent>();
-    
-    
-	if(MeshComponent)
-	{
-		BoxExtent = MeshComponent->GetLocalBounds().BoxExtent;
-		Extent = FMath::Sqrt(BoxExtent.X*BoxExtent.X + BoxExtent.Y*BoxExtent.Y);
-	}
+	
 }
 
 // Called every frame

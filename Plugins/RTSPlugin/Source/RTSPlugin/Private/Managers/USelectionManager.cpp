@@ -11,6 +11,7 @@
 #include "Utility/Util.h"
 #include "SceneManagement.h"
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "ActorsAndComponents/Unit.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Managers/Asset_Manager.h"
@@ -102,11 +103,11 @@ void USelectionManager::UpdateCircles()
 	for(const ABuilding* SelectedBuilding : SelectedBuildings)
 	{
 		DrawCircle(World,
-		SelectedBuilding->MeshComponent->GetComponentLocation(),
+		SelectedBuilding->TeamEntity->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
 		FColor::Black,
-		SelectedBuilding->Extent,
+		SelectedBuilding->TeamEntity->Extent,
 		300,
 		false,
 		-1,
@@ -119,11 +120,11 @@ void USelectionManager::UpdateCircles()
 	for(const AUnit* SelectedUnit : SelectedUnits)
 	{
 		DrawCircle(World,
-		SelectedUnit->MeshComponent->GetComponentLocation(),
+		SelectedUnit->TeamEntity->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
 		FColor::White,
-		SelectedUnit->Extent,
+		SelectedUnit->TeamEntity->Extent,
 		300,
 		false,
 		-1,

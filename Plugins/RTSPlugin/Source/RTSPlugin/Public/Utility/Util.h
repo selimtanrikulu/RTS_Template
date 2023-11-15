@@ -106,7 +106,12 @@ struct FAssetManagerConfig
 	
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AActor> StudioBP;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* DraftMaterial;
 	
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInterface* ErrorMaterial;
 };
 
 /**
