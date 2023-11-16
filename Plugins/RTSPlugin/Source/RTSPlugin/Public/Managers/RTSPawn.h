@@ -7,6 +7,7 @@
 #include "RTSPawn.generated.h"
 
 
+class UBuildingManager;
 class USpringArmComponent;
 class ULogManager;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMyInputAction);
@@ -50,6 +51,7 @@ private:
 
 	//Dependencies
 	UPROPERTY() ULogManager* LogManager;
+	UPROPERTY() UBuildingManager* BuildingManager;
 	
 
 	//Inputs

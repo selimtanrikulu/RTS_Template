@@ -28,7 +28,7 @@ void ABuilding::BeginPlay()
 	AssetManager = GameInstance->AssetManager;
 
 
-	MeshComponent = FindComponentByClass<UMeshComponent>();
+	StaticMeshComponent = FindComponentByClass<UStaticMeshComponent>();
 
 	CacheMaterials();
 }
@@ -41,35 +41,84 @@ void ABuilding::Tick(float DeltaTime)
 }
 
 
+void ABuilding::SetBuildingState(EBuildingState buildingState)
+{
+	if(BuildingState == buildingState)
+	{
+		UE_LOG(LogTemp,Display,TEXT("Building state already set"));
+		return;
+	}
+
+	UE_LOG(LogTemp,Display,TEXT("State set : %s"),*UEnum::GetValueAsString(buildingState));
+
+	BuildingState = buildingState;
+
+	switch(BuildingState)
+	{
+		case EBuildingState::Draft:
+			StaticMeshComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+			SetDraft();
+			break;
+
+		case EBuildingState::Error:
+			StaticMeshComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+			SetError();
+			break;
+			
+		case EBuildingState::Located:
+			SetCache();
+			StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
+			break;
+
+		default:
+			UE_LOG(LogTemp,Error,TEXT("Unknown building state"));
+			return;
+	}
+
+	
+}
+
+EBuildingState ABuilding::GetBuildingState() const
+{
+	return BuildingState;
+}
+
+bool ABuilding::Locatable() const
+{
+	TArray<AActor*> OverlappingActors;
+	GetOverlappingActors(OverlappingActors, UStaticMeshComponent::StaticClass());
+
+	return OverlappingActors.Num() <= 0;
+}
 
 void ABuilding::SetError() const
 {
-	for(int i=0;i<MeshComponent->GetMaterials().Num();i++)
+	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		MeshComponent->SetMaterial(0,AssetManager->GetErrorMaterial());
+		StaticMeshComponent->SetMaterial(0,AssetManager->GetErrorMaterial());
 	}
 }
 
 void ABuilding::SetDraft() const
 {
-	for(int i=0;i<MeshComponent->GetMaterials().Num();i++)
+	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		MeshComponent->SetMaterial(0,AssetManager->GetDraftMaterial());
+		StaticMeshComponent->SetMaterial(0,AssetManager->GetDraftMaterial());
 	}
 }
 
 void ABuilding::SetCache()
 {
-	for(int i=0;i<MeshComponent->GetMaterials().Num();i++)
+	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		MeshComponent->SetMaterial(0,CachedMaterials[i]);
+		StaticMeshComponent->SetMaterial(0,CachedMaterials[i]);
 	}
 }
 
 void ABuilding::CacheMaterials()
 {
-	for(int i=0;i<MeshComponent->GetMaterials().Num();i++)
+	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		CachedMaterials.Add(MeshComponent->GetMaterial(i));
+		CachedMaterials.Add(StaticMeshComponent->GetMaterial(i));
 	}
 }

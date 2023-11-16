@@ -71,21 +71,47 @@ void UBuildingManager::OnMouseWheelDown()
 
 void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 {
+	if(DraftingBuilding)
+	{
+		UE_LOG(LogTemp,Display,TEXT("Already drafting a building"));
+		return;
+	}
+	
 	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.EntityData.BP));
 
+	DraftingBuilding->SetBuildingState(EBuildingState::Draft);
 	DraftingBuilding->BuildingData = BuildingData;
-
-	DraftingBuilding->SetDraft();
 }
+
+bool UBuildingManager::IsDrafting() const
+{
+	return DraftingBuilding != nullptr;
+}
+
 void UBuildingManager::UpdateDraftingBuildingLocation() const
 {
 	const FHitResult Hit = RTSPawn->LookForFloor();
+
+
+	const EBuildingState BuildingState = DraftingBuilding->GetBuildingState();
+	const bool Locatable = DraftingBuilding->Locatable();
+	
+	
+	if(Locatable && BuildingState != EBuildingState::Draft)
+	{
+		DraftingBuilding->SetBuildingState(EBuildingState::Draft);
+	}
+	else if(!Locatable && BuildingState != EBuildingState::Error)
+	{
+		DraftingBuilding->SetBuildingState(EBuildingState::Error);
+	}
+
 	
 	DraftingBuilding->SetActorLocation(Hit.Location);
 }
 void UBuildingManager::LocateBuilding()
 {
-	DraftingBuilding->SetCache();
+	DraftingBuilding->SetBuildingState(EBuildingState::Located);
 	DraftingBuilding = nullptr;
 }
 void UBuildingManager::CancelDraft()

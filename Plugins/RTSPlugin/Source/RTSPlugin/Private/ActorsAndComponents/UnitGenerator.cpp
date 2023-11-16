@@ -5,6 +5,7 @@
 
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/TeamEntity.h"
+#include "ActorsAndComponents/Unit.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/StoreManager.h"
@@ -138,6 +139,11 @@ void UUnitGenerator::SpawnUnit(const FUnitData& UnitData) const
 	}
 	
 	// Spawn your unit at the calculated location
-    GetWorld()->SpawnActor<AActor>
+    AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>
 	(UnitBP, SpawnLocation, FRotator::ZeroRotator);
+
+
+	AUnit* SpawnedUnit = Cast<AUnit>(SpawnedActor);
+
+	SpawnedUnit->UnitData = UnitData;
 }

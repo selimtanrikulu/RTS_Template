@@ -25,6 +25,8 @@ public:
 
 	void DraftBuilding(const FBuildingData& BuildingData);
 
+	bool IsDrafting() const;
+
 private:
 	//Dependencies
 	UPROPERTY() UWorld* World;

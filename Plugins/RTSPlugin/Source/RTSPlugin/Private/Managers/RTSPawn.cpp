@@ -4,6 +4,7 @@
 #include "RTSPlugin/Public/Managers/RTSPawn.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managers/BuildingManager.h"
 #include "Managers/LogManager.h"
 #include "Managers/RTSGameInstance.h"
 
@@ -24,6 +25,7 @@ void ARTSPawn::BeginPlay()
 	const URTSGameInstance* RTSGameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 	
 	LogManager = RTSGameInstance->LogManager;
+	BuildingManager = RTSGameInstance->BuildingManager;
 	
 	SpringArmComponent = FindComponentByClass<USpringArmComponent>();
 }
@@ -115,6 +117,8 @@ void ARTSPawn::Move()
 
 void ARTSPawn::UpdateZoom(const int Amount)
 {
+	if(BuildingManager->IsDrafting())return;
+	
 	CurrentZoomLevel += Amount;
 
 	CurrentZoomLevel = FMath::Max(0,CurrentZoomLevel);

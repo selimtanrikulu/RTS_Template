@@ -58,7 +58,6 @@ void ASelectBox::UpdateLocationAndScale()
 
 void ASelectBox::UpdateOverlaps()
 {
-	//Check overlapping grid objects (Different dimensions' objects may cause that overlap)
 	TArray<AActor*> OverlappingActors;
 	GetOverlappingActors(OverlappingActors, UStaticMeshComponent::StaticClass());
 	

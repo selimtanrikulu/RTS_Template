@@ -10,6 +10,18 @@
 class UAsset_Manager;
 class UTeamEntity;
 
+UENUM(BlueprintType)
+enum class EBuildingState : uint8
+{
+	None,
+	Draft,
+	Error,
+	Located,
+};
+
+
+
+
 UCLASS()
 class RTSPLUGIN_API ABuilding : public AActor
 {
@@ -32,12 +44,12 @@ public:
 
 	UPROPERTY() UTeamEntity* TeamEntity;
 
-	
 
-	void SetError() const;
-	void SetDraft() const;
-	void SetCache();
-	void CacheMaterials();
+	void SetBuildingState(EBuildingState buildingState);
+
+	EBuildingState GetBuildingState() const;
+	
+	bool Locatable() const;
 
 
 private:
@@ -45,7 +57,14 @@ private:
 	//Dependencies
 	UPROPERTY() UAsset_Manager* AssetManager;
 
-	UPROPERTY() UMeshComponent* MeshComponent;
+	UPROPERTY() UStaticMeshComponent* StaticMeshComponent;
 	UPROPERTY() TArray<UMaterialInterface*> CachedMaterials;
-	
+
+
+
+	EBuildingState BuildingState;
+	void SetError() const;
+	void SetDraft() const;
+	void SetCache();
+	void CacheMaterials();
 };
