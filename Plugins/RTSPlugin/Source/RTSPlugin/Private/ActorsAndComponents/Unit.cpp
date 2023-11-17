@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "ActorsAndComponents/TeamEntity.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
 #include "Managers/RTSGameInstance.h"
@@ -42,7 +43,10 @@ void AUnit::BeginPlay()
 	SpawnedAIController->Possess(this);
 	
 
-	
+
+	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
+	//CharacterMovementComponent->SetAvoidanceEnabled(true);
+	//CharacterMovementComponent->AvoidanceConsiderationRadius = 500;
 }
 
 // Called every frame
