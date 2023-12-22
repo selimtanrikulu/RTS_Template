@@ -3,24 +3,31 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Managers/ManagerBase.h"
 #include "Utility/Util.h"
 #include "BuildingManager.generated.h"
 
+class UPlayerManager;
 class ABuilding;
 class ARTSPawn;
 /**
  * 
  */
 UCLASS()
-class RTSPLUGIN_API UBuildingManager : public UObject
+class RTSPLUGIN_API UBuildingManager : public UManagerBase
 {
 	GENERATED_BODY()
 
 
 public:
 
-	void Begin(UWorld* world);
-	void Tick(float DeltaTime);
+	//Manager Base
+	virtual void Init(URTSGameInstance* gameInstance) override;
+	virtual void Begin() override;
+	virtual void Tick(float DeltaTime) override;
+	//--------------
+
+
 
 
 	void DraftBuilding(const FBuildingData& BuildingData);
@@ -29,8 +36,7 @@ public:
 
 private:
 	//Dependencies
-	UPROPERTY() UWorld* World;
-	UPROPERTY() ARTSPawn* RTSPawn;
+	UPROPERTY() UPlayerManager* PlayerManager;
 
 
 	//Input listeners

@@ -3,10 +3,6 @@
 
 #include "ActorsAndComponents/TeamEntity.h"
 
-#include "Kismet/GameplayStatics.h"
-#include "Managers/Asset_Manager.h"
-#include "Managers/RTSGameInstance.h"
-
 // Sets default values for this component's properties
 UTeamEntity::UTeamEntity()
 {

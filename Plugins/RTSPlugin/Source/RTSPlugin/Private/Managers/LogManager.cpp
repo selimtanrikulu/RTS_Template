@@ -13,6 +13,21 @@ ULogManager::~ULogManager()
 {
 }
 
+void ULogManager::Init(URTSGameInstance* gameInstance)
+{
+	Super::Init(gameInstance);
+}
+
+void ULogManager::Begin()
+{
+	Super::Begin();
+}
+
+void ULogManager::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 void ULogManager::EditorLog(const FText& LogText,ELogVerbosity::Type LogVerbosity)
 {
 	// Use the appropriate log category based on the verbosity

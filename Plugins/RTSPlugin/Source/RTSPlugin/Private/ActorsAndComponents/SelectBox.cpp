@@ -5,8 +5,8 @@
 
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/Unit.h"
-#include "Managers/RTSPawn.h"
-#include "Utility/Util.h"
+#include "Managers/PlayerManager.h"
+#include "Managers/RTSGameInstance.h"
 
 // Sets default values
 ASelectBox::ASelectBox()
@@ -23,7 +23,8 @@ void ASelectBox::BeginPlay()
 
 
 	//Get dependencies
-	RTSPawn = Cast<ARTSPawn>(Util::GetActorOfClass(GetWorld(),ARTSPawn::StaticClass()));
+	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(GetGameInstance());
+	PlayerManager = GameInstance->PlayerManager;
 	//
 
 	
@@ -45,7 +46,7 @@ void ASelectBox::Tick(float DeltaTime)
 
 void ASelectBox::UpdateLocationAndScale()
 {
-	const FHitResult Hit = RTSPawn->LookForFloor();
+	const FHitResult Hit = PlayerManager->LookForFloor();
     const FVector HitLocation = Hit.Location;
     FVector DeltaLocation = HitLocation-StartLocation;
     

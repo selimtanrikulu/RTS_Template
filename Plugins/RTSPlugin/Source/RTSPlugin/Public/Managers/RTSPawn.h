@@ -10,6 +10,7 @@
 class UBuildingManager;
 class USpringArmComponent;
 class ULogManager;
+class UPlayerManager;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnMyInputAction);
 
 
@@ -40,6 +41,7 @@ public:
 	UPROPERTY(BlueprintAssignable) FOnMyInputAction OnMouseRightReleasedDelegate;
 	UPROPERTY(BlueprintAssignable) FOnMyInputAction OnMouseWheelUpDelegate;
 	UPROPERTY(BlueprintAssignable) FOnMyInputAction OnMouseWheelDownDelegate;
+	UPROPERTY(BlueprintAssignable) FOnMyInputAction OnDeleteClickDelegate;
 
 	
 	//LineTraces
@@ -50,6 +52,7 @@ public:
 private:
 
 	//Dependencies
+	UPROPERTY() UPlayerManager* PlayerManager;
 	UPROPERTY() ULogManager* LogManager;
 	UPROPERTY() UBuildingManager* BuildingManager;
 	
@@ -68,6 +71,7 @@ private:
 	void OnMouseRightReleased();
 	void OnMouseWheelUp();
 	void OnMouseWheelDown();
+	void OnDeleteClicked();
 
 	
 	

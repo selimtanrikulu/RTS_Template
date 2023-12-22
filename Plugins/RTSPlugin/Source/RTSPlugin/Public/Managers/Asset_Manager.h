@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "Managers/ManagerBase.h"
 #include "Utility/Util.h"
 #include "Asset_Manager.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class RTSPLUGIN_API UAsset_Manager : public UObject
+class RTSPLUGIN_API UAsset_Manager : public UManagerBase
 {
 	GENERATED_BODY()
 
@@ -19,8 +19,13 @@ class RTSPLUGIN_API UAsset_Manager : public UObject
 
 public:
 
-	void Begin(FAssetManagerConfig assetManagerConfig);
+	//Manager Base
+	virtual void Init(URTSGameInstance* gameInstance) override;
+	virtual void Begin() override;
+	virtual void Tick(float DeltaTime) override;
+	//--------------
 
+	
 	TSubclassOf<AActor> GetSelectBoxBP() const;
 	TSubclassOf<AActor> GetStudioBP() const;
 	TSubclassOf<AAIController> GetAIControllerBP() const;

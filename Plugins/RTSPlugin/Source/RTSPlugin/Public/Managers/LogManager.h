@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Managers/ManagerBase.h"
 #include "LogManager.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RTSPLUGIN_API ULogManager : public UObject
+class RTSPLUGIN_API ULogManager : public UManagerBase
 {
 	GENERATED_BODY()
 
@@ -17,6 +18,12 @@ class RTSPLUGIN_API ULogManager : public UObject
 public:
 	ULogManager();
 	~ULogManager();
+
+	//Manager Base
+	virtual void Init(URTSGameInstance* gameInstance) override;
+	virtual void Begin() override;
+	virtual void Tick(float DeltaTime) override;
+	//--------------
 
 
 	void EditorLog(const FText& LogText,ELogVerbosity::Type LogVerbosity);

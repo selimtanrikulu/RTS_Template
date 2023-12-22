@@ -47,6 +47,24 @@ struct FEntityData
 };
 
 
+
+USTRUCT(BlueprintType)
+struct FConstructionData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMesh* Level1;
+
+	UPROPERTY(EditDefaultsOnly)
+	UStaticMesh* Level2;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float TotalWorkerEnergySeconds;
+};
+
+
+
 USTRUCT(BlueprintType)
 struct FBuildingData
 {
@@ -54,11 +72,12 @@ struct FBuildingData
 
 	UPROPERTY(EditDefaultsOnly)
 	FEntityData EntityData;
+	
+	UPROPERTY(EditDefaultsOnly)
+	FConstructionData ConstructionData;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString Path;
-	
-	
 	
 };
 
@@ -123,12 +142,12 @@ public:
 	Util();
 	~Util();
 
-
+/*
 	static AActor* GetActorOfClass(const UObject* WorldContextObject,
 							  TSubclassOf<AActor> ActorClass);
 
 
-
+*/
 	static TArray<AActor*> GetActorsOfClass(const UObject* WorldContextObject,
 							  TSubclassOf<AActor> ActorClass);
 

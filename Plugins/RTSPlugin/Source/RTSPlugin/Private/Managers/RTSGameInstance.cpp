@@ -3,13 +3,14 @@
 
 #include "Managers/RTSGameInstance.h"
 
+#include "PlayerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
 #include "Managers/BuildingManager.h"
 #include "Managers/LogManager.h"
 #include "Managers/RTSHud.h"
 #include "Managers/StoreManager.h"
-#include "Managers/USelectionManager.h"
+#include "..\..\Public\Managers\SelectionManager.h"
 
 void URTSGameInstance::Init()
 {
@@ -20,28 +21,43 @@ void URTSGameInstance::Init()
 	BuildingManager = NewObject<UBuildingManager>();
 	StoreManager = NewObject<UStoreManager>();
 	AssetManager = NewObject<UAsset_Manager>();
+	PlayerManager = NewObject<UPlayerManager>();
 
-	AssetManager->Begin(AssetManagerConfig);
+	
+	Managers.Add(LogManager);
+	Managers.Add(SelectionManager);
+	Managers.Add(BuildingManager);
+	Managers.Add(StoreManager);
+	Managers.Add(AssetManager);
+	Managers.Add(PlayerManager);
+
+	for(UManagerBase* ManagerBase : Managers)
+	{
+		ManagerBase->Init(this);
+	}
 }
 
 
 void URTSGameInstance::OnBeginPlay()
 {
-	UWorld* World = GetWorld();
+	World = GetWorld();
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	PlayerController->SetShowMouseCursor(true);
 	RTSHUD = Cast<ARTSHUD>(PlayerController->GetHUD());
-	
-	SelectionManager->Begin(World);
-	BuildingManager->Begin(World);
-	StoreManager->Begin(StoreManagerConfig,World);
-	
+
+
+	for(UManagerBase* ManagerBase : Managers)
+	{
+		ManagerBase->Begin();
+	}
 }
 
 void URTSGameInstance::OnTick(float DeltaTime)
 {
-	SelectionManager->Tick(DeltaTime);
-	BuildingManager->Tick(DeltaTime);
+	for(UManagerBase* ManagerBase : Managers)
+	{
+		ManagerBase->Tick(DeltaTime);
+	}
 }
 
 

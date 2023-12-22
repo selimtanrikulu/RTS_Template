@@ -21,22 +21,27 @@ ABuilding::ABuilding()
 void ABuilding::BeginPlay()
 {
 	Super::BeginPlay();
-
 	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
-
 	AssetManager = GameInstance->AssetManager;
-
-
 	StaticMeshComponent = FindComponentByClass<UStaticMeshComponent>();
-
-	CacheMaterials();
 }
+
 
 // Called every frame
 void ABuilding::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+
+	if(BuildingState == EBuildingState::Construction)
+	{
+		CurrentWorkerEnergySeconds += DeltaTime;
+		if(CurrentWorkerEnergySeconds >= BuildingData.ConstructionData.TotalWorkerEnergySeconds)
+		{
+			SetBuildingState(EBuildingState::Located);
+		}
+	}
 
 }
 
@@ -57,16 +62,21 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 	{
 		case EBuildingState::Draft:
 			StaticMeshComponent->SetCollisionProfileName(TEXT("OverlapAll"));
-			SetDraft();
+			SetDraftMaterial();
 			break;
 
 		case EBuildingState::Error:
 			StaticMeshComponent->SetCollisionProfileName(TEXT("OverlapAll"));
-			SetError();
+			SetErrorMaterial();
+			break;
+
+		case EBuildingState::Construction:
+			StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
+			SetConstructionMesh(1);
 			break;
 			
 		case EBuildingState::Located:
-			SetCache();
+			SetConstructedMesh();
 			StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
 			break;
 
@@ -75,12 +85,19 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 			return;
 	}
 
+
+	OnBuildingStateChangedDelegate.Broadcast();
 	
 }
 
 EBuildingState ABuilding::GetBuildingState() const
 {
 	return BuildingState;
+}
+
+float ABuilding::GetProgress() const
+{
+	return CurrentWorkerEnergySeconds / BuildingData.ConstructionData.TotalWorkerEnergySeconds;
 }
 
 bool ABuilding::Locatable() const
@@ -91,7 +108,7 @@ bool ABuilding::Locatable() const
 	return OverlappingActors.Num() <= 0;
 }
 
-void ABuilding::SetError() const
+void ABuilding::SetErrorMaterial() const
 {
 	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
@@ -99,7 +116,7 @@ void ABuilding::SetError() const
 	}
 }
 
-void ABuilding::SetDraft() const
+void ABuilding::SetDraftMaterial() const
 {
 	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
@@ -107,18 +124,60 @@ void ABuilding::SetDraft() const
 	}
 }
 
-void ABuilding::SetCache()
+void ABuilding::SetConstructionMesh(int Level) const
+{
+	
+	UStaticMesh* ConstructionMesh;
+	TArray<UMaterialInterface*> CachedMaterialsConstruction;
+
+	if(Level == 1)
+	{
+		ConstructionMesh = BuildingData.ConstructionData.Level1;
+		CachedMaterialsConstruction = CachedMaterialsLevel1;
+	}
+	else
+	{
+		ConstructionMesh = BuildingData.ConstructionData.Level2;
+		CachedMaterialsConstruction = CachedMaterialsLevel2;
+	}
+	
+	StaticMeshComponent->SetStaticMesh(ConstructionMesh);
+	
+	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
+	{
+		StaticMeshComponent->SetMaterial(0,CachedMaterialsConstruction[i]);
+	}
+	
+}
+
+void ABuilding::SetConstructedMesh()
 {
 	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		StaticMeshComponent->SetMaterial(0,CachedMaterials[i]);
+		StaticMeshComponent->SetMaterial(0,CachedMaterialsConstructed[i]);
 	}
+
+	StaticMeshComponent->SetStaticMesh(ConstructedStaticMesh);
 }
 
 void ABuilding::CacheMaterials()
 {
 	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
-		CachedMaterials.Add(StaticMeshComponent->GetMaterial(i));
+		CachedMaterialsConstructed.Add(StaticMeshComponent->GetMaterial(i));
+	}
+
+	ConstructedStaticMesh = StaticMeshComponent->GetStaticMesh();
+
+	const int Level1MaterialSize = BuildingData.ConstructionData.Level1->GetStaticMaterials().Num();
+	for(int i=0;i<Level1MaterialSize;i++)
+	{
+		CachedMaterialsLevel1.Add(BuildingData.ConstructionData.Level1->GetMaterial(i));
+	}
+
+	const int Level2MaterialSize = BuildingData.ConstructionData.Level2->GetStaticMaterials().Num();
+	for(int i=0;i<Level2MaterialSize;i++)
+	{
+		CachedMaterialsLevel2.Add(BuildingData.ConstructionData.Level2->GetMaterial(i));
 	}
 }

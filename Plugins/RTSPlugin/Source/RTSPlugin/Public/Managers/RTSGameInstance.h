@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class UPlayerManager;
 class UAsset_Manager;
 class UStoreManager;
 class ARTSHUD;
@@ -16,6 +17,8 @@ class ULogManager;
 /**
  * 
  */
+
+class UManagerBase;
 
 UCLASS()
 class RTSPLUGIN_API URTSGameInstance : public UGameInstance
@@ -35,6 +38,18 @@ public:
 	UPROPERTY() ARTSHUD* RTSHUD;
 	UPROPERTY() UStoreManager* StoreManager;
 	UPROPERTY() UAsset_Manager* AssetManager;
+	UPROPERTY() UPlayerManager* PlayerManager;
+
+	UPROPERTY() UWorld* World;
+
+	
+	//Store Manager Config
+	UPROPERTY(EditDefaultsOnly)
+	FStoreManagerConfig StoreManagerConfig;
+
+	//Asset Manager Config
+	UPROPERTY(EditDefaultsOnly)
+	FAssetManagerConfig AssetManagerConfig;
 
 
 	
@@ -48,13 +63,7 @@ private:
 	void OnTick(float DeltaTime);
 
 
-	//Store Manager Config
-	UPROPERTY(EditDefaultsOnly)
-	FStoreManagerConfig StoreManagerConfig;
+	//Managers
+	TArray<UManagerBase*> Managers;
 
-	//Asset Manager Config
-	UPROPERTY(EditDefaultsOnly)
-	FAssetManagerConfig AssetManagerConfig;
-
-	
 };

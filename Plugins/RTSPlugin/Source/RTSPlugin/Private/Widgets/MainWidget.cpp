@@ -10,7 +10,8 @@
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/StoreManager.h"
-#include "Managers/USelectionManager.h"
+#include "..\..\Public\Managers\SelectionManager.h"
+#include "Components/ProgressBar.h"
 #include "Widgets/BuildingEntry.h"
 #include "Widgets/UnitEntry.h"
 
@@ -38,9 +39,9 @@ void UMainWidget::OnSelectionChanged()
 
 	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
 	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
-	
-
 	const ESelectionState SelectionState = SelectionManager->GetSelectionState();
+
+	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
 
 	if(SelectionState == ESelectionState::BuildingSingle)
 	{
@@ -51,14 +52,19 @@ void UMainWidget::OnSelectionChanged()
 		}
 
 		const ABuilding* SelectedBuilding = SelectedBuildings[0];
+		const EBuildingState BuildingState = SelectedBuilding->GetBuildingState();
 
-		UUnitGenerator* UnitGenerator = SelectedBuilding->FindComponentByClass<UUnitGenerator>();
-
-		if(UnitGenerator)
+		if(BuildingState == EBuildingState::Located)
 		{
-			CreateUnitEntries(UnitGenerator->GetUnits(),UnitGenerator);
+			UUnitGenerator* UnitGenerator = SelectedBuilding->FindComponentByClass<UUnitGenerator>();
+			if(UnitGenerator)
+			{
+				CreateUnitEntries(UnitGenerator->GetUnits(),UnitGenerator);
+			}
 		}
-		
+
+		ProgressBar->SetVisibility(ESlateVisibility::Visible);
+		ProgressBar->SetPercent(SelectedBuilding->GetProgress());
 	}
 	else if(SelectionState == ESelectionState::UnitSingle ||
 		SelectionState == ESelectionState::UnitMass)
@@ -70,8 +76,7 @@ void UMainWidget::OnSelectionChanged()
 		}
 
 		AUnit* Unit = SelectedUnits[0];
-
-		AWorker* Worker = Cast<AWorker>(Unit);
+		const AWorker* Worker = Cast<AWorker>(Unit);
 
 		if(Worker)
 		{

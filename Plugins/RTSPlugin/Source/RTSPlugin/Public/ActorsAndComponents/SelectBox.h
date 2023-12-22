@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Managers/USelectionManager.h"
+#include "..\Managers\SelectionManager.h"
 #include "SelectBox.generated.h"
 
 class ABuilding;
@@ -38,7 +38,7 @@ public:
 private:
 
 	//Dependencies
-	UPROPERTY() ARTSPawn* RTSPawn;
+	UPROPERTY() UPlayerManager* PlayerManager;
 
 	
 	FVector StartLocation;

@@ -2,6 +2,8 @@
 
 
 #include "RTSPlugin/Public/Managers/RTSPawn.h"
+
+#include "PlayerManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/BuildingManager.h"
@@ -26,6 +28,9 @@ void ARTSPawn::BeginPlay()
 	
 	LogManager = RTSGameInstance->LogManager;
 	BuildingManager = RTSGameInstance->BuildingManager;
+	PlayerManager = RTSGameInstance->PlayerManager;
+
+	PlayerManager->SetPawn(this);
 	
 	SpringArmComponent = FindComponentByClass<USpringArmComponent>();
 }
@@ -51,6 +56,7 @@ void ARTSPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("MouseRight",IE_Released,this,&ARTSPawn::OnMouseRightReleased);
 	PlayerInputComponent->BindAction("MouseWheelDown",IE_Pressed,this,&ARTSPawn::OnMouseWheelDown);
 	PlayerInputComponent->BindAction("MouseWheelUp",IE_Pressed,this,&ARTSPawn::OnMouseWheelUp);
+	PlayerInputComponent->BindAction("Delete",IE_Pressed,this,&ARTSPawn::OnDeleteClicked);
 }
 
 void ARTSPawn::SetHorizontalInput(float Value)
@@ -101,6 +107,12 @@ void ARTSPawn::OnMouseWheelDown()
 	OnMouseWheelDownDelegate.Broadcast();
 
 	UpdateZoom(1);
+}
+
+void ARTSPawn::OnDeleteClicked()
+{
+	LogManager->EditorLog(FText::FromString(TEXT("Delete Clicked")),ELogVerbosity::Display);
+	OnDeleteClickDelegate.Broadcast();
 }
 
 void ARTSPawn::Move()

@@ -13,7 +13,7 @@ Util::~Util()
 {
 }
 
-
+/*
 AActor* Util::GetActorOfClass(const UObject* WorldContextObject,
                               TSubclassOf<AActor> ActorClass)
 {
@@ -27,7 +27,7 @@ AActor* Util::GetActorOfClass(const UObject* WorldContextObject,
 	}
 
 	return FoundActors[0];
-}
+}*/
 
 TArray<AActor*> Util::GetActorsOfClass(const UObject* WorldContextObject, TSubclassOf<AActor> ActorClass)
 {

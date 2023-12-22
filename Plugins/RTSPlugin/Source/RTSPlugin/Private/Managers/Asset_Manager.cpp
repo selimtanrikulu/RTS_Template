@@ -3,9 +3,24 @@
 
 #include "Managers/Asset_Manager.h"
 
-void UAsset_Manager::Begin(FAssetManagerConfig assetManagerConfig)
+#include "Managers/RTSGameInstance.h"
+
+
+void UAsset_Manager::Init(URTSGameInstance* gameInstance)
 {
-	AssetManagerConfig = assetManagerConfig;
+	Super::Init(gameInstance);
+
+	AssetManagerConfig = GameInstance->AssetManagerConfig;
+}
+
+void UAsset_Manager::Begin()
+{
+	Super::Begin();
+}
+
+void UAsset_Manager::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 TSubclassOf<AActor> UAsset_Manager::GetSelectBoxBP() const

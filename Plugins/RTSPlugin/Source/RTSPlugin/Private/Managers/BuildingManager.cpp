@@ -3,30 +3,27 @@
 
 #include "Managers/BuildingManager.h"
 
+#include "PlayerManager.h"
 #include "ActorsAndComponents/Building.h"
-#include "ActorsAndComponents/TeamEntity.h"
-#include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
-#include "Managers/RTSPawn.h"
 
-void UBuildingManager::Begin(UWorld* world)
+
+void UBuildingManager::Init(URTSGameInstance* gameInstance)
 {
-	World = world;
+	Super::Init(gameInstance);
 
-
-	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World,0);
-	URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
-
-	RTSPawn = Cast<ARTSPawn>(Util::GetActorOfClass(World,ARTSPawn::StaticClass()));
-
-	
-	RTSPawn->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseLeftClicked);
-	RTSPawn->OnMouseRightClickDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseRightClicked);
-	RTSPawn->OnMouseWheelUpDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseWheelUp);
-	RTSPawn->OnMouseWheelDownDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseWheelDown);
-	
+	PlayerManager = GameInstance->PlayerManager;
 }
 
+void UBuildingManager::Begin()
+{
+	Super::Begin();
+
+	PlayerManager->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseLeftClicked);
+	PlayerManager->OnMouseRightClickDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseRightClicked);
+	PlayerManager->OnMouseWheelUpDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseWheelUp);
+	PlayerManager->OnMouseWheelDownDelegate.AddUniqueDynamic(this,&UBuildingManager::OnMouseWheelDown);
+}
 
 void UBuildingManager::Tick(float DeltaTime)
 {
@@ -77,10 +74,11 @@ void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 		return;
 	}
 	
-	DraftingBuilding = Cast<ABuilding>(World->SpawnActor(BuildingData.EntityData.BP));
+	DraftingBuilding = Cast<ABuilding>(GameInstance->World->SpawnActor(BuildingData.EntityData.BP));
 
-	DraftingBuilding->SetBuildingState(EBuildingState::Draft);
 	DraftingBuilding->BuildingData = BuildingData;
+	DraftingBuilding->CacheMaterials();
+	DraftingBuilding->SetBuildingState(EBuildingState::Draft);
 }
 
 bool UBuildingManager::IsDrafting() const
@@ -90,7 +88,7 @@ bool UBuildingManager::IsDrafting() const
 
 void UBuildingManager::UpdateDraftingBuildingLocation() const
 {
-	const FHitResult Hit = RTSPawn->LookForFloor();
+	const FHitResult Hit = PlayerManager->LookForFloor();
 
 
 	const EBuildingState BuildingState = DraftingBuilding->GetBuildingState();
@@ -111,12 +109,12 @@ void UBuildingManager::UpdateDraftingBuildingLocation() const
 }
 void UBuildingManager::LocateBuilding()
 {
-	DraftingBuilding->SetBuildingState(EBuildingState::Located);
+	DraftingBuilding->SetBuildingState(EBuildingState::Construction);
 	DraftingBuilding = nullptr;
 }
 void UBuildingManager::CancelDraft()
 {
-	World->DestroyActor(DraftingBuilding);
+	GameInstance->World->DestroyActor(DraftingBuilding);
 	DraftingBuilding = nullptr;
 }
 void UBuildingManager::RotateBuilding(const float Amount) const

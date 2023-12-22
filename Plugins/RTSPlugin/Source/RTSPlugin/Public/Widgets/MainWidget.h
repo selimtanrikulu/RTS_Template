@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "MainWidget.generated.h"
 
+class UProgressBar;
 class UUnitGenerator;
 struct FUnitData;
 class UStoreManager;
@@ -30,6 +31,9 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
 	UTileView* UnitsTileView;
+
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UProgressBar* ProgressBar;
 
 private:
 

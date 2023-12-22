@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "../Utility//Util.h"
+#include "Managers/ManagerBase.h"
 #include "StoreManager.generated.h"
 
 class UAsset_Manager;
@@ -16,7 +17,7 @@ class StoreTree;
 
 
 UCLASS()
-class RTSPLUGIN_API UStoreManager : public UObject
+class RTSPLUGIN_API UStoreManager : public UManagerBase
 {
 	GENERATED_BODY()
 	
@@ -24,9 +25,14 @@ public:
 	// Sets default values for this actor's properties
 	UStoreManager();
 
+
+	//Manager Base
+	virtual void Init(URTSGameInstance* gameInstance) override;
+	virtual void Begin() override;
+	virtual void Tick(float DeltaTime) override;
+	//--------------
 	
-	void Begin(const FStoreManagerConfig &storeManagerConfig,
-	           UWorld* world);
+
 	
 	void OpenWorkerRoot();
 	void CloseWorker();
@@ -53,7 +59,6 @@ private:
 	
 	
 	//Dependencies
-	UPROPERTY() UWorld* World;
 	UPROPERTY() UBuildingManager* BuildingManager;
 	UPROPERTY() UAsset_Manager* AssetManager;
 	

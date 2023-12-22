@@ -33,42 +33,36 @@ UStoreManager::UStoreManager()
 
 }
 
-// Called when the game starts or when spawned
-void UStoreManager::Begin(const FStoreManagerConfig &storeManagerConfig,UWorld* world)
+void UStoreManager::Init(URTSGameInstance* gameInstance)
 {
-	World = world;
-	StoreManagerConfig = storeManagerConfig;
-
-
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(World,0);
-	URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
-
+	Super::Init(gameInstance);
 	
-	
-
-
+	StoreManagerConfig = GameInstance->StoreManagerConfig;
 	
 	//Get dependencies
 	BuildingManager = GameInstance->BuildingManager;
 	AssetManager = GameInstance->AssetManager;
-	//------
+	//---------------
+}
 
-	
-	
+void UStoreManager::Begin()
+{
+	Super::Begin();
 
 	SetIDs();
 	CreateImages();
-
 	FindExistingEntities();
-	
-	
 	CreateStoreTree();
-
-
+	
 	//Temporarily
 	GameInstance->RTSHUD->SetWidget(EWidgetType::Main);
-	
 }
+
+void UStoreManager::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 
 
 void UStoreManager::SetIDs()
@@ -88,7 +82,7 @@ void UStoreManager::FindExistingEntities()
 	for(const FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
 	{
 		const TSubclassOf<AActor> ActorClass = BuildingData.EntityData.BP;
-		TArray<AActor*> FoundActors = Util::GetActorsOfClass(World,ActorClass);
+		TArray<AActor*> FoundActors = Util::GetActorsOfClass(GameInstance->World,ActorClass);
 
 		for(AActor* FoundActor : FoundActors)
 		{
@@ -101,13 +95,15 @@ void UStoreManager::FindExistingEntities()
 			}
 
 			Building->BuildingData = BuildingData;
+			Building->CacheMaterials();
+			Building->SetBuildingState(EBuildingState::Located);
 		}
 	}
 
 	for(const FUnitData &UnitData : StoreManagerConfig.UnitsData)
 	{
 		const TSubclassOf<AActor> ActorClass = UnitData.EntityData.BP;
-		TArray<AActor*> FoundActors = Util::GetActorsOfClass(World,ActorClass);
+		TArray<AActor*> FoundActors = Util::GetActorsOfClass(GameInstance->World,ActorClass);
 		
 		for(AActor* FoundActor : FoundActors)
 		{
@@ -134,7 +130,7 @@ void UStoreManager::CreateImages()
 
 	//Create Studio
 	const FVector SpawnLocation(0, 0, 5000);
-	AActor* Studio = World->SpawnActor<AActor>(AssetManager->GetStudioBP(), SpawnLocation, FRotator(0));
+	AActor* Studio = GameInstance->World->SpawnActor<AActor>(AssetManager->GetStudioBP(), SpawnLocation, FRotator(0));
 	
 
 	USceneCaptureComponent2D* CaptureComponent = nullptr;
@@ -170,7 +166,7 @@ void UStoreManager::CreateImages()
 	{
 		//Spawn Grid Object
 		TSubclassOf<AActor> EntityBP = EntityData->BP;
-		AActor* SpawnedActor = World->SpawnActor<AActor>(EntityBP, SpawnLocation, FRotator(0));
+		AActor* SpawnedActor = GameInstance->World->SpawnActor<AActor>(EntityBP, SpawnLocation, FRotator(0));
 
 
 		// Create a Texture Render Target to capture the image
@@ -249,13 +245,13 @@ void UStoreManager::CreateImages()
 
 		
 		//Restore
-		World->DestroyActor(SpawnedActor);
+		GameInstance->World->DestroyActor(SpawnedActor);
 	}
 
 
 	//Restore
 	CaptureComponent->DestroyComponent();
-	World->DestroyActor(Studio);
+	GameInstance->World->DestroyActor(Studio);
 }
 
 void UStoreManager::CreateStoreTree()
