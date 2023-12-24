@@ -50,11 +50,11 @@ FString UTeamEntity::GetInfo() const
 
 	if(const ABuilding* Building = Cast<ABuilding>(Owner))
 	{
-		return Building->GetInfo();
+		return Building->GetBuildingData().GetInfo();
 	}
 	if(const AUnit* Unit = Cast<AUnit>(Owner))
 	{
-		return Unit->GetInfo();
+		return Unit->GetUnitData().GetInfo();
 	}
 	
 	UE_LOG(LogTemp,Error,TEXT("Entity info not found"));
@@ -77,7 +77,7 @@ void UTeamEntity::ApplyDamage(const float Damage)
 	
 	if(CurrentHP <= 0)
 	{
-		OnEntityKilledDelegate.Broadcast(this);
+		OnTeamEntityKilledDelegate.Broadcast(this);
 	}
 }
 

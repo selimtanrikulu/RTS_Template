@@ -38,6 +38,9 @@ enum class ESelectionState : uint8
 	BuildingSingle,
 	BuildingMass,
 	BuildingMixed,
+	SourceSingle,
+	SourceMass,
+	SourceMixed,
 	AllMixed,
 };
 
@@ -88,8 +91,10 @@ private:
 
 	//Select Box Listeners
 	UFUNCTION() void OnOverlapChanged();
-	UFUNCTION() void OnEntityKilled(URTSEntity* Entity);
-	UFUNCTION() void OnEntityChanged(URTSEntity* RTSEntity);
+	UFUNCTION() void OnTeamEntityKilled(UTeamEntity* TeamEntity);
+	UFUNCTION() void OnTeamEntityChanged(UTeamEntity* TeamEntity);
+	UFUNCTION() void OnSourceCollected(USourceHolder* SourceHolder);
+	UFUNCTION() void OnSourceFinished(USourceHolder* SourceHolder);
 
 	void UpdateCircles();
 	void UpdateSelectionState();
@@ -117,6 +122,7 @@ private:
 	//Utility functions
 	bool AreSameBuildings(TArray<ABuilding*> Buildings);
 	bool AreSameUnits(TArray<AUnit*> Units);
+	bool AreSameSources(TArray<ASource*> Sources);
 	
 	
 };

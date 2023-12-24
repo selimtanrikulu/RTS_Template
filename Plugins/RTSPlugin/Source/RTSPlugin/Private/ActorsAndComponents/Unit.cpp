@@ -28,6 +28,7 @@ void AUnit::Init(const FUnitData& unitData)
 {
 	UnitData = unitData;
 	TeamEntity->Init(UnitData.TeamEntityData);
+	TeamEntity->HealFull();
 }
 
 // Called when the game starts or when spawned
@@ -62,11 +63,6 @@ void AUnit::SetTargetLocation(FVector TargetLocation)
 	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
 
 	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
-}
-
-FString AUnit::GetInfo() const
-{
-	return UnitData.GetInfo();
 }
 
 

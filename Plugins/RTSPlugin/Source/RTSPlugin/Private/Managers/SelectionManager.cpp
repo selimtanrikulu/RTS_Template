@@ -40,18 +40,14 @@ void USelectionManager::Init(URTSGameInstance* gameInstance)
 	PlayerManager->OnMouseRightClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseRightClicked);
 	PlayerManager->OnDeleteClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnDeleteClicked);
 }
-
 void USelectionManager::Begin()
 {
 	Super::Begin();
 }
-
-
 void USelectionManager::Tick(float DeltaTime)
 {
 	UpdateCircles();
 }
-
 void USelectionManager::OnMouseLeftClicked()
 {
 	if(CurrentSelectBox)
@@ -63,7 +59,6 @@ void USelectionManager::OnMouseLeftClicked()
 	
 	CreateSelectBox();
 }
-
 void USelectionManager::OnMouseLeftReleased()
 {
 	if(!CurrentSelectBox)
@@ -75,7 +70,6 @@ void USelectionManager::OnMouseLeftReleased()
 		
 	DestroySelectBox();
 }
-
 void USelectionManager::OnMouseRightClicked()
 {
 	const FHitResult Hit = PlayerManager->LookForFloor();
@@ -85,8 +79,6 @@ void USelectionManager::OnMouseRightClicked()
 		SelectedUnit->SetTargetLocation(Hit.Location);
 	}
 }
-
-
 void USelectionManager::OnDeleteClicked()
 {
 	for(ABuilding* Building : SelectedBuildings)
@@ -105,7 +97,6 @@ void USelectionManager::OnDeleteClicked()
 
 	OnSelectionChangedDelegate.Broadcast();
 }
-
 void USelectionManager::OnOverlapChanged()
 {
 	//Update selection
@@ -120,8 +111,6 @@ void USelectionManager::OnOverlapChanged()
 	//Fire main delegate
 	OnSelectionChangedDelegate.Broadcast();
 }
-
-
 void USelectionManager::UpdateCircles()
 {
 	for(const ABuilding* SelectedBuilding : SelectedBuildings)
@@ -160,11 +149,11 @@ void USelectionManager::UpdateCircles()
 	for(const ASource* Source : SelectedSources)
 	{
 		DrawCircle(GameInstance->World,
-		Source->SourceHolder->NeutralEntity->MeshComponent->GetComponentLocation(),
+		Source->NeutralEntity->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
 		FColor::White,
-		Source->SourceHolder->NeutralEntity->Extent,
+		Source->NeutralEntity->Extent,
 		300,
 		false,
 		-1,
@@ -174,37 +163,75 @@ void USelectionManager::UpdateCircles()
 	}
 
 }
-
 void USelectionManager::UpdateSelectionState()
 {
 	if(SelectedUnits.Num() == 0)
 	{
-		if(SelectedBuildings.Num() == 0)
+		if(SelectedSources.Num() == 0)
 		{
-			SelectionState = ESelectionState::None;
-		}
-		else if(SelectedBuildings.Num() == 1)
-		{
-			SelectionState = ESelectionState::BuildingSingle;
-		}
-		else
-		{
-			if(AreSameBuildings(SelectedBuildings))
+			if(SelectedBuildings.Num() == 0)
 			{
-				SelectionState = ESelectionState::BuildingMass;
+				SelectionState = ESelectionState::None;
+			}
+			else if(SelectedBuildings.Num() == 1)
+			{
+				SelectionState = ESelectionState::BuildingSingle;
 			}
 			else
 			{
-				SelectionState = ESelectionState::BuildingMixed;
+				if(AreSameBuildings(SelectedBuildings))
+				{
+					SelectionState = ESelectionState::BuildingMass;
+				}
+				else
+				{
+					SelectionState = ESelectionState::BuildingMixed;
+				}
 			}
-			
 		}
+		else if(SelectedSources.Num() == 1)
+		{
+			if(SelectedBuildings.Num() == 0)
+			{
+				SelectionState = ESelectionState::SourceSingle;
+			}
+			else
+			{
+				SelectionState = ESelectionState::AllMixed;
+			}
+		}
+		else
+		{
+			if(SelectedBuildings.Num() == 0)
+			{
+				if(AreSameSources(SelectedSources))
+				{
+					SelectionState = ESelectionState::SourceMass;
+				}
+				else
+				{
+					SelectionState = ESelectionState::SourceMixed;
+				}
+			}
+			else
+			{
+				SelectionState = ESelectionState::AllMixed;
+			}
+		}
+		
 	}
 	else if(SelectedUnits.Num() == 1)
 	{
-		if(SelectedBuildings.Num() == 0)
+		if(SelectedSources.Num() == 0)
 		{
-			SelectionState = ESelectionState::UnitSingle;
+			if(SelectedBuildings.Num() == 0)
+			{
+				SelectionState = ESelectionState::UnitSingle;
+			}
+			else
+			{
+				SelectionState = ESelectionState::AllMixed;
+			}
 		}
 		else
 		{
@@ -213,88 +240,113 @@ void USelectionManager::UpdateSelectionState()
 	}
 	else
 	{
-		if(SelectedBuildings.Num() == 0)
+		if(SelectedSources.Num() == 0)
 		{
-			if(AreSameUnits(SelectedUnits))
+			if(SelectedBuildings.Num() == 0)
 			{
-				SelectionState = ESelectionState::UnitMass;
+				if(AreSameUnits(SelectedUnits))
+				{
+					SelectionState = ESelectionState::UnitMass;
+				}
+				else
+				{
+					SelectionState = ESelectionState::UnitMixed;
+				}
 			}
 			else
 			{
-				SelectionState = ESelectionState::UnitMixed;
+				SelectionState = ESelectionState::AllMixed;
 			}
 		}
 		else
 		{
 			SelectionState = ESelectionState::AllMixed;
 		}
+		
 	}
 }
-
-
-void USelectionManager::OnEntityKilled(URTSEntity* Entity)
+void USelectionManager::OnTeamEntityKilled(UTeamEntity* TeamEntity)
 {
 	//Remove
 	SelectedBuildings.RemoveAll([&](const ABuilding* Element)
-		{ return Element->TeamEntity == Entity; });
+		{ return Element->TeamEntity == TeamEntity; });
 	
 	SelectedUnits.RemoveAll([&](const AUnit* Element)
-		{ return Element->TeamEntity == Entity; });
-
-	SelectedSources.RemoveAll([&](const ASource* Element)
-		{ return Element->SourceHolder->NeutralEntity == Entity; });
-
+		{ return Element->TeamEntity == TeamEntity; });
+	
 	
 	UpdateSelectionState();
 	OnSelectionChangedDelegate.Broadcast();
 }
-
-void USelectionManager::OnEntityChanged(URTSEntity* RTSEntity)
+void USelectionManager::OnTeamEntityChanged(UTeamEntity* TeamEntity)
 {
 	OnSelectionChangedDelegate.Broadcast();
 }
-
+void USelectionManager::OnSourceCollected(USourceHolder* SourceHolder)
+{
+	OnSelectionChangedDelegate.Broadcast();
+}
+void USelectionManager::OnSourceFinished(USourceHolder* SourceHolder)
+{
+	SelectedSources.RemoveAll([&](const ASource* Element)
+		{ return Element->SourceHolder == SourceHolder; });
+	
+	SelectedBuildings.RemoveAll([&](const ABuilding* Element)
+		{ return Element->FindComponentByClass<USourceHolder>() == SourceHolder; });
+	
+	UpdateSelectionState();
+	OnSelectionChangedDelegate.Broadcast();
+}
 void USelectionManager::BindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
-		Building->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
-		Building->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
+		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityKilled);
+		Building->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
+
+		if(USourceHolder* SourceHolder = Building->FindComponentByClass<USourceHolder>())
+		{
+			SourceHolder->OnSourceCollectedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceCollected);
+			SourceHolder->OnSourceFinishedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceFinished);
+		}
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
-		Unit->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
-		Unit->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
+		Unit->TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityKilled);
+		Unit->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
 	}
 	for(const ASource* Source : SelectedSources)
 	{
-		Source->SourceHolder->OnEntityChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
-		Source->SourceHolder->NeutralEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
+		Source->SourceHolder->OnSourceCollectedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceCollected);
+		Source->SourceHolder->OnSourceFinishedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceFinished);
 	}
 }
-
 void USelectionManager::UnbindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
-		Building->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
-		Building->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
+		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityKilled);
+		Building->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
+
+		if(USourceHolder* SourceHolder = Building->FindComponentByClass<USourceHolder>())
+		{
+			SourceHolder->OnSourceCollectedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceCollected);
+			SourceHolder->OnSourceFinishedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceFinished);
+		}
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
-		Unit->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
-		Unit->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
+		Unit->TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityKilled);
+		Unit->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
 	}
 	for(const ASource* Source : SelectedSources)
 	{
-		Source->SourceHolder->OnEntityChangedDelegate.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
-		Source->SourceHolder->NeutralEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
+		Source->SourceHolder->OnSourceCollectedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceCollected);
+		Source->SourceHolder->OnSourceFinishedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceFinished);
 	}
 }
-
-
 void USelectionManager::CreateSelectBox()
 {
 	const FHitResult Hit = PlayerManager->LookForFloor();
@@ -312,29 +364,24 @@ void USelectionManager::CreateSelectBox()
 	
 	CurrentSelectBox->OnOverlapChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnOverlapChanged);
 }
-
 void USelectionManager::DestroySelectBox()
 {
 	CurrentSelectBox->OnOverlapChangedDelegate.RemoveDynamic(this,&USelectionManager::OnOverlapChanged);
 	GameInstance->World->DestroyActor(CurrentSelectBox);
 	CurrentSelectBox = nullptr;
 }
-
 TArray<ABuilding*> USelectionManager::GetSelectedBuildings() const
 {
 	return SelectedBuildings;
 }
-
 TArray<AUnit*> USelectionManager::GetSelectedUnits() const
 {
 	return SelectedUnits;
 }
-
 TArray<ASource*> USelectionManager::GetSelectedSources() const
 {
 	return SelectedSources;
 }
-
 TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
 {
 	TArray<UTeamEntity*> SelectedTeamEntities;
@@ -350,7 +397,6 @@ TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
 
 	return SelectedTeamEntities;
 }
-
 TArray<URTSEntity*> USelectionManager::GetSelectedRTSEntities() const
 {
 	TArray<URTSEntity*> SelectedRTSEntities;
@@ -365,18 +411,15 @@ TArray<URTSEntity*> USelectionManager::GetSelectedRTSEntities() const
 	}
 	for(const ASource* Source : SelectedSources)
 	{
-		SelectedRTSEntities.Add(Source->SourceHolder->NeutralEntity);
+		SelectedRTSEntities.Add(Source->NeutralEntity);
 	}
 
 	return SelectedRTSEntities;
 }
-
 ESelectionState USelectionManager::GetSelectionState() const
 {
 	return SelectionState;
 }
-
-
 bool USelectionManager::AreSameBuildings(TArray<ABuilding*> Buildings)
 {
 	if(Buildings.Num() == 0)return true;
@@ -392,7 +435,6 @@ bool USelectionManager::AreSameBuildings(TArray<ABuilding*> Buildings)
 
 	return true;
 }
-
 bool USelectionManager::AreSameUnits(TArray<AUnit*> Units)
 {
 	if(Units.Num() == 0)return true;
@@ -401,6 +443,21 @@ bool USelectionManager::AreSameUnits(TArray<AUnit*> Units)
 	for(const AUnit* Unit : Units)
 	{
 		if(UnitID != Unit->GetUnitData().TeamEntityData.EntityData.EntityID)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+bool USelectionManager::AreSameSources(TArray<ASource*> Sources)
+{
+	if(Sources.Num() == 0)return true;
+
+	const int SourceID = Sources[0]->NeutralEntity->GetEntityData().EntityID;
+	for(const ASource* Source : Sources)
+	{
+		if(SourceID != Source->NeutralEntity->GetEntityData().EntityID)
 		{
 			return false;
 		}

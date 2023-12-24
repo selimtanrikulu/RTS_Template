@@ -37,16 +37,16 @@ void USelectionWidget::OnSelectionChanged()
 
 void USelectionWidget::CreateSelectionEntries() const
 {
-	TArray<URTSEntity*> SelectedTeamEntities = SelectionManager->GetSelectedRTSEntities();
+	TArray<URTSEntity*> SelectedEntities = SelectionManager->GetSelectedRTSEntities();
 	
-	if(SelectedTeamEntities.Num() == 0)
+	if(SelectedEntities.Num() == 0)
 	{
 		return;
 	}
 	
-	if(SelectedTeamEntities.Num() == 1)
+	if(SelectedEntities.Num() == 1)
 	{
-		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
+		const URTSEntity* RTSEntity = SelectedEntities[0];
 		const float Progress = RTSEntity->GetProgress();
 		ProgressBar->SetPercent(Progress);
 		ProgressBar->SetVisibility(ESlateVisibility::Visible);
@@ -56,24 +56,26 @@ void USelectionWidget::CreateSelectionEntries() const
 	if(SelectionState == ESelectionState::BuildingMass ||
 		SelectionState == ESelectionState::BuildingSingle ||
 		SelectionState == ESelectionState::UnitMass ||
-		SelectionState == ESelectionState::UnitMass)
+		SelectionState == ESelectionState::UnitSingle ||
+		SelectionState == ESelectionState::SourceSingle ||
+		SelectionState == ESelectionState::SourceMass)
 	{
-		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
+		const URTSEntity* RTSEntity = SelectedEntities[0];
 		const FString Info = RTSEntity->GetInfo();
 		InfoText->SetText(FText::FromString(Info));
 		InfoText->SetVisibility(ESlateVisibility::Visible);
 	}
 	
-	while(SelectedTeamEntities.Num() > 0)
+	while(SelectedEntities.Num() > 0)
 	{
-		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
+		const URTSEntity* RTSEntity = SelectedEntities[0];
 
-		//Get all entities with id = TeamEntity.ID
-		const int Size = SelectedTeamEntities.FilterByPredicate([&](const URTSEntity* Element)
+		//Get all entities with id = Entity.ID
+		const int Size = SelectedEntities.FilterByPredicate([&](const URTSEntity* Element)
 			{ return Element->GetEntityData().EntityID == RTSEntity->GetEntityData().EntityID;}).Num();
 
 		//Remove all such elements
-		SelectedTeamEntities.RemoveAll([&](const URTSEntity* Element)
+		SelectedEntities.RemoveAll([&](const URTSEntity* Element)
 			{ return Element->GetEntityData().EntityID == RTSEntity->GetEntityData().EntityID; });
 
 		//Create selection entry argument

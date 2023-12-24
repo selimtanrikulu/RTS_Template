@@ -3,7 +3,9 @@
 
 #include "ActorsAndComponents/SourceHolder.h"
 
+#include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/NeutralEntity.h"
+#include "ActorsAndComponents/Source.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
 #include "Managers/SourceManager.h"
@@ -16,29 +18,23 @@ USourceHolder::USourceHolder()
 	PrimaryComponentTick.bCanEverTick = true;
 
 	// ...
-	
-	NeutralEntity = CreateDefaultSubobject<UNeutralEntity>(TEXT("Neutral Entity"));
-//	NeutralEntity->AddToRoot();
 }
 
-void USourceHolder::Init(const FSourceData& sourceData)
-{
-	SourceData = sourceData;
-	AmountLeft = SourceData.HoldAmount;
-	NeutralEntity->Init(SourceData.EntityData);
-}
+
 
 
 // Called when the game starts
 void USourceHolder::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	// ...
 
 	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 	SourceManager = GameInstance->SourceManager;
+
+	AmountLeft = HoldAmount;
 }
 
 
@@ -50,7 +46,7 @@ void USourceHolder::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 
 	if(AmountLeft > 0)
 	{
-		Collect();
+		//Collect();
 	}
 
 
@@ -60,31 +56,41 @@ void USourceHolder::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 	// ...
 }
 
-FSourceData USourceHolder::GetSourceData() const
-{
-	return SourceData;
-}
 
 void USourceHolder::Collect()
 {
 	AmountLeft --;
-	SourceManager->Earn(SourceData.SourceName,1);
+	SourceManager->Earn(SourceName,1);
 
-	OnEntityChangedDelegate.Broadcast(NeutralEntity);
+	OnSourceCollectedDelegate.Broadcast(this);
 
 	if(AmountLeft <= 0)
 	{
-		NeutralEntity->OnEntityKilledDelegate.Broadcast(NeutralEntity);
+		OnSourceFinishedDelegate.Broadcast(this);
 	}
 }
 
 float USourceHolder::GetProgress() const
 {
-	return static_cast<float>(AmountLeft) / SourceData.HoldAmount;
+	return static_cast<float>(AmountLeft) / HoldAmount;
 }
 
 FString USourceHolder::GetInfo() const
 {
-	return SourceData.GetInfo();
+	AActor* Owner = GetOwner();
+
+
+	if(const ASource* Source = Cast<ASource>(Owner))
+	{
+		return Source->NeutralEntity->GetInfo();
+	}
+	if(const ABuilding* Building = Cast<ABuilding>(Owner))
+	{
+		return Building->GetBuildingData().GetInfo();
+	}
+
+	UE_LOG(LogTemp,Error,TEXT("Info not found for source holder"));
+	
+	return "";
 }
 

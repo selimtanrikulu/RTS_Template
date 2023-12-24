@@ -33,7 +33,6 @@ public:
 	
 	void SetTargetLocation(FVector TargetLocation);
 	FUnitData GetUnitData() const;
-	FString GetInfo() const;
 
 private:
 

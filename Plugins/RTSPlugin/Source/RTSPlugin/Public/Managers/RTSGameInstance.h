@@ -59,7 +59,7 @@ public:
 	TArray<FUnitData> UnitsData;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FSourceData> SourcesData;
+	TArray<FEntityData> SourcesData;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FSourceInfo> Sources;

@@ -8,7 +8,7 @@
 #include "RTSEntity.generated.h"
 
 class UEntityManager;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEntityAction, URTSEntity*, Entity);
+
 
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -32,7 +32,7 @@ public:
 	//Components
 	UPROPERTY() UMeshComponent* MeshComponent;
 
-	FEntityAction OnEntityKilledDelegate;
+	
 
 	FVector BoxExtent;
 	float Extent;

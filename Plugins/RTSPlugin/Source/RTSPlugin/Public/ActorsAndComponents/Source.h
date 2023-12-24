@@ -18,7 +18,7 @@ class RTSPLUGIN_API ASource : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ASource();
-	void Init(const FSourceData &SourceData) const;
+	void Init(const FEntityData &EntityData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -28,14 +28,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	
 	//Components
 	UPROPERTY(EditDefaultsOnly) UStaticMeshComponent* StaticMeshComponent;
-	UPROPERTY() USourceHolder* SourceHolder;
+	UPROPERTY(EditDefaultsOnly) UNeutralEntity* NeutralEntity;
+	UPROPERTY(EditDefaultsOnly) USourceHolder* SourceHolder;
+
+
 	
-
-private:
-
 	
 };

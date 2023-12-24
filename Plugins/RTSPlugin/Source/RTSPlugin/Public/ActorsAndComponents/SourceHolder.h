@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSEntity.h"
 #include "Components/ActorComponent.h"
 #include "Utility/Util.h"
 #include "SourceHolder.generated.h"
@@ -12,6 +11,9 @@
 class UEntityManager;
 class UNeutralEntity;
 class USourceManager;
+
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSourceAction, USourceHolder*, SourceHolder);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API USourceHolder : public UActorComponent
@@ -22,8 +24,7 @@ public:
 	// Sets default values for this component's properties
 	USourceHolder();
 
-	
-	void Init(const FSourceData &SourceData);
+
 
 protected:
 	// Called when the game starts
@@ -32,28 +33,35 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-	//Components
-	UPROPERTY() UNeutralEntity* NeutralEntity;
+	
 	
 	//Events
-	FEntityAction OnEntityChangedDelegate;
+	FSourceAction OnSourceCollectedDelegate;
+	FSourceAction OnSourceFinishedDelegate;
 	
-	
-	FSourceData GetSourceData() const;
+
 	void Collect();
 	float GetProgress() const;
 	FString GetInfo() const;
-
+	
 private:
 
 	//Dependencies
 	UPROPERTY() USourceManager* SourceManager;
+
+
+
 	
 	//Config
-	FSourceData SourceData;
+	UPROPERTY(EditDefaultsOnly)
+	FString SourceName;
+	
+	UPROPERTY(EditDefaultsOnly)
+	int HoldAmount;
+
+	
 
 	//State
 	int AmountLeft;
-	
+
 };

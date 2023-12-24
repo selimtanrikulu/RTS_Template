@@ -26,15 +26,11 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-
-	
 	
 	//RTS Entity
 	virtual FEntityData GetEntityData() const override;
 	virtual FString GetInfo() const override;
 	virtual float GetProgress() const override;
-
 
 private:
 

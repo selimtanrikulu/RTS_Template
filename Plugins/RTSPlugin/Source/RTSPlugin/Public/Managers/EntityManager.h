@@ -4,9 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "ManagerBase.h"
-#include "UObject/NoExportTypes.h"
 #include "EntityManager.generated.h"
 
+class USourceHolder;
+class UTeamEntity;
 class URTSEntity;
 /**
  * 
@@ -32,6 +33,7 @@ private:
 	
 	TArray<URTSEntity*> Entities;
 	
-	UFUNCTION() void OnEntityKilled(URTSEntity* Entity);
+	UFUNCTION() void OnEntityKilled(UTeamEntity* TeamEntity);
+	UFUNCTION() void OnSourceFinished(USourceHolder* SourceHolder);
 
 };

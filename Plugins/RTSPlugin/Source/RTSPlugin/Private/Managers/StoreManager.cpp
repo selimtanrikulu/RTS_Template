@@ -6,7 +6,6 @@
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/NeutralEntity.h"
 #include "ActorsAndComponents/Source.h"
-#include "ActorsAndComponents/SourceHolder.h"
 #include "ActorsAndComponents/TeamEntity.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Components/DirectionalLightComponent.h"
@@ -119,14 +118,14 @@ void UStoreManager::FindExistingEntities() const
 		}
 	}
 
-	for(const FSourceData &SourceData : GameInstance->SourcesData)
+	for(const FEntityData &EntityData : GameInstance->SourcesData)
 	{
-		const TSubclassOf<AActor> ActorClass = SourceData.EntityData.BP;
+		const TSubclassOf<AActor> ActorClass = EntityData.BP;
 		TArray<AActor*> FoundActors = Util::GetActorsOfClass(GameInstance->World,ActorClass);
 		
 		for(AActor* FoundActor : FoundActors)
 		{
-			const ASource* Source = Cast<ASource>(FoundActor);
+			ASource* Source = Cast<ASource>(FoundActor);
 
 			if(!Source)
 			{
@@ -134,10 +133,11 @@ void UStoreManager::FindExistingEntities() const
 				continue;
 			}
 			
-			Source->Init(SourceData);
-			EntityManager->AddEntity(Source->SourceHolder->NeutralEntity);
+			Source->Init(EntityData);
+			EntityManager->AddEntity(Source->NeutralEntity);
 		}
 	}
+	
 }
 void UStoreManager::CreateImagesOrthographic()
 {
@@ -238,16 +238,20 @@ void UStoreManager::CreateImagesOrthographic()
 
 		EntityData->ImageMaterial = MaterialInstance;
 
+
+		
 		
 		//Restore
 		GameInstance->World->DestroyActor(SpawnedActor);
 	}
+	
 
-
+	
 	//Restore
 	CaptureComponent->DestroyComponent();
 	GameInstance->World->DestroyActor(Studio);
 }
+
 void UStoreManager::CreateImagesPerspective()
 {
 	if (!BaseMaterial)
@@ -381,6 +385,7 @@ void UStoreManager::CreateImagesPerspective()
 	CaptureComponent->DestroyComponent();
 	GameInstance->World->DestroyActor(Studio);
 }
+
 void UStoreManager::CreateStoreTree()
 {
 	StoreTreeRoot = new StoreTree(new StoreNode(TEXT("~")), nullptr);
@@ -394,7 +399,11 @@ void UStoreManager::CreateStoreTree()
 		StoreTreeRoot->AddCategory(Path, BuildingData);
 	}
 }
-TArray<FEntityData*> UStoreManager::GetEntitiesData() const
+
+
+
+
+ TArray<FEntityData*> UStoreManager::GetEntitiesData() const
 {
 	TArray<FEntityData*> EntitiesData;
 	
@@ -406,14 +415,15 @@ TArray<FEntityData*> UStoreManager::GetEntitiesData() const
 	{
 		EntitiesData.Add(&UnitData.TeamEntityData.EntityData);
 	}
-
-	for(FSourceData &SourceData : GameInstance->SourcesData)
+	for(FEntityData &EntityData : GameInstance->SourcesData)
 	{
-		EntitiesData.Add(&SourceData.EntityData);
+		EntitiesData.Add(&EntityData);
 	}
+
 
 	return EntitiesData;
 }
+
 FBuildingData* UStoreManager::GetBuildingByName(const FString& BuildingName) const
 {
 	for(FBuildingData &BuildingData : GameInstance->BuildingsData)
@@ -516,24 +526,14 @@ void UStoreManager::SelectPreviousCategory()
 	CurrentTree = CurrentTree->Parent;
 
 }
-void UStoreManager::SetDraftingBuilding(FBuildingData& BuildingData)
+void UStoreManager::SetDraftingBuilding(const FBuildingData& BuildingData)
 {
 	//On grid object selected
 	CloseWorker();
 	BuildingManager->DraftBuilding(BuildingData);
-	DraftingBuilding = &BuildingData;
 }
-void UStoreManager::BuyDraftingObject() const
-{
-	if(DraftingBuilding)
-	{
-		//PlayerManager->Buy(*DraftingBuilding);
-	}
-}
-void UStoreManager::CancelDraftingObject()
-{
-	DraftingBuilding = nullptr;
-}
+
+
 bool UStoreManager::EndOfTree() const
 {
 	return CurrentTree->Children.Num() == 0;

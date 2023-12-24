@@ -39,17 +39,14 @@ public:
 	void CloseWorker();
 	void SelectNextCategory(const FString& Category);
 	void SelectPreviousCategory();
-	void SetDraftingBuilding(FBuildingData& BuildingData);
+	void SetDraftingBuilding(const FBuildingData& BuildingData);
 	bool EndOfTree() const;
 	TArray<FString> GetCurrentChildren() const;
 	TArray<FBuildingData> GetCurrentBuildings() const;
 	TArray<FSourceInfo> GetSourcesInfo() const;
 
 	TArray<FString> GetCurrentPath() const;
-
-	void BuyDraftingObject() const;
-	void CancelDraftingObject();
-
+	
 
 	FBuildingData* GetBuildingByName(const FString& BuildingName) const;
 	FUnitData *GetUnitByName(const FString& UnitName) const;
@@ -66,8 +63,6 @@ private:
 	//Utility
 	StoreTree* StoreTreeRoot;
 	StoreTree* CurrentTree;
-	FBuildingData* DraftingBuilding;
-
 
 	void SetIDs() const;
 	void FindExistingEntities() const;
@@ -76,7 +71,7 @@ private:
 	void CreateStoreTree();
 
 	TArray<FEntityData*> GetEntitiesData() const;
-	
+
 
 	
 

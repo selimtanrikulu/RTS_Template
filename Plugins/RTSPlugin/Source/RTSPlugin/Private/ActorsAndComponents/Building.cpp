@@ -190,11 +190,6 @@ void ABuilding::SetConstructedMesh()
 }
 
 
-FString ABuilding::GetInfo() const
-{
-	return BuildingData.GetInfo();
-}
-
 
 FBuildingData ABuilding::GetBuildingData() const
 {

@@ -31,15 +31,7 @@ FEntityData UNeutralEntity::GetEntityData() const
 
 FString UNeutralEntity::GetInfo() const
 {
-	const AActor* Owner = GetOwner();
-	
-	if(const USourceHolder* SourceHolder = Owner->FindComponentByClass<USourceHolder>())
-	{
-		return SourceHolder->GetInfo();
-	}
-	
-	UE_LOG(LogTemp,Error,TEXT("Entity info not found"));
-	return "Garbage Info";
+	return EntityData.GetInfo();
 }
 
 float UNeutralEntity::GetProgress() const

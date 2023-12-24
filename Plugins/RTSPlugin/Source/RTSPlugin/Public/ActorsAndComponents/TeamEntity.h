@@ -12,7 +12,7 @@
 class UEntityManager;
 class UAsset_Manager;
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamEntityAction, UTeamEntity*, TeamEntity);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API UTeamEntity : public URTSEntity
@@ -33,8 +33,9 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//Events
-	FEntityAction OnTeamEntityHPChanged;
-
+	FTeamEntityAction OnTeamEntityHPChanged;
+	FTeamEntityAction OnTeamEntityKilledDelegate;
+	
 	//RTS Entity
 	virtual FEntityData GetEntityData() const override;
 	virtual FString GetInfo() const override;

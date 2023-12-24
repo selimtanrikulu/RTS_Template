@@ -2,8 +2,9 @@
 
 
 #include "Managers/EntityManager.h"
-
 #include "ActorsAndComponents/RTSEntity.h"
+#include "ActorsAndComponents/SourceHolder.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "Managers/RTSGameInstance.h"
 
 void UEntityManager::Init(URTSGameInstance* gameInstance)
@@ -24,13 +25,31 @@ void UEntityManager::Tick(float DeltaTime)
 void UEntityManager::AddEntity(URTSEntity* Entity)
 {
 	Entities.Add(Entity);
-	Entity->OnEntityKilledDelegate.AddUniqueDynamic(this,&UEntityManager::OnEntityKilled);
+
+	if(UTeamEntity* TeamEntity = Cast<UTeamEntity>(Entity))
+	{
+		TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&UEntityManager::OnEntityKilled);
+	}
+
+	if(USourceHolder* SourceHolder = Entity->GetOwner()->FindComponentByClass<USourceHolder>())
+	{
+		SourceHolder->OnSourceFinishedDelegate.AddUniqueDynamic(this,&UEntityManager::OnSourceFinished);
+	}
 }
 
-void UEntityManager::OnEntityKilled(URTSEntity* Entity)
+void UEntityManager::OnEntityKilled(UTeamEntity* TeamEntity)
 {
+	Entities.Remove(TeamEntity);
+	TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&UEntityManager::OnEntityKilled);
+	AActor* Owner = TeamEntity->GetOwner();
+	GameInstance->World->DestroyActor(Owner);
+}
+
+void UEntityManager::OnSourceFinished(USourceHolder* SourceHolder)
+{
+	AActor* Owner = SourceHolder->GetOwner();
+	URTSEntity* Entity = Owner->FindComponentByClass<URTSEntity>();
 	Entities.Remove(Entity);
-	Entity->OnEntityKilledDelegate.RemoveDynamic(this,&UEntityManager::OnEntityKilled);
-	AActor* Owner = Entity->GetOwner();
+	SourceHolder->OnSourceFinishedDelegate.RemoveDynamic(this,&UEntityManager::OnSourceFinished);
 	GameInstance->World->DestroyActor(Owner);
 }

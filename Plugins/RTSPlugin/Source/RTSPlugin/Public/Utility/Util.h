@@ -66,27 +66,6 @@ struct FEntityData
 
 
 USTRUCT(BlueprintType)
-struct FSourceData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly)
-	FEntityData EntityData;
-
-	UPROPERTY(EditDefaultsOnly)
-	FString SourceName;
-	
-	UPROPERTY(EditDefaultsOnly)
-	int HoldAmount;
-	
-	FString GetInfo() const
-	{
-		return EntityData.GetInfo();
-	}
-};
-
-
-USTRUCT(BlueprintType)
 struct FSourceInfo
 {
 	GENERATED_BODY()

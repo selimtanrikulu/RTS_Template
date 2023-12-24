@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TeamEntity.h"
 #include "GameFramework/Actor.h"
 #include "Managers/SelectionManager.h"
 #include "Utility/Util.h"
@@ -46,17 +47,17 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//Events
-	UPROPERTY(BlueprintAssignable) FEntityAction OnBuildingChangedDelegate;
+	UPROPERTY(BlueprintAssignable) FTeamEntityAction OnBuildingChangedDelegate;
 	
 	//Components
 	UPROPERTY() UTeamEntity* TeamEntity;
+	
 	
 	void SetBuildingState(EBuildingState buildingState);
 	void CacheMaterials();
 	bool Locatable() const;
 	EBuildingState GetBuildingState() const;
 	void Progress(float Amount);
-	FString GetInfo() const;
 	FBuildingData GetBuildingData() const;
 
 
