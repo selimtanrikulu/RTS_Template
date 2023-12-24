@@ -28,13 +28,13 @@ void UUnitEntry::StartEntry(UUnitEntryArgument* unitEntryArgument)
 
 	
 
-	UnitNameText->SetText(FText::FromString(unitEntryArgument->UnitData.EntityData.Name));
+	UnitNameText->SetText(FText::FromString(unitEntryArgument->UnitData.TeamEntityData.EntityData.Name));
 
 
-	if(UnitEntryArgument->UnitData.EntityData.ImageMaterial)
+	if(UnitEntryArgument->UnitData.TeamEntityData.EntityData.ImageMaterial)
 	{
 		UnitImage->SetBrushFromMaterial(Cast<UMaterialInterface>
-		(UnitEntryArgument->UnitData.EntityData.ImageMaterial));
+		(UnitEntryArgument->UnitData.TeamEntityData.EntityData.ImageMaterial));
 	}
 	else
 	{

@@ -8,39 +8,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="11dfa442-1f59-4ef9-9221-185ef5d8e49a" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/indexLayout.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/vcs.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Archery.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Archery.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Barracks.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Barracks.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_House.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_House.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_TownCenter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_TownCenter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Blueprints/Blueprint_CeilingLight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Blueprints/Blueprint_CeilingLight.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Ambient_Dust.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Particles/P_Ambient_Dust.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Config/DefaultRTSPlugin.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Config/DefaultRTSPlugin.ini" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Game/BP_RTSGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Game/BP_RTSGameInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Widget/WBP_BuildingEntry.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Widget/WBP_Main.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Widget/WBP_Main.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Widget/WBP_UnitEntry.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Maps/RTS.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Maps/RTS.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Building.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Building.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/SelectBox.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/SelectBox.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/TeamEntity.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/TeamEntity.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/Asset_Manager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/Asset_Manager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Unit.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Unit.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/UnitGenerator.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/UnitGenerator.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/BuildingManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/BuildingManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/LogManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/LogManager.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/ManagerBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/ManagerBase.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/ManagerBase.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/PlayerManager.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/RTSGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/RTSGameInstance.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/RTSPawn.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/RTSPawn.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/SelectionManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/SelectionManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/StoreManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/StoreManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/USelectionManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Managers/SelectionManager.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Utility/Util.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Utility/Util.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/BuildingEntry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/BuildingEntry.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/MainWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/MainWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/UnitEntry.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/Widgets/UnitEntry.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Building.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Building.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/SelectBox.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/SelectBox.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/TeamEntity.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/TeamEntity.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/Asset_Manager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/Asset_Manager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/BuildingManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/BuildingManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/LogManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/LogManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Unit.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Unit.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/UnitGenerator.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/UnitGenerator.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/RTSGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/RTSGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/RTSPawn.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/RTSPawn.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/SelectionManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/SelectionManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/StoreManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/StoreManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/USelectionManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Managers/SelectionManager.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Utility/Util.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Utility/Util.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Widgets/MainWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/Widgets/MainWidget.h" afterDir="false" />
     </list>
@@ -65,6 +67,7 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
     &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -175,6 +178,10 @@
       <workItem from="1700244105104" duration="1052000" />
       <workItem from="1700246622966" duration="1251000" />
       <workItem from="1703187949573" duration="7842000" />
+      <workItem from="1703281963049" duration="595000" />
+      <workItem from="1703321841484" duration="3674000" />
+      <workItem from="1703325700483" duration="26261000" />
+      <workItem from="1703412554175" duration="309000" />
     </task>
     <servers />
   </component>

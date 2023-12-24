@@ -3,7 +3,7 @@
 
 #include "..\..\Public\Managers\SelectionManager.h"
 
-#include "PlayerManager.h"
+#include "Managers/PlayerManager.h"
 #include "ActorsAndComponents/SelectBox.h"
 #include "Managers/LogManager.h"
 #include "Managers/RTSGameInstance.h"
@@ -106,9 +106,11 @@ void USelectionManager::OnDeleteClicked()
 void USelectionManager::OnOverlapChanged()
 {
 	//Update selection
+	UnbindSelections();
 	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
 	SelectedUnits = CurrentSelectBox->OverlappingUnits;
-
+	BindSelections();
+	
 	UpdateSelectionState();
 	
 	//Fire main delegate
@@ -209,6 +211,60 @@ void USelectionManager::UpdateSelectionState()
 	}
 }
 
+void USelectionManager::OnBuildingChanged(ABuilding* Building)
+{
+	OnSelectionChangedDelegate.Broadcast();
+}
+
+void USelectionManager::OnEntityKilled(URTSEntity* Entity)
+{
+	//Remove
+	SelectedBuildings.RemoveAll([&](const ABuilding* Element)
+		{ return Element->TeamEntity == Entity; });
+	
+	SelectedUnits.RemoveAll([&](const AUnit* Element)
+		{ return Element->TeamEntity == Entity; });
+
+	UpdateSelectionState();
+	OnSelectionChangedDelegate.Broadcast();
+}
+
+void USelectionManager::OnTeamEntityGetDamage(UTeamEntity* TeamEntity)
+{
+	OnSelectionChangedDelegate.Broadcast();
+}
+
+void USelectionManager::BindSelections()
+{
+	for(ABuilding* Building : SelectedBuildings)
+	{
+		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnBuildingChanged);
+		Building->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
+		Building->TeamEntity->OnTeamEntityGetDamageDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+	}
+	for(const AUnit* Unit : SelectedUnits)
+	{
+		Unit->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
+		Unit->TeamEntity->OnTeamEntityGetDamageDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+	}
+}
+
+void USelectionManager::UnbindSelections()
+{
+	for(ABuilding* Building : SelectedBuildings)
+	{
+		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnBuildingChanged);
+		Building->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
+		Building->TeamEntity->OnTeamEntityGetDamageDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+	}
+	for(const AUnit* Unit : SelectedUnits)
+	{
+		Unit->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
+		Unit->TeamEntity->OnTeamEntityGetDamageDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+	}
+}
+
+
 void USelectionManager::CreateSelectBox()
 {
 	const FHitResult Hit = PlayerManager->LookForFloor();
@@ -243,6 +299,38 @@ TArray<AUnit*> USelectionManager::GetSelectedUnits() const
 	return SelectedUnits;
 }
 
+TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
+{
+	TArray<UTeamEntity*> SelectedTeamEntities;
+
+	for(const ABuilding* Building : SelectedBuildings)
+	{
+		SelectedTeamEntities.Add(Building->TeamEntity);
+	}
+	for(const AUnit* Unit : SelectedUnits)
+	{
+		SelectedTeamEntities.Add(Unit->TeamEntity);
+	}
+
+	return SelectedTeamEntities;
+}
+
+TArray<URTSEntity*> USelectionManager::GetSelectedEntities() const
+{
+	TArray<URTSEntity*> SelectedTeamEntities;
+
+	for(const ABuilding* Building : SelectedBuildings)
+	{
+		SelectedTeamEntities.Add(Building->TeamEntity);
+	}
+	for(const AUnit* Unit : SelectedUnits)
+	{
+		SelectedTeamEntities.Add(Unit->TeamEntity);
+	}
+
+	return SelectedTeamEntities;
+}
+
 ESelectionState USelectionManager::GetSelectionState() const
 {
 	return SelectionState;
@@ -253,10 +341,10 @@ bool USelectionManager::AreSameBuildings(TArray<ABuilding*> Buildings)
 {
 	if(Buildings.Num() == 0)return true;
 
-	const int BuildingID = Buildings[0]->BuildingData.EntityData.EntityID;
+	const int BuildingID = Buildings[0]->GetBuildingData().TeamEntityData.EntityData.EntityID;
 	for(const ABuilding* Building : Buildings)
 	{
-		if(BuildingID != Building->BuildingData.EntityData.EntityID)
+		if(BuildingID != Building->GetBuildingData().TeamEntityData.EntityData.EntityID)
 		{
 			return false;
 		}
@@ -269,10 +357,10 @@ bool USelectionManager::AreSameUnits(TArray<AUnit*> Units)
 {
 	if(Units.Num() == 0)return true;
 
-	const int UnitID = Units[0]->UnitData.EntityData.EntityID;
+	const int UnitID = Units[0]->GetUnitData().TeamEntityData.EntityData.EntityID;
 	for(const AUnit* Unit : Units)
 	{
-		if(UnitID != Unit->UnitData.EntityData.EntityID)
+		if(UnitID != Unit->GetUnitData().TeamEntityData.EntityData.EntityID)
 		{
 			return false;
 		}

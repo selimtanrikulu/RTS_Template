@@ -81,7 +81,7 @@ void UStoreManager::FindExistingEntities()
 {
 	for(const FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
 	{
-		const TSubclassOf<AActor> ActorClass = BuildingData.EntityData.BP;
+		const TSubclassOf<AActor> ActorClass = BuildingData.TeamEntityData.EntityData.BP;
 		TArray<AActor*> FoundActors = Util::GetActorsOfClass(GameInstance->World,ActorClass);
 
 		for(AActor* FoundActor : FoundActors)
@@ -94,15 +94,15 @@ void UStoreManager::FindExistingEntities()
 				continue;
 			}
 
-			Building->BuildingData = BuildingData;
+			Building->Init(BuildingData);
 			Building->CacheMaterials();
-			Building->SetBuildingState(EBuildingState::Located);
+			Building->FillProgress();
 		}
 	}
 
 	for(const FUnitData &UnitData : StoreManagerConfig.UnitsData)
 	{
-		const TSubclassOf<AActor> ActorClass = UnitData.EntityData.BP;
+		const TSubclassOf<AActor> ActorClass = UnitData.TeamEntityData.EntityData.BP;
 		TArray<AActor*> FoundActors = Util::GetActorsOfClass(GameInstance->World,ActorClass);
 		
 		for(AActor* FoundActor : FoundActors)
@@ -115,7 +115,7 @@ void UStoreManager::FindExistingEntities()
 				continue;
 			}
 
-			Unit->UnitData = UnitData;
+			Unit->Init(UnitData);
 		}
 	}
 }
@@ -275,11 +275,16 @@ TArray<FEntityData*> UStoreManager::GetEntitiesData()
 	
 	for(FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
 	{
-		EntitiesData.Add(&BuildingData.EntityData);
+		EntitiesData.Add(&BuildingData.TeamEntityData.EntityData);
 	}
 	for(FUnitData &UnitData : StoreManagerConfig.UnitsData)
 	{
-		EntitiesData.Add(&UnitData.EntityData);
+		EntitiesData.Add(&UnitData.TeamEntityData.EntityData);
+	}
+
+	for(FSourceData &SourceData : StoreManagerConfig.SourcesData)
+	{
+		EntitiesData.Add(&SourceData.EntityData);
 	}
 
 	return EntitiesData;
@@ -289,7 +294,7 @@ FBuildingData* UStoreManager::GetBuildingByName(const FString& BuildingName)
 {
 	for(FBuildingData &BuildingData : StoreManagerConfig.BuildingsData)
 	{
-		if(BuildingData.EntityData.Name == BuildingName)
+		if(BuildingData.TeamEntityData.EntityData.Name == BuildingName)
 		{
 			return &BuildingData;
 		}
@@ -304,7 +309,7 @@ FUnitData* UStoreManager::GetUnitByName(const FString& UnitName)
 {
 	for(FUnitData &UnitData : StoreManagerConfig.UnitsData)
 	{
-		if(UnitData.EntityData.Name == UnitName)
+		if(UnitData.TeamEntityData.EntityData.Name == UnitName)
 		{
 			return &UnitData;
 		}
@@ -334,6 +339,11 @@ TArray<FBuildingData> UStoreManager::GetCurrentBuildings() const
 	}
 
 	return CurrentTree->Node->ContainingBuildings;
+}
+
+TArray<FSourceData> UStoreManager::GetSourcesData() const
+{
+	return StoreManagerConfig.SourcesData;
 }
 
 

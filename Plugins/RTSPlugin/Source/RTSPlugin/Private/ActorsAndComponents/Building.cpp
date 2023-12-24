@@ -17,6 +17,13 @@ ABuilding::ABuilding()
 	TeamEntity = CreateDefaultSubobject<UTeamEntity>(TEXT("Team Entity"));
 }
 
+
+void ABuilding::Init(const FBuildingData& buildingData)
+{
+	BuildingData = buildingData;
+	TeamEntity->Init(BuildingData.TeamEntityData.HP);
+}
+
 // Called when the game starts or when spawned
 void ABuilding::BeginPlay()
 {
@@ -33,14 +40,11 @@ void ABuilding::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	Delta_Time = DeltaTime;
 
 	if(BuildingState == EBuildingState::Construction)
 	{
-		CurrentWorkerEnergySeconds += DeltaTime;
-		if(CurrentWorkerEnergySeconds >= BuildingData.ConstructionData.TotalWorkerEnergySeconds)
-		{
-			SetBuildingState(EBuildingState::Located);
-		}
+		Progress();
 	}
 
 }
@@ -78,6 +82,7 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 		case EBuildingState::Located:
 			SetConstructedMesh();
 			StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
+			
 			break;
 
 		default:
@@ -86,7 +91,7 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 	}
 
 
-	OnBuildingStateChangedDelegate.Broadcast();
+	OnBuildingChangedDelegate.Broadcast(this);
 	
 }
 
@@ -98,6 +103,33 @@ EBuildingState ABuilding::GetBuildingState() const
 float ABuilding::GetProgress() const
 {
 	return CurrentWorkerEnergySeconds / BuildingData.ConstructionData.TotalWorkerEnergySeconds;
+}
+
+void ABuilding::Progress()
+{
+	const float BeforeProgress = GetProgress();
+	
+	if(BeforeProgress >= 1 || BuildingState != EBuildingState::Construction)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Errorrenous call for progress"));
+		return;
+	}
+	
+	CurrentWorkerEnergySeconds += Delta_Time;
+
+	
+	const float AfterProgress = GetProgress();
+	if(AfterProgress>=0.5f && BeforeProgress <0.5f)
+	{
+		SetConstructionMesh(2);
+	}
+	
+	OnBuildingChangedDelegate.Broadcast(this);
+
+	if(GetProgress() >= 1)
+	{
+		SetBuildingState(EBuildingState::Located);
+	}
 }
 
 bool ABuilding::Locatable() const
@@ -159,6 +191,25 @@ void ABuilding::SetConstructedMesh()
 
 	StaticMeshComponent->SetStaticMesh(ConstructedStaticMesh);
 }
+
+void ABuilding::FillProgress()
+{
+	CurrentWorkerEnergySeconds = BuildingData.ConstructionData.TotalWorkerEnergySeconds;
+	SetBuildingState(EBuildingState::Located);
+}
+
+FString ABuilding::GetInfo() const
+{
+	return BuildingData.GetInfo();
+}
+
+
+FBuildingData ABuilding::GetBuildingData() const
+{
+	return BuildingData;
+}
+
+
 
 void ABuilding::CacheMaterials()
 {

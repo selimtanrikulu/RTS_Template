@@ -3,14 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RTSEntity.h"
 #include "Components/ActorComponent.h"
+#include "Utility/Util.h"
 #include "TeamEntity.generated.h"
 
 
+class UEntityManager;
 class UAsset_Manager;
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamEntityAction, UTeamEntity*, TeamEntity);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class RTSPLUGIN_API UTeamEntity : public UActorComponent
+class RTSPLUGIN_API UTeamEntity : public URTSEntity
 {
 	GENERATED_BODY()
 
@@ -25,17 +31,24 @@ protected:
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	//Events
+	FTeamEntityAction OnTeamEntityGetDamageDelegate;
+
+		
+	virtual FEntityData GetEntityData() const override;
+	virtual FString GetInfo() const override;
+	virtual float GetProgress() const override;
 	
-
-	//Components
-	UPROPERTY() UMeshComponent* MeshComponent;
-	FVector BoxExtent;
-	float Extent;
-
-
-	
+	void Init(float CurrentHP);
+	void ApplyDamage(float Damage);
 
 private:
 
+
+
+	float GetHPRatio() const;
+	float CurrentHP;
 	
+
 };

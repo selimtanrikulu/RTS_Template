@@ -42,7 +42,7 @@ public:
 	bool EndOfTree() const;
 	TArray<FString> GetCurrentChildren() const;
 	TArray<FBuildingData> GetCurrentBuildings() const;
-
+	TArray<FSourceData> GetSourcesData() const;
 
 	TArray<FString> GetCurrentPath() const;
 

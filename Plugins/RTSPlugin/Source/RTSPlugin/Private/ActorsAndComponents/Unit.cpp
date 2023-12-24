@@ -25,6 +25,12 @@ AUnit::AUnit()
 	AutoPossessAI = EAutoPossessAI::Disabled;
 }
 
+void AUnit::Init(const FUnitData& unitData)
+{
+	UnitData = unitData;
+	TeamEntity->Init(UnitData.TeamEntityData.HP);
+}
+
 // Called when the game starts or when spawned
 void AUnit::BeginPlay()
 {
@@ -41,19 +47,13 @@ void AUnit::BeginPlay()
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(AIControllerClass,FVector(),FRotator());
 	AAIController* SpawnedAIController = Cast<AAIController>(SpawnedActor);
 	SpawnedAIController->Possess(this);
-	
-
-
-	UCharacterMovementComponent* CharacterMovementComponent = GetCharacterMovement();
-	//CharacterMovementComponent->SetAvoidanceEnabled(true);
-	//CharacterMovementComponent->AvoidanceConsiderationRadius = 500;
 }
 
 // Called every frame
 void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void AUnit::SetTargetLocation(FVector TargetLocation)
@@ -64,4 +64,18 @@ void AUnit::SetTargetLocation(FVector TargetLocation)
 
 	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
 }
+
+FString AUnit::GetInfo() const
+{
+	return UnitData.GetInfo();
+}
+
+
+
+
+FUnitData AUnit::GetUnitData() const
+{
+	return UnitData;
+}
+
 

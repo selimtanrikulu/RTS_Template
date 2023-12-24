@@ -18,6 +18,7 @@ class RTSPLUGIN_API AUnit : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AUnit();
+	void Init(const FUnitData &UnitData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -27,18 +28,20 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
-	void SetTargetLocation(FVector TargetLocation);
-	
-	FUnitData UnitData;
-
+	//Components
 	UPROPERTY() UTeamEntity* TeamEntity;
 	
+	void SetTargetLocation(FVector TargetLocation);
+	FUnitData GetUnitData() const;
+	FString GetInfo() const;
 
 private:
 
 	//Dependencies
 	UPROPERTY() UAsset_Manager* AssetManager;
+	
+	//Config
+	FUnitData UnitData;
 
 
 	

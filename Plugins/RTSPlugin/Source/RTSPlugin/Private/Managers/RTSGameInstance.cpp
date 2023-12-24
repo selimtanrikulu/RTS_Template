@@ -3,7 +3,7 @@
 
 #include "Managers/RTSGameInstance.h"
 
-#include "PlayerManager.h"
+#include "Managers/PlayerManager.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
 #include "Managers/BuildingManager.h"
@@ -11,6 +11,8 @@
 #include "Managers/RTSHud.h"
 #include "Managers/StoreManager.h"
 #include "..\..\Public\Managers\SelectionManager.h"
+#include "Managers/EntityManager.h"
+#include "Managers/SourceManager.h"
 
 void URTSGameInstance::Init()
 {
@@ -22,6 +24,8 @@ void URTSGameInstance::Init()
 	StoreManager = NewObject<UStoreManager>();
 	AssetManager = NewObject<UAsset_Manager>();
 	PlayerManager = NewObject<UPlayerManager>();
+	EntityManager = NewObject<UEntityManager>();
+	SourceManager = NewObject<USourceManager>();
 
 	
 	Managers.Add(LogManager);
@@ -30,10 +34,16 @@ void URTSGameInstance::Init()
 	Managers.Add(StoreManager);
 	Managers.Add(AssetManager);
 	Managers.Add(PlayerManager);
+	Managers.Add(EntityManager);
+	Managers.Add(SourceManager);
 
 	for(UManagerBase* ManagerBase : Managers)
 	{
 		ManagerBase->Init(this);
+	}
+	for(UManagerBase* ManagerBase : Managers)
+	{
+		ManagerBase->PostInit();
 	}
 }
 

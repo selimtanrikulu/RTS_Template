@@ -30,13 +30,13 @@ void UBuildingEntry::StartEntry(UBuildingEntryArgument* buildingEntryArgument)
 
 	
 
-	BuildingNameText->SetText(FText::FromString(buildingEntryArgument->BuildingData.EntityData.Name));
+	BuildingNameText->SetText(FText::FromString(buildingEntryArgument->BuildingData.TeamEntityData.EntityData.Name));
 
 
-	if(BuildingEntryArgument->BuildingData.EntityData.ImageMaterial)
+	if(BuildingEntryArgument->BuildingData.TeamEntityData.EntityData.ImageMaterial)
 	{
 		BuildingImage->SetBrushFromMaterial(Cast<UMaterialInterface>
-		(BuildingEntryArgument->BuildingData.EntityData.ImageMaterial));
+		(BuildingEntryArgument->BuildingData.TeamEntityData.EntityData.ImageMaterial));
 	}
 	else
 	{

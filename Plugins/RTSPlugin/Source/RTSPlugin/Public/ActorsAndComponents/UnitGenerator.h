@@ -8,6 +8,8 @@
 #include "UnitGenerator.generated.h"
 
 
+class USourceManager;
+class UEntityManager;
 class UStoreManager;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -29,13 +31,15 @@ public:
 
 
 	TArray<FUnitData>& GetUnits();
+	
 	void SpawnUnit(const FUnitData& UnitData) const;
 
 
 private:
 	//Dependencies
 	UPROPERTY() UStoreManager* StoreManager;
-
+	UPROPERTY() UEntityManager* EntityManager;
+	UPROPERTY() USourceManager* SourceManager;
 
 	UPROPERTY() ABuilding* OwnerBuilding;
 	

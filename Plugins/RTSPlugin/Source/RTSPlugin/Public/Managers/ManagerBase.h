@@ -20,6 +20,7 @@ public:
 
 
 	virtual void Init(URTSGameInstance* gameInstance);
+	virtual void PostInit();
 	virtual void Begin();
 	virtual void Tick(float DeltaTime);
 

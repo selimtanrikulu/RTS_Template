@@ -5,14 +5,18 @@
 
 
 #include "CoreMinimal.h"
+#include "ActorsAndComponents/RTSEntity.h"
 #include "Managers/ManagerBase.h"
 #include "SelectionManager.generated.h"
 
+class UTeamEntity;
 class UPlayerManager;
 class UAsset_Manager;
 class AUnit;
 class ABuilding;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSelectionChanged);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FSelectionAction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBuildingAction,ABuilding*,Building);
+
 
 
 class ULogManager;
@@ -58,12 +62,14 @@ public:
 
 	TArray<ABuilding*> GetSelectedBuildings() const;
 	TArray<AUnit*> GetSelectedUnits() const;
-
+	TArray<UTeamEntity*> GetSelectedTeamEntities() const;
+	TArray<URTSEntity*> GetSelectedEntities() const;
 
 	ESelectionState GetSelectionState() const;
 	
 
-	UPROPERTY(BlueprintAssignable) FOnSelectionChanged OnSelectionChangedDelegate;
+	UPROPERTY(BlueprintAssignable) FSelectionAction OnSelectionChangedDelegate;
+	UPROPERTY(BlueprintAssignable) FBuildingAction OnBuildingChangedDelegate;
 
 private:
 
@@ -81,7 +87,9 @@ private:
 
 	//Select Box Listeners
 	UFUNCTION() void OnOverlapChanged();
-	
+	UFUNCTION() void OnBuildingChanged(ABuilding* Building);
+	UFUNCTION() void OnEntityKilled(URTSEntity* Entity);
+	UFUNCTION() void OnTeamEntityGetDamage(UTeamEntity* TeamEntity);
 
 	void UpdateCircles();
 	void UpdateSelectionState();
@@ -96,6 +104,11 @@ private:
 	TArray<ABuilding*> SelectedBuildings;
 	TArray<AUnit*> SelectedUnits;
 	
+
+	void BindSelections();
+	void UnbindSelections();
+	
+
 	
 	void CreateSelectBox();
 	void DestroySelectBox();

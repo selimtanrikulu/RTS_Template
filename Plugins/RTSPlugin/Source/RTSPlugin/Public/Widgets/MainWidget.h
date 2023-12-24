@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Utility/Util.h"
 #include "MainWidget.generated.h"
 
 class UProgressBar;
@@ -26,27 +25,10 @@ public:
 
 	virtual void NativeConstruct() override;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
-	UTileView* BuildingsTileView;
-
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
-	UTileView* UnitsTileView;
-
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
-	UProgressBar* ProgressBar;
 
 private:
 
-	//Dependencies
-	UPROPERTY() UStoreManager* StoreManager;
-	UPROPERTY() USelectionManager* SelectionManager;
 
-	//Selection Manager Listener
-	UFUNCTION()
-	void OnSelectionChanged();
-
-
-	void CreateUnitEntries(TArray<FUnitData> &UnitsData,UUnitGenerator* UnitGenerator) const;
-	void CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const;
+	
 	
 };

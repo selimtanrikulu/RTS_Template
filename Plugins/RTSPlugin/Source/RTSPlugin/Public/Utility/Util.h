@@ -11,7 +11,7 @@ class AUnit;
 class ABuilding;
 
 USTRUCT(BlueprintType)
-struct FSourceData
+struct FCostData
 {
 	GENERATED_BODY()
 
@@ -20,9 +20,17 @@ struct FSourceData
 	
 	UPROPERTY(EditDefaultsOnly)
 	int Amount;
+
+	FString GetInfo() const
+	{
+		FString Info = "";
+		Info += SourceName;
+		Info += " ";
+		Info += FString::FormatAsNumber(Amount);
+		Info += "\n";
+		return Info;
+	}
 };
-
-
 
 USTRUCT(BlueprintType)
 struct FEntityData
@@ -30,20 +38,77 @@ struct FEntityData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AActor> BP;
-	
-	UPROPERTY(EditDefaultsOnly)
 	FString Name;
 	
 	UPROPERTY(EditDefaultsOnly)
-	TArray<FSourceData> Cost;
-
+	TSubclassOf<AActor> BP;
+	
 	UPROPERTY()
 	UMaterialInstanceDynamic* ImageMaterial;
 
 	UPROPERTY()
 	int EntityID;
+
+
+	FString GetInfo() const
+	{
+		FString Info = "";
+		Info += "Name : ";
+		Info += Name;
+		Info += "\n";
+		Info += "ID : ";
+		Info += FString::FormatAsNumber(EntityID);
+		Info += "\n";
+		return Info;
+	}
 	
+};
+
+
+USTRUCT(BlueprintType)
+struct FSourceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FEntityData EntityData;
+
+	UPROPERTY(EditDefaultsOnly)
+	int StartAmount;
+	
+	FString GetInfo() const
+	{
+		return EntityData.GetInfo();
+	}
+};
+
+USTRUCT(BlueprintType)
+struct FTeamEntityData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FEntityData EntityData;
+	
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FCostData> Cost;
+
+	UPROPERTY(EditDefaultsOnly)
+	float HP;
+
+	FString GetInfo() const
+	{
+		FString Info = "";
+
+		Info += EntityData.GetInfo();
+
+		for(FCostData CostData : Cost)
+		{
+			Info += CostData.GetInfo();
+		}
+
+		return Info;
+	}
 };
 
 
@@ -61,6 +126,11 @@ struct FConstructionData
 	
 	UPROPERTY(EditDefaultsOnly)
 	float TotalWorkerEnergySeconds;
+
+	FString GetInfo() const
+	{
+		return "";
+	}
 };
 
 
@@ -71,13 +141,21 @@ struct FBuildingData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	FEntityData EntityData;
+	FTeamEntityData TeamEntityData;
 	
 	UPROPERTY(EditDefaultsOnly)
 	FConstructionData ConstructionData;
 
 	UPROPERTY(EditDefaultsOnly)
 	FString Path;
+
+	FString GetInfo() const
+	{
+		FString Info = "";
+		Info += TeamEntityData.GetInfo();
+		Info += ConstructionData.GetInfo();
+		return Info;
+	}
 	
 };
 
@@ -91,7 +169,12 @@ struct FUnitData
 	GENERATED_BODY()
 
 	UPROPERTY(EditDefaultsOnly)
-	FEntityData EntityData;
+	FTeamEntityData TeamEntityData;
+
+	FString GetInfo() const
+	{
+		return TeamEntityData.GetInfo();
+	}
 };
 
 
@@ -107,6 +190,9 @@ struct FStoreManagerConfig
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FUnitData> UnitsData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSourceData> SourcesData;
 	
 };
 

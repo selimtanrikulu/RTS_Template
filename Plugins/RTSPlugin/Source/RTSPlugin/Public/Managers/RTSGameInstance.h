@@ -7,6 +7,8 @@
 #include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class USourceManager;
+class UEntityManager;
 class UPlayerManager;
 class UAsset_Manager;
 class UStoreManager;
@@ -39,6 +41,8 @@ public:
 	UPROPERTY() UStoreManager* StoreManager;
 	UPROPERTY() UAsset_Manager* AssetManager;
 	UPROPERTY() UPlayerManager* PlayerManager;
+	UPROPERTY() UEntityManager* EntityManager;
+	UPROPERTY() USourceManager* SourceManager;
 
 	UPROPERTY() UWorld* World;
 

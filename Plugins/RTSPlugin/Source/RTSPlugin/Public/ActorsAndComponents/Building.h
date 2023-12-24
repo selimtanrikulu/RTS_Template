@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Managers/SelectionManager.h"
 #include "Utility/Util.h"
 #include "Building.generated.h"
 
@@ -11,7 +12,7 @@ class UStoreManager;
 class UAsset_Manager;
 class UTeamEntity;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnBuildingAction);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingAction,ABuilding*, Building);
 
 UENUM(BlueprintType)
 enum class EBuildingState : uint8
@@ -34,6 +35,7 @@ class RTSPLUGIN_API ABuilding : public AActor
 public:	
 	// Sets default values for this actor's properties
 	ABuilding();
+	void Init(const FBuildingData& BuildingData);
 
 protected:
 	// Called when the game starts or when spawned
@@ -44,12 +46,11 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintAssignable) FOnBuildingAction OnBuildingStateChangedDelegate;
+	UPROPERTY(BlueprintAssignable) FOnBuildingAction OnBuildingChangedDelegate;
 	
 	UPROPERTY() UTeamEntity* TeamEntity;
 
-	//Config
-	FBuildingData BuildingData;
+	
 	
 	void SetBuildingState(EBuildingState buildingState);
 	void CacheMaterials();
@@ -57,11 +58,23 @@ public:
 	EBuildingState GetBuildingState() const;
 	float GetProgress() const;
 
+
+	void Progress();
+	void FillProgress();
+
+	FString GetInfo() const;
+	
+	FBuildingData GetBuildingData() const;
+
+
+	
 private:
 
 	//Dependencies
 	UPROPERTY() UAsset_Manager* AssetManager;
 
+	//Config
+	FBuildingData BuildingData;
 
 	//Components
 	UPROPERTY() UStaticMeshComponent* StaticMeshComponent;
@@ -71,16 +84,18 @@ private:
 	UPROPERTY() TArray<UMaterialInterface*> CachedMaterialsConstructed;
 	UPROPERTY() TArray<UMaterialInterface*> CachedMaterialsLevel1;
 	UPROPERTY() TArray<UMaterialInterface*> CachedMaterialsLevel2;
-
+	float Delta_Time;
+	
 	//State
 	EBuildingState BuildingState;
 	float CurrentWorkerEnergySeconds;
-
-
+	
+	
 	//Utility Functions
 	void SetErrorMaterial() const;
 	void SetDraftMaterial() const;
 	void SetConstructionMesh(int Level) const;
 	void SetConstructedMesh();
+	
 	
 };

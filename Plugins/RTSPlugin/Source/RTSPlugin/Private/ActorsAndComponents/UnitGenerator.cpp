@@ -7,7 +7,9 @@
 #include "ActorsAndComponents/TeamEntity.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Kismet/GameplayStatics.h"
+#include "Managers/EntityManager.h"
 #include "Managers/RTSGameInstance.h"
+#include "Managers/SourceManager.h"
 #include "Managers/StoreManager.h"
 
 // Sets default values for this component's properties
@@ -33,7 +35,8 @@ void UUnitGenerator::BeginPlay()
 
 
 	StoreManager = GameInstance->StoreManager;
-	
+	EntityManager = GameInstance->EntityManager;
+	SourceManager = GameInstance->SourceManager;
 
 	OwnerBuilding = Cast<ABuilding>(GetOwner());
 }
@@ -127,10 +130,17 @@ FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent) const
 // Function to spawn a unit at the closest empty location
 void UUnitGenerator::SpawnUnit(const FUnitData& UnitData) const
 {
-	constexpr float UnitExtent = 100;
-	const TSubclassOf<AActor> UnitBP = UnitData.EntityData.BP;
-	const FVector SpawnLocation = FindClosestEmptyLocation(UnitExtent);
+	if(!SourceManager->CheckBalance(UnitData.TeamEntityData))
+	{
+		return;
+	}
+	
+	SourceManager->Buy(UnitData.TeamEntityData);
 
+	
+	constexpr float UnitExtent = 100;
+	const TSubclassOf<AActor> UnitBP = UnitData.TeamEntityData.EntityData.BP;
+	const FVector SpawnLocation = FindClosestEmptyLocation(UnitExtent);
 
 	if(SpawnLocation.Z < -100)
 	{
@@ -138,12 +148,18 @@ void UUnitGenerator::SpawnUnit(const FUnitData& UnitData) const
 		return;
 	}
 	
-	// Spawn your unit at the calculated location
-    AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>
-	(UnitBP, SpawnLocation, FRotator::ZeroRotator);
+	
+	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(
+	UnitBP,
+	SpawnLocation,
+	FRotator::ZeroRotator);
 
-
+	
 	AUnit* SpawnedUnit = Cast<AUnit>(SpawnedActor);
-
-	SpawnedUnit->UnitData = UnitData;
+	if (SpawnedUnit)
+	{
+		SpawnedUnit->Init(UnitData);
+	}
+	EntityManager->AddEntity(SpawnedUnit->TeamEntity);
+	
 }

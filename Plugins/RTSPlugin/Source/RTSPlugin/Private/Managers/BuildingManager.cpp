@@ -3,7 +3,7 @@
 
 #include "Managers/BuildingManager.h"
 
-#include "PlayerManager.h"
+#include "Managers/PlayerManager.h"
 #include "ActorsAndComponents/Building.h"
 #include "Managers/RTSGameInstance.h"
 
@@ -74,9 +74,9 @@ void UBuildingManager::DraftBuilding(const FBuildingData& BuildingData)
 		return;
 	}
 	
-	DraftingBuilding = Cast<ABuilding>(GameInstance->World->SpawnActor(BuildingData.EntityData.BP));
+	DraftingBuilding = Cast<ABuilding>(GameInstance->World->SpawnActor(BuildingData.TeamEntityData.EntityData.BP));
 
-	DraftingBuilding->BuildingData = BuildingData;
+	DraftingBuilding->Init(BuildingData);
 	DraftingBuilding->CacheMaterials();
 	DraftingBuilding->SetBuildingState(EBuildingState::Draft);
 }
