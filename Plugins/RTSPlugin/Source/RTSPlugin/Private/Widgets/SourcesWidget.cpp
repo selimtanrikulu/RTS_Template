@@ -25,13 +25,13 @@ void USourcesWidget::NativeConstruct()
 
 void USourcesWidget::CreateSourceEntries() const
 {
-	TArray<FSourceData> SourcesData = StoreManager->GetSourcesData();
+	TArray<FSourceInfo> SourcesInfo = StoreManager->GetSourcesInfo();
 
-	for(const FSourceData SourceData : SourcesData)
+	for(const FSourceInfo &SourceInfo : SourcesInfo)
 	{
 		//Create selection entry argument
 		USourceEntryArgument* SourceEntryArgument = NewObject<USourceEntryArgument>();
-		SourceEntryArgument->SourceData = SourceData;
+		SourceEntryArgument->SourceInfo = SourceInfo;
 		SourceEntryArgument->Amount = 10;
 		SourceTileView->AddItem(SourceEntryArgument);
 	}

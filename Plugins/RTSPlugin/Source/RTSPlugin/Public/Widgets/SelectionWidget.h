@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "SelectionWidget.generated.h"
 
+class URTSEntity;
 class UTextBlock;
 class UTeamEntity;
 class USelectionManager;
@@ -42,7 +43,7 @@ private:
 	//Selection Manager Listener
 	UFUNCTION() void OnSelectionChanged();
 
-	void CreateSelectionEntries(TArray<UTeamEntity*> &SelectedTeamEntities) const;
+	void CreateSelectionEntries(TArray<URTSEntity*> &SelectedTeamEntities) const;
 
 	void ClearWidget() const;
 	

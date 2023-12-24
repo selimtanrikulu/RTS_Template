@@ -24,15 +24,15 @@ void USourceManager::PostInit()
 {
 	Super::PostInit();
 
-	TArray<FSourceData> SourcesData = StoreManager->GetSourcesData();
-	for(FSourceData &SourceData : SourcesData)
+	TArray<FSourceInfo> SourcesInfo = StoreManager->GetSourcesInfo();
+	for(FSourceInfo &SourceInfo : SourcesInfo)
 	{
 		TPair<FString,FOnSourceAction> SourceDelegatePair;
-		SourceDelegatePair.Key = SourceData.EntityData.Name;
+		SourceDelegatePair.Key = SourceInfo.Name;
 		OnSourceChangeDelegates.Add(SourceDelegatePair);
 		FCostData Source;
-		Source.SourceName = SourceData.EntityData.Name;
-		Source.Amount = SourceData.StartAmount;
+		Source.SourceName = SourceInfo.Name;
+		Source.Amount = SourceInfo.StartAmount;
 		Sources.Add(Source);
 	}
 }
@@ -56,18 +56,26 @@ FOnSourceAction& USourceManager::GetSourceChangeDelegate(const FString& SourceNa
 	return GarbageAction;
 }
 
-int USourceManager::GetSourceAmount(const FString& SourceName)
+
+FCostData& USourceManager::GetSource(const FString& SourceName)
 {
 	for(FCostData &Source : Sources)
 	{
 		if(Source.SourceName == SourceName)
 		{
-			return Source.Amount;
+			return Source;
 		}
 	}
 
 	UE_LOG(LogTemp,Error,TEXT("Source cannot be found"));
-	return 0;
+	return GarbageSource;
+}
+
+
+int USourceManager::GetSourceAmount(const FString& SourceName)
+{
+	const FCostData &Source = GetSource(SourceName);
+	return Source.Amount;
 }
 
 
@@ -75,30 +83,18 @@ int USourceManager::GetSourceAmount(const FString& SourceName)
 void USourceManager::UpdateSource(const FString& SourceName, const int Amount)
 {
 	//Update Source
-	for(FCostData &Source : Sources)
+	FCostData &Source = GetSource(SourceName);
+	Source.Amount += Amount;
+	if(Source.Amount < 0)
 	{
-		if(Source.SourceName == SourceName)
-		{
-			Source.Amount += Amount;
-
-			if(Source.Amount < 0)
-			{
-				UE_LOG(LogTemp,Error,TEXT("Source is less than zero after update"));
-				Source.Amount = 0;
-			}
-
-			break;
-		}
+		UE_LOG(LogTemp,Error,TEXT("Source is less than zero after update"));
+		Source.Amount = 0;
 	}
 	
 	//Broadcast Event
-	for(TPair<FString,FOnSourceAction> &SourceDelegatePair : OnSourceChangeDelegates)
-	{
-		if(SourceDelegatePair.Key == SourceName)
-		{
-			SourceDelegatePair.Value.Broadcast();
-		}
-	}
+	const FOnSourceAction SourceActionDelegate = GetSourceChangeDelegate(SourceName);
+	SourceActionDelegate.Broadcast();
+	
 }
 
 void USourceManager::Buy(const FTeamEntityData& TeamEntityData)
@@ -119,6 +115,10 @@ bool USourceManager::CheckBalance(const FTeamEntityData& TeamEntityData)
 	return true;
 }
 
+void USourceManager::Earn(const FString& SourceName, const int Amount)
+{
+	UpdateSource(SourceName,Amount);
+}
 
 
 bool USourceManager::CheckBalance(const FCostData &CostData)
@@ -128,20 +128,6 @@ bool USourceManager::CheckBalance(const FCostData &CostData)
 
 bool USourceManager::CheckBalance(const FString& SourceName,int Amount)
 {
-	for(FCostData &Source : Sources)
-	{
-		if(Source.SourceName == SourceName)
-		{
-			if(Source.Amount >= Amount)
-			{
-				return true;
-			}
-			//else
-			return false;
-		}
-	}
-
-
-	UE_LOG(LogTemp,Error,TEXT("Source cannot be found to check balance"));
-	return false;
+	const FCostData &Source = GetSource(SourceName);
+	return Source.Amount >= Amount;
 }

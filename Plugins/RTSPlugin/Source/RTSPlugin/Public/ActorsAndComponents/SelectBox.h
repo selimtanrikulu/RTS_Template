@@ -32,6 +32,7 @@ public:
 
 	TArray<ABuilding*> OverlappingBuildings;
 	TArray<AUnit*> OverlappingUnits;
+	TArray<USourceHolder*> OverlappingSourceHolders;
 	
 	UPROPERTY(BlueprintAssignable) FOnOverlapChanged OnOverlapChangedDelegate;
 

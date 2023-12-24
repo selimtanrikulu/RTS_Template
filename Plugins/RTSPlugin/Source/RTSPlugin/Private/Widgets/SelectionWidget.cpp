@@ -32,16 +32,16 @@ void USelectionWidget::OnSelectionChanged()
 {
 	ClearWidget();
 
-	TArray<UTeamEntity*> SelectedTeamEntities = SelectionManager->GetSelectedTeamEntities();
+	TArray<URTSEntity*> SelectedTeamEntities = SelectionManager->GetSelectedRTSEntities();
 	CreateSelectionEntries(SelectedTeamEntities);
 }
 
-void USelectionWidget::CreateSelectionEntries(TArray<UTeamEntity*> &SelectedTeamEntities) const
+void USelectionWidget::CreateSelectionEntries(TArray<URTSEntity*> &SelectedTeamEntities) const
 {
 	if(SelectedTeamEntities.Num() == 1)
 	{
-		const UTeamEntity* TeamEntity = SelectedTeamEntities[0];
-		const float Progress = TeamEntity->GetProgress();
+		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
+		const float Progress = RTSEntity->GetProgress();
 		ProgressBar->SetPercent(Progress);
 		ProgressBar->SetVisibility(ESlateVisibility::Visible);
 	}
@@ -52,28 +52,28 @@ void USelectionWidget::CreateSelectionEntries(TArray<UTeamEntity*> &SelectedTeam
 		SelectionState == ESelectionState::UnitMass ||
 		SelectionState == ESelectionState::UnitMass)
 	{
-		const UTeamEntity* TeamEntity = SelectedTeamEntities[0];
-		const FString Info = TeamEntity->GetInfo();
+		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
+		const FString Info = RTSEntity->GetInfo();
 		InfoText->SetText(FText::FromString(Info));
 		InfoText->SetVisibility(ESlateVisibility::Visible);
 	}
 	
 	while(SelectedTeamEntities.Num() > 0)
 	{
-		const UTeamEntity* TeamEntity = SelectedTeamEntities[0];
+		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
 
 		//Get all entities with id = TeamEntity.ID
-		const int Size = SelectedTeamEntities.FilterByPredicate([&](const UTeamEntity* Element)
-			{ return Element->GetEntityData().EntityID == TeamEntity->GetEntityData().EntityID;}).Num();
+		const int Size = SelectedTeamEntities.FilterByPredicate([&](const URTSEntity* Element)
+			{ return Element->GetEntityData().EntityID == RTSEntity->GetEntityData().EntityID;}).Num();
 
 		//Remove all such elements
-		SelectedTeamEntities.RemoveAll([&](const UTeamEntity* Element)
-			{ return Element->GetEntityData().EntityID == TeamEntity->GetEntityData().EntityID; });
+		SelectedTeamEntities.RemoveAll([&](const URTSEntity* Element)
+			{ return Element->GetEntityData().EntityID == RTSEntity->GetEntityData().EntityID; });
 
 		//Create selection entry argument
 		USelectionEntryArgument* SelectionEntryArgument =
 			NewObject<USelectionEntryArgument>();
-		SelectionEntryArgument->EntityData = TeamEntity->GetEntityData();
+		SelectionEntryArgument->EntityData = RTSEntity->GetEntityData();
 		SelectionEntryArgument->Size = Size;
 		SelectionTileView->AddItem(SelectionEntryArgument);
 	}

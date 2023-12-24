@@ -72,13 +72,40 @@ struct FSourceData
 
 	UPROPERTY(EditDefaultsOnly)
 	FEntityData EntityData;
-
+	
 	UPROPERTY(EditDefaultsOnly)
-	int StartAmount;
+	int HoldAmount;
 	
 	FString GetInfo() const
 	{
 		return EntityData.GetInfo();
+	}
+};
+
+
+USTRUCT(BlueprintType)
+struct FSourceInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	FString Name;
+
+	UPROPERTY(EditDefaultsOnly)
+	int StartAmount;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* SourceImage;
+
+	
+	FString GetInfo() const
+	{
+		FString Info = "";
+		Info += Name;
+		Info += "\n";
+		Info += FString::FormatAsNumber(StartAmount);
+		Info += "\n";
+		return Info;
 	}
 };
 
@@ -193,7 +220,9 @@ struct FStoreManagerConfig
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FSourceData> SourcesData;
-	
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSourceInfo> Sources;
 };
 
 

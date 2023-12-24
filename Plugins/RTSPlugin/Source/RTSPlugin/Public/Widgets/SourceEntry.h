@@ -20,7 +20,7 @@ class RTSPLUGIN_API USourceEntryArgument : public UObject
 public:
 
 	//Entity dependent
-	FSourceData SourceData;
+	FSourceInfo SourceInfo;
 	int Amount;
 };
 

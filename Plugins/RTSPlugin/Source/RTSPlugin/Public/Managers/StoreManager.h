@@ -42,7 +42,7 @@ public:
 	bool EndOfTree() const;
 	TArray<FString> GetCurrentChildren() const;
 	TArray<FBuildingData> GetCurrentBuildings() const;
-	TArray<FSourceData> GetSourcesData() const;
+	TArray<FSourceInfo> GetSourcesInfo() const;
 
 	TArray<FString> GetCurrentPath() const;
 
@@ -71,7 +71,8 @@ private:
 
 	void SetIDs();
 	void FindExistingEntities();
-	void CreateImages();
+	void CreateImagesOrthographic();
+	void CreateImagesPerspective();
 	void CreateStoreTree();
 
 	TArray<FEntityData*> GetEntitiesData();

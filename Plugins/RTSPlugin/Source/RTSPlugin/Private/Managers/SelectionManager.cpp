@@ -9,7 +9,9 @@
 #include "Managers/RTSGameInstance.h"
 #include "Utility/Util.h"
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/SourceHolder.h"
 #include "ActorsAndComponents/TeamEntity.h"
+#include "ActorsAndComponents/NeutralEntity.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Managers/Asset_Manager.h"
 
@@ -109,6 +111,7 @@ void USelectionManager::OnOverlapChanged()
 	UnbindSelections();
 	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
 	SelectedUnits = CurrentSelectBox->OverlappingUnits;
+	SelectedSourceHolders = CurrentSelectBox->OverlappingSourceHolders;
 	BindSelections();
 	
 	UpdateSelectionState();
@@ -143,8 +146,24 @@ void USelectionManager::UpdateCircles()
 		SelectedUnit->TeamEntity->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
-		FColor::White,
+		FColor::Blue,
 		SelectedUnit->TeamEntity->Extent,
+		300,
+		false,
+		-1,
+		0,
+		5
+		);
+	}
+
+	for(const USourceHolder* SourceHolder : SelectedSourceHolders)
+	{
+		DrawCircle(GameInstance->World,
+		SourceHolder->NeutralEntity->MeshComponent->GetComponentLocation(),
+		FVector::RightVector,
+		FVector::ForwardVector,
+		FColor::White,
+		SourceHolder->NeutralEntity->Extent,
 		300,
 		false,
 		-1,
@@ -278,6 +297,7 @@ void USelectionManager::CreateSelectBox()
 	//Load overlaps to select box
 	CurrentSelectBox->OverlappingBuildings = SelectedBuildings;
 	CurrentSelectBox->OverlappingUnits = SelectedUnits;
+	CurrentSelectBox->OverlappingSourceHolders = SelectedSourceHolders;
 	
 	CurrentSelectBox->OnOverlapChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnOverlapChanged);
 }
@@ -299,6 +319,11 @@ TArray<AUnit*> USelectionManager::GetSelectedUnits() const
 	return SelectedUnits;
 }
 
+TArray<USourceHolder*> USelectionManager::GetSelectedSourceHolders() const
+{
+	return SelectedSourceHolders;
+}
+
 TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
 {
 	TArray<UTeamEntity*> SelectedTeamEntities;
@@ -315,20 +340,24 @@ TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
 	return SelectedTeamEntities;
 }
 
-TArray<URTSEntity*> USelectionManager::GetSelectedEntities() const
+TArray<URTSEntity*> USelectionManager::GetSelectedRTSEntities() const
 {
-	TArray<URTSEntity*> SelectedTeamEntities;
+	TArray<URTSEntity*> SelectedRTSEntities;
 
 	for(const ABuilding* Building : SelectedBuildings)
 	{
-		SelectedTeamEntities.Add(Building->TeamEntity);
+		SelectedRTSEntities.Add(Building->TeamEntity);
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
-		SelectedTeamEntities.Add(Unit->TeamEntity);
+		SelectedRTSEntities.Add(Unit->TeamEntity);
+	}
+	for(const USourceHolder* SourceHolder : SelectedSourceHolders)
+	{
+		SelectedRTSEntities.Add(SourceHolder->NeutralEntity);
 	}
 
-	return SelectedTeamEntities;
+	return SelectedRTSEntities;
 }
 
 ESelectionState USelectionManager::GetSelectionState() const

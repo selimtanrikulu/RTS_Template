@@ -9,6 +9,7 @@
 #include "Managers/ManagerBase.h"
 #include "SelectionManager.generated.h"
 
+class USourceHolder;
 class UTeamEntity;
 class UPlayerManager;
 class UAsset_Manager;
@@ -62,8 +63,9 @@ public:
 
 	TArray<ABuilding*> GetSelectedBuildings() const;
 	TArray<AUnit*> GetSelectedUnits() const;
+	TArray<USourceHolder*> GetSelectedSourceHolders() const;
 	TArray<UTeamEntity*> GetSelectedTeamEntities() const;
-	TArray<URTSEntity*> GetSelectedEntities() const;
+	TArray<URTSEntity*> GetSelectedRTSEntities() const;
 
 	ESelectionState GetSelectionState() const;
 	
@@ -103,6 +105,7 @@ private:
 
 	TArray<ABuilding*> SelectedBuildings;
 	TArray<AUnit*> SelectedUnits;
+	TArray<USourceHolder*> SelectedSourceHolders;
 	
 
 	void BindSelections();

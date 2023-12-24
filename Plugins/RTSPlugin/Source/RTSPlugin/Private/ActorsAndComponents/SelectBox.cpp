@@ -4,6 +4,7 @@
 #include "ActorsAndComponents/SelectBox.h"
 
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/SourceHolder.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Managers/PlayerManager.h"
 #include "Managers/RTSGameInstance.h"
@@ -61,11 +62,10 @@ void ASelectBox::UpdateOverlaps()
 {
 	TArray<AActor*> OverlappingActors;
 	GetOverlappingActors(OverlappingActors, UStaticMeshComponent::StaticClass());
-	
 
 	bool ChangedFlag = false;
 
-
+	
 	//Check new
 	for(AActor* OverlappingActor : OverlappingActors)
 	{
@@ -83,6 +83,16 @@ void ASelectBox::UpdateOverlaps()
 			if(!OverlappingUnits.Contains(Unit))
 			{
 				OverlappingUnits.Add(Unit);
+				ChangedFlag = true;
+			}
+		}
+
+		if(USourceHolder* SourceHolder = OverlappingActor->FindComponentByClass<USourceHolder>())
+		{
+			
+			if(!OverlappingSourceHolders.Contains(SourceHolder))
+			{
+				OverlappingSourceHolders.Add(SourceHolder);
 				ChangedFlag = true;
 			}
 		}
@@ -119,12 +129,28 @@ void ASelectBox::UpdateOverlaps()
 		OverlappingUnits.Remove(UnitToRemove);
 	}
 
+	//Check existence (Source Holders)
+	TArray<USourceHolder*> SourceHoldersToRemove;
+	for(USourceHolder* OverlappingSourceHolder : OverlappingSourceHolders)
+	{
+		if(!OverlappingActors.Contains(OverlappingSourceHolder->GetOwner()))
+		{
+			SourceHoldersToRemove.Add(OverlappingSourceHolder);
+			ChangedFlag = true;
+		}
+	}
+	for(USourceHolder* SourceHolderToRemove : SourceHoldersToRemove)
+	{
+		OverlappingSourceHolders.Remove(SourceHolderToRemove);
+	}
+
 
 	
 	if(ChangedFlag)
 	{
 		OnOverlapChangedDelegate.Broadcast();
 	}
+
 }
 
 

@@ -3,26 +3,25 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RTSEntity.h"
 #include "Components/ActorComponent.h"
 #include "Utility/Util.h"
-#include "TeamEntity.generated.h"
+#include "SourceHolder.generated.h"
 
 
-class UEntityManager;
-class UAsset_Manager;
-
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamEntityAction, UTeamEntity*, TeamEntity);
+class UNeutralEntity;
+class USourceManager;
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class RTSPLUGIN_API UTeamEntity : public URTSEntity
+class RTSPLUGIN_API USourceHolder : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UTeamEntity();
+	USourceHolder();
+
+	
+	void Init(const FSourceData &SourceData);
 
 protected:
 	// Called when the game starts
@@ -32,21 +31,27 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	//Events
-	FTeamEntityAction OnTeamEntityGetDamageDelegate;
-
-	//RTS Entity
-	virtual FEntityData GetEntityData() const override;
-	virtual FString GetInfo() const override;
-	virtual float GetProgress() const override;
-
+	//Components
+	UPROPERTY() UNeutralEntity* NeutralEntity;
 	
-	void Init(float CurrentHP);
-	void ApplyDamage(float Damage);
+	FSourceData GetSourceData() const;
+	void Collect();
+
+	float GetProgress() const;
+	
+	FString GetInfo() const;
 
 private:
+
+	//Dependencies
+	UPROPERTY() USourceManager* SourceManager;
+
 	
-	float GetHPRatio() const;
-	float CurrentHP;
+	
+	//Config
+	FSourceData SourceData;
+
+	//State
+	int AmountLeft;
 	
 };

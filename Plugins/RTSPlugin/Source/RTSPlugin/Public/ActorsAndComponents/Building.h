@@ -48,9 +48,8 @@ public:
 
 	UPROPERTY(BlueprintAssignable) FOnBuildingAction OnBuildingChangedDelegate;
 	
+	//Components
 	UPROPERTY() UTeamEntity* TeamEntity;
-
-	
 	
 	void SetBuildingState(EBuildingState buildingState);
 	void CacheMaterials();

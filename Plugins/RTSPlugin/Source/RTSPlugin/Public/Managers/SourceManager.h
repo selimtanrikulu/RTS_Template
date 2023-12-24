@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "ManagerBase.h"
-#include "ActorsAndComponents/TeamEntity.h"
-#include "UObject/NoExportTypes.h"
 #include "Utility/Util.h"
 #include "SourceManager.generated.h"
 
@@ -31,10 +29,9 @@ public:
 
 	FOnSourceAction& GetSourceChangeDelegate(const FString& SourceName);
 	int GetSourceAmount(const FString &SourceName);
-
 	void Buy(const FTeamEntityData& TeamEntityData);
-	
 	bool CheckBalance(const FTeamEntityData& TeamEntityData);
+	void Earn(const FString &SourceName,int Amount);
 	
 private:
 	//Dependencies
@@ -45,9 +42,13 @@ private:
 	
 	TArray<TPair<FString,FOnSourceAction>> OnSourceChangeDelegates;
 	FOnSourceAction GarbageAction;
+	FCostData GarbageSource;
 
 	bool CheckBalance(const FCostData &CostData);
 	bool CheckBalance(const FString &SourceName,int Amount);
 
 	void UpdateSource(const FString& SourceName,int Amount);
+	
+	FCostData& GetSource(const FString &SourceName);
+	
 };
