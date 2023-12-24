@@ -5,7 +5,7 @@
 
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/UnitGenerator.h"
-#include "Components/ProgressBar.h"
+#include "Components/Image.h"
 #include "Components/TileView.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
@@ -21,19 +21,18 @@ void UBuildingWidget::NativeConstruct()
 	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 
-	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
 	
 	SelectionManager = GameInstance->SelectionManager;
 	StoreManager = GameInstance->StoreManager;
 	
 	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&UBuildingWidget::OnSelectionChanged);
+
+	ClearWidget();
 }
 
 void UBuildingWidget::OnSelectionChanged()
 {
-	UnitsTileView->ClearListItems();
-	UnitsTileView->SetVisibility(ESlateVisibility::Hidden);
-	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
+	ClearWidget();
 
 	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
 	const TArray<ABuilding*> SelectedBuildings = SelectionManager->GetSelectedBuildings();
@@ -61,8 +60,6 @@ void UBuildingWidget::OnSelectionChanged()
 			}
 		}
 
-		ProgressBar->SetVisibility(ESlateVisibility::Visible);
-		ProgressBar->SetPercent(SelectedBuilding->GetProgress());
 	}
 
 	
@@ -89,5 +86,13 @@ void UBuildingWidget::CreateUnitEntries(TArray<FUnitData>& UnitsData, UUnitGener
 	}
 
 	UnitsTileView->SetVisibility(ESlateVisibility::Visible);
+	PanelBackground->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UBuildingWidget::ClearWidget() const
+{
+	UnitsTileView->ClearListItems();
+	UnitsTileView->SetVisibility(ESlateVisibility::Hidden);
+	PanelBackground->SetVisibility(ESlateVisibility::Hidden);
 }
 

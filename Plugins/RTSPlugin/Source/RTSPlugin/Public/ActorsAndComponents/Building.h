@@ -12,7 +12,6 @@ class UStoreManager;
 class UAsset_Manager;
 class UTeamEntity;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnBuildingAction,ABuilding*, Building);
 
 UENUM(BlueprintType)
 enum class EBuildingState : uint8
@@ -46,7 +45,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(BlueprintAssignable) FOnBuildingAction OnBuildingChangedDelegate;
+	//Events
+	UPROPERTY(BlueprintAssignable) FEntityAction OnBuildingChangedDelegate;
 	
 	//Components
 	UPROPERTY() UTeamEntity* TeamEntity;
@@ -55,14 +55,8 @@ public:
 	void CacheMaterials();
 	bool Locatable() const;
 	EBuildingState GetBuildingState() const;
-	float GetProgress() const;
-
-
-	void Progress();
-	void FillProgress();
-
+	void Progress(float Amount);
 	FString GetInfo() const;
-	
 	FBuildingData GetBuildingData() const;
 
 
@@ -76,7 +70,7 @@ private:
 	FBuildingData BuildingData;
 
 	//Components
-	UPROPERTY() UStaticMeshComponent* StaticMeshComponent;
+	UPROPERTY(EditDefaultsOnly) UStaticMeshComponent* StaticMeshComponent;
 	
 	//Utility
 	UPROPERTY() UStaticMesh* ConstructedStaticMesh;
@@ -87,8 +81,6 @@ private:
 	
 	//State
 	EBuildingState BuildingState;
-	float CurrentWorkerEnergySeconds;
-	
 	
 	//Utility Functions
 	void SetErrorMaterial() const;

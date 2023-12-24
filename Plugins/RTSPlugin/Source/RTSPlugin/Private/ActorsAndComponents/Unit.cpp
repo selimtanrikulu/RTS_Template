@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "ActorsAndComponents/TeamEntity.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
 #include "Managers/RTSGameInstance.h"
@@ -28,7 +27,7 @@ AUnit::AUnit()
 void AUnit::Init(const FUnitData& unitData)
 {
 	UnitData = unitData;
-	TeamEntity->Init(UnitData.TeamEntityData.HP);
+	TeamEntity->Init(UnitData.TeamEntityData);
 }
 
 // Called when the game starts or when spawned

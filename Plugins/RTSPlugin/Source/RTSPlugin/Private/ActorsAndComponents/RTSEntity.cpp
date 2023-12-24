@@ -2,9 +2,6 @@
 
 
 #include "ActorsAndComponents/RTSEntity.h"
-
-#include "Kismet/GameplayStatics.h"
-#include "Managers/EntityManager.h"
 #include "Managers/RTSGameInstance.h"
 
 // Sets default values for this component's properties
@@ -24,23 +21,13 @@ void URTSEntity::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 
-	EntityManager = GameInstance->EntityManager;
-	
 	MeshComponent = GetOwner()->FindComponentByClass<UMeshComponent>();
 	if(MeshComponent)
 	{
 		BoxExtent = MeshComponent->GetLocalBounds().BoxExtent;
 		Extent = FMath::Sqrt(BoxExtent.X*BoxExtent.X + BoxExtent.Y*BoxExtent.Y);
 	}
-}
-
-void URTSEntity::Kill()
-{
-	OnEntityKilledDelegate.Broadcast(this);
-	EntityManager->KillEntity(this);
 }
 
 

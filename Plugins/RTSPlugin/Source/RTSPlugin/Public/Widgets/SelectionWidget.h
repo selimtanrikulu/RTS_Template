@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "SelectionWidget.generated.h"
 
+class UImage;
 class URTSEntity;
 class UTextBlock;
 class UTeamEntity;
@@ -25,13 +26,16 @@ public:
 
 	virtual void NativeConstruct() override;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Selection Widget")
+	UImage* PanelBackground;
+	
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Selection Widget")
 	UTileView* SelectionTileView;
 
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Selection Widget")
 	UTextBlock* InfoText;
 
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Selection Widget")
 	UProgressBar* ProgressBar;
 	
 private:
@@ -43,7 +47,7 @@ private:
 	//Selection Manager Listener
 	UFUNCTION() void OnSelectionChanged();
 
-	void CreateSelectionEntries(TArray<URTSEntity*> &SelectedTeamEntities) const;
+	void CreateSelectionEntries() const;
 
 	void ClearWidget() const;
 	

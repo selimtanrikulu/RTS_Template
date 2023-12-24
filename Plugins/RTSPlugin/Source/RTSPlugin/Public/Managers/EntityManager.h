@@ -24,13 +24,14 @@ public:
 	virtual void Begin() override;
 	virtual void Tick(float DeltaTime) override;
 	//--------------
-
-
+	
 	void AddEntity(URTSEntity* Entity);
-	void KillEntity(URTSEntity* Entity);
+	
 	
 private:
+	
 	TArray<URTSEntity*> Entities;
 	
-	
+	UFUNCTION() void OnEntityKilled(URTSEntity* Entity);
+
 };

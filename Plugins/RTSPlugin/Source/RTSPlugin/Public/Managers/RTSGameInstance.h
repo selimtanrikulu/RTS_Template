@@ -48,9 +48,24 @@ public:
 
 	
 	//Store Manager Config
-	UPROPERTY(EditDefaultsOnly)
-	FStoreManagerConfig StoreManagerConfig;
+	//UPROPERTY(EditDefaultsOnly)
+	//FStoreManagerConfig StoreManagerConfig;
 
+	//Store Manager Config
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FBuildingData> BuildingsData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FUnitData> UnitsData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSourceData> SourcesData;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<FSourceInfo> Sources;
+	//--------------------------
+
+	
 	//Asset Manager Config
 	UPROPERTY(EditDefaultsOnly)
 	FAssetManagerConfig AssetManagerConfig;

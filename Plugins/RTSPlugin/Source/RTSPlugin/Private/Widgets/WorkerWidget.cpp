@@ -3,6 +3,7 @@
 
 #include "Widgets/WorkerWidget.h"
 #include "ActorsAndComponents/Worker.h"
+#include "Components/Image.h"
 #include "Components/TileView.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/RTSGameInstance.h"
@@ -22,16 +23,21 @@ void UWorkerWidget::NativeConstruct()
 	StoreManager = GameInstance->StoreManager;
 	
 	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&UWorkerWidget::OnSelectionChanged);
+
+	ClearWidget();
 }
 
 void UWorkerWidget::OnSelectionChanged()
 {
+	ClearWidget();
 	UpdateWidget();	
 }
 
 
-void UWorkerWidget::CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const
+void UWorkerWidget::CreateBuildingEntries() const
 {
+	TArray<FBuildingData> BuildingsData = StoreManager->GetCurrentBuildings();
+	
 	for(const FBuildingData &BuildingData : BuildingsData)
 	{
 		UBuildingEntryArgument* BuildingEntryArgument =
@@ -42,19 +48,14 @@ void UWorkerWidget::CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) 
 	}
 
 	BuildingsTileView->SetVisibility(ESlateVisibility::Visible);
+	PanelBackground->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UWorkerWidget::UpdateWidget() const
 {
-	BuildingsTileView->ClearListItems();
-
-	BuildingsTileView->SetVisibility(ESlateVisibility::Hidden);
-
 	const TArray<AUnit*> SelectedUnits = SelectionManager->GetSelectedUnits();
 	const ESelectionState SelectionState = SelectionManager->GetSelectionState();
-
 	
-
 	if(SelectionState == ESelectionState::UnitSingle ||
 		SelectionState == ESelectionState::UnitMass)
 	{
@@ -70,9 +71,7 @@ void UWorkerWidget::UpdateWidget() const
 		if(Worker)
 		{
 			StoreManager->OpenWorkerRoot();
-
-			TArray<FBuildingData> BuildingsData = StoreManager->GetCurrentBuildings();
-			CreateBuildingEntries(BuildingsData);
+			CreateBuildingEntries();
 		}
 		
 	}
@@ -83,4 +82,12 @@ void UWorkerWidget::UpdateWidget() const
 
 	UE_LOG(LogTemp,Display,TEXT("Selection State : %s"),
 		*UEnum::GetValueAsString(SelectionState));
+}
+
+void UWorkerWidget::ClearWidget() const
+{
+	BuildingsTileView->ClearListItems();
+	BuildingsTileView->SetVisibility(ESlateVisibility::Hidden);
+
+	PanelBackground->SetVisibility(ESlateVisibility::Hidden);
 }

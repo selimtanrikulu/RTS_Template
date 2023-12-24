@@ -4,7 +4,9 @@
 #include "Managers/BuildingManager.h"
 
 #include "Managers/PlayerManager.h"
+#include "Managers/EntityManager.h"
 #include "ActorsAndComponents/Building.h"
+#include "ActorsAndComponents/TeamEntity.h"
 #include "Managers/RTSGameInstance.h"
 
 
@@ -13,6 +15,7 @@ void UBuildingManager::Init(URTSGameInstance* gameInstance)
 	Super::Init(gameInstance);
 
 	PlayerManager = GameInstance->PlayerManager;
+	EntityManager = GameInstance->EntityManager;
 }
 
 void UBuildingManager::Begin()
@@ -110,6 +113,7 @@ void UBuildingManager::UpdateDraftingBuildingLocation() const
 void UBuildingManager::LocateBuilding()
 {
 	DraftingBuilding->SetBuildingState(EBuildingState::Construction);
+	EntityManager->AddEntity(DraftingBuilding->TeamEntity);
 	DraftingBuilding = nullptr;
 }
 void UBuildingManager::CancelDraft()

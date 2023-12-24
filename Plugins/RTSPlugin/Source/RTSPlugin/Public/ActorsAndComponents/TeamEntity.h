@@ -13,7 +13,6 @@ class UEntityManager;
 class UAsset_Manager;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamEntityAction, UTeamEntity*, TeamEntity);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API UTeamEntity : public URTSEntity
@@ -23,6 +22,7 @@ class RTSPLUGIN_API UTeamEntity : public URTSEntity
 public:	
 	// Sets default values for this component's properties
 	UTeamEntity();
+	void Init(const FTeamEntityData &teamEntityData);
 
 protected:
 	// Called when the game starts
@@ -33,7 +33,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//Events
-	FTeamEntityAction OnTeamEntityGetDamageDelegate;
+	FEntityAction OnTeamEntityHPChanged;
 
 	//RTS Entity
 	virtual FEntityData GetEntityData() const override;
@@ -41,12 +41,19 @@ public:
 	virtual float GetProgress() const override;
 
 	
-	void Init(float CurrentHP);
-	void ApplyDamage(float Damage);
-
-private:
 	
+	void ApplyDamage(float Damage);
+	void Heal(float Amount);
+	void HealFull();
+	float GetCurrentHP() const;
 	float GetHPRatio() const;
+	
+private:
+
+	//Config
+	FTeamEntityData TeamEntityData;
+
+	//State
 	float CurrentHP;
 	
 };

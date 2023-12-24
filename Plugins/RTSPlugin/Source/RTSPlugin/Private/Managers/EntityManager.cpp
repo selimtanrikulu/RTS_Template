@@ -24,11 +24,13 @@ void UEntityManager::Tick(float DeltaTime)
 void UEntityManager::AddEntity(URTSEntity* Entity)
 {
 	Entities.Add(Entity);
+	Entity->OnEntityKilledDelegate.AddUniqueDynamic(this,&UEntityManager::OnEntityKilled);
 }
 
-void UEntityManager::KillEntity(URTSEntity* Entity)
+void UEntityManager::OnEntityKilled(URTSEntity* Entity)
 {
 	Entities.Remove(Entity);
+	Entity->OnEntityKilledDelegate.RemoveDynamic(this,&UEntityManager::OnEntityKilled);
 	AActor* Owner = Entity->GetOwner();
 	GameInstance->World->DestroyActor(Owner);
 }

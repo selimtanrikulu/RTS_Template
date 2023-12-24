@@ -4,6 +4,7 @@
 #include "Widgets/SelectionWidget.h"
 
 #include "ActorsAndComponents/TeamEntity.h"
+#include "Components/Image.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "Components/TileView.h"
@@ -31,13 +32,18 @@ void USelectionWidget::NativeConstruct()
 void USelectionWidget::OnSelectionChanged()
 {
 	ClearWidget();
-
-	TArray<URTSEntity*> SelectedTeamEntities = SelectionManager->GetSelectedRTSEntities();
-	CreateSelectionEntries(SelectedTeamEntities);
+	CreateSelectionEntries();
 }
 
-void USelectionWidget::CreateSelectionEntries(TArray<URTSEntity*> &SelectedTeamEntities) const
+void USelectionWidget::CreateSelectionEntries() const
 {
+	TArray<URTSEntity*> SelectedTeamEntities = SelectionManager->GetSelectedRTSEntities();
+	
+	if(SelectedTeamEntities.Num() == 0)
+	{
+		return;
+	}
+	
 	if(SelectedTeamEntities.Num() == 1)
 	{
 		const URTSEntity* RTSEntity = SelectedTeamEntities[0];
@@ -79,6 +85,7 @@ void USelectionWidget::CreateSelectionEntries(TArray<URTSEntity*> &SelectedTeamE
 	}
 	
 	SelectionTileView->SetVisibility(ESlateVisibility::Visible);
+	PanelBackground->SetVisibility(ESlateVisibility::Visible);
 }
 
 void USelectionWidget::ClearWidget() const
@@ -90,4 +97,5 @@ void USelectionWidget::ClearWidget() const
 	InfoText->SetVisibility(ESlateVisibility::Hidden);
 	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
 	SelectionTileView->SetVisibility(ESlateVisibility::Hidden);
+	PanelBackground->SetVisibility(ESlateVisibility::Hidden);
 }

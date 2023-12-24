@@ -12,6 +12,7 @@
 #include "ActorsAndComponents/SourceHolder.h"
 #include "ActorsAndComponents/TeamEntity.h"
 #include "ActorsAndComponents/NeutralEntity.h"
+#include "ActorsAndComponents/Source.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Managers/Asset_Manager.h"
 
@@ -111,7 +112,7 @@ void USelectionManager::OnOverlapChanged()
 	UnbindSelections();
 	SelectedBuildings = CurrentSelectBox->OverlappingBuildings;
 	SelectedUnits = CurrentSelectBox->OverlappingUnits;
-	SelectedSourceHolders = CurrentSelectBox->OverlappingSourceHolders;
+	SelectedSources = CurrentSelectBox->OverlappingSources;
 	BindSelections();
 	
 	UpdateSelectionState();
@@ -156,14 +157,14 @@ void USelectionManager::UpdateCircles()
 		);
 	}
 
-	for(const USourceHolder* SourceHolder : SelectedSourceHolders)
+	for(const ASource* Source : SelectedSources)
 	{
 		DrawCircle(GameInstance->World,
-		SourceHolder->NeutralEntity->MeshComponent->GetComponentLocation(),
+		Source->SourceHolder->NeutralEntity->MeshComponent->GetComponentLocation(),
 		FVector::RightVector,
 		FVector::ForwardVector,
 		FColor::White,
-		SourceHolder->NeutralEntity->Extent,
+		Source->SourceHolder->NeutralEntity->Extent,
 		300,
 		false,
 		-1,
@@ -230,10 +231,6 @@ void USelectionManager::UpdateSelectionState()
 	}
 }
 
-void USelectionManager::OnBuildingChanged(ABuilding* Building)
-{
-	OnSelectionChangedDelegate.Broadcast();
-}
 
 void USelectionManager::OnEntityKilled(URTSEntity* Entity)
 {
@@ -244,11 +241,15 @@ void USelectionManager::OnEntityKilled(URTSEntity* Entity)
 	SelectedUnits.RemoveAll([&](const AUnit* Element)
 		{ return Element->TeamEntity == Entity; });
 
+	SelectedSources.RemoveAll([&](const ASource* Element)
+		{ return Element->SourceHolder->NeutralEntity == Entity; });
+
+	
 	UpdateSelectionState();
 	OnSelectionChangedDelegate.Broadcast();
 }
 
-void USelectionManager::OnTeamEntityGetDamage(UTeamEntity* TeamEntity)
+void USelectionManager::OnEntityChanged(URTSEntity* RTSEntity)
 {
 	OnSelectionChangedDelegate.Broadcast();
 }
@@ -257,14 +258,19 @@ void USelectionManager::BindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnBuildingChanged);
+		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
 		Building->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
-		Building->TeamEntity->OnTeamEntityGetDamageDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+		Building->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
 		Unit->TeamEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
-		Unit->TeamEntity->OnTeamEntityGetDamageDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+		Unit->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
+	}
+	for(const ASource* Source : SelectedSources)
+	{
+		Source->SourceHolder->OnEntityChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityChanged);
+		Source->SourceHolder->NeutralEntity->OnEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnEntityKilled);
 	}
 }
 
@@ -272,14 +278,19 @@ void USelectionManager::UnbindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnBuildingChanged);
+		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
 		Building->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
-		Building->TeamEntity->OnTeamEntityGetDamageDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+		Building->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
 		Unit->TeamEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
-		Unit->TeamEntity->OnTeamEntityGetDamageDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityGetDamage);
+		Unit->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
+	}
+	for(const ASource* Source : SelectedSources)
+	{
+		Source->SourceHolder->OnEntityChangedDelegate.RemoveDynamic(this,&USelectionManager::OnEntityChanged);
+		Source->SourceHolder->NeutralEntity->OnEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnEntityKilled);
 	}
 }
 
@@ -297,7 +308,7 @@ void USelectionManager::CreateSelectBox()
 	//Load overlaps to select box
 	CurrentSelectBox->OverlappingBuildings = SelectedBuildings;
 	CurrentSelectBox->OverlappingUnits = SelectedUnits;
-	CurrentSelectBox->OverlappingSourceHolders = SelectedSourceHolders;
+	CurrentSelectBox->OverlappingSources = SelectedSources;
 	
 	CurrentSelectBox->OnOverlapChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnOverlapChanged);
 }
@@ -319,9 +330,9 @@ TArray<AUnit*> USelectionManager::GetSelectedUnits() const
 	return SelectedUnits;
 }
 
-TArray<USourceHolder*> USelectionManager::GetSelectedSourceHolders() const
+TArray<ASource*> USelectionManager::GetSelectedSources() const
 {
-	return SelectedSourceHolders;
+	return SelectedSources;
 }
 
 TArray<UTeamEntity*> USelectionManager::GetSelectedTeamEntities() const
@@ -352,9 +363,9 @@ TArray<URTSEntity*> USelectionManager::GetSelectedRTSEntities() const
 	{
 		SelectedRTSEntities.Add(Unit->TeamEntity);
 	}
-	for(const USourceHolder* SourceHolder : SelectedSourceHolders)
+	for(const ASource* Source : SelectedSources)
 	{
-		SelectedRTSEntities.Add(SourceHolder->NeutralEntity);
+		SelectedRTSEntities.Add(Source->SourceHolder->NeutralEntity);
 	}
 
 	return SelectedRTSEntities;

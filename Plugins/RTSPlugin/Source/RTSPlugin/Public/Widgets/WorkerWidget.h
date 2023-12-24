@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "WorkerWidget.generated.h"
 
+class UImage;
 struct FBuildingData;
 class USelectionManager;
 class UStoreManager;
@@ -21,8 +22,11 @@ class UWorkerWidget : public UUserWidget
 public:
 
 	virtual void NativeConstruct() override;
+
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Worker Widget")
+	UImage* PanelBackground;
 	
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Main Widget")
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Worker Widget")
 	UTileView* BuildingsTileView;
 
 
@@ -35,8 +39,9 @@ private:
 	//Selection Manager Listener
 	UFUNCTION() void OnSelectionChanged();
 
-	void CreateBuildingEntries(TArray<FBuildingData> &BuildingsData) const;
+	void CreateBuildingEntries() const;
 	void UpdateWidget() const;
-	
+
+	void ClearWidget() const;
 	
 };

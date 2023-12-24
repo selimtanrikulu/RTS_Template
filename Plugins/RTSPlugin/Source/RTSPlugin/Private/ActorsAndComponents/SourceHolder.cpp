@@ -18,14 +18,14 @@ USourceHolder::USourceHolder()
 	// ...
 	
 	NeutralEntity = CreateDefaultSubobject<UNeutralEntity>(TEXT("Neutral Entity"));
+//	NeutralEntity->AddToRoot();
 }
 
 void USourceHolder::Init(const FSourceData& sourceData)
 {
 	SourceData = sourceData;
 	AmountLeft = SourceData.HoldAmount;
-
-	//NeutralEntity->Init()
+	NeutralEntity->Init(SourceData.EntityData);
 }
 
 
@@ -47,6 +47,16 @@ void USourceHolder::TickComponent(float DeltaTime, ELevelTick TickType, FActorCo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+
+	if(AmountLeft > 0)
+	{
+		Collect();
+	}
+
+
+	
+
+	
 	// ...
 }
 
@@ -58,7 +68,14 @@ FSourceData USourceHolder::GetSourceData() const
 void USourceHolder::Collect()
 {
 	AmountLeft --;
-	SourceManager->Earn(SourceData.EntityData.Name,1);
+	SourceManager->Earn(SourceData.SourceName,1);
+
+	OnEntityChangedDelegate.Broadcast(NeutralEntity);
+
+	if(AmountLeft <= 0)
+	{
+		NeutralEntity->OnEntityKilledDelegate.Broadcast(NeutralEntity);
+	}
 }
 
 float USourceHolder::GetProgress() const

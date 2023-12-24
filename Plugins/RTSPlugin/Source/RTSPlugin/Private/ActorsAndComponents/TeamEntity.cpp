@@ -16,6 +16,10 @@ UTeamEntity::UTeamEntity()
 	// ...
 }
 
+void UTeamEntity::Init(const FTeamEntityData &teamEntityData)
+{
+	TeamEntityData = teamEntityData;
+}
 
 // Called when the game starts
 void UTeamEntity::BeginPlay()
@@ -37,25 +41,7 @@ void UTeamEntity::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 
 FEntityData UTeamEntity::GetEntityData() const
 {
-	AActor* Owner = GetOwner();
-
-	if(const ABuilding* Building = Cast<ABuilding>(Owner))
-	{
-		return Building->GetBuildingData().TeamEntityData.EntityData;
-	}
-	if(const AUnit* Unit = Cast<AUnit>(Owner))
-	{
-		return Unit->GetUnitData().TeamEntityData.EntityData;
-	}
-
-
-	UE_LOG(LogTemp,Error,TEXT("Entity Data cannot be found"));
-	FEntityData GarbageEntity;
-	GarbageEntity.Name = "Garbage";
-	GarbageEntity.BP = nullptr;
-	GarbageEntity.ImageMaterial = nullptr;
-	GarbageEntity.EntityID = -1;
-	return GarbageEntity;
+	return TeamEntityData.EntityData;
 }
 
 FString UTeamEntity::GetInfo() const
@@ -80,49 +66,44 @@ float UTeamEntity::GetProgress() const
 	return GetHPRatio();
 }
 
-void UTeamEntity::Init(const float currentHP)
-{
-	CurrentHP = currentHP;
-}
+
 
 void UTeamEntity::ApplyDamage(const float Damage)
 {
-	
 	CurrentHP -= Damage;
 	CurrentHP = FMath::Max(CurrentHP,0);
-
-
 	
-	OnTeamEntityGetDamageDelegate.Broadcast(this);
+	OnTeamEntityHPChanged.Broadcast(this);
 	
 	if(CurrentHP <= 0)
 	{
-		Kill();
+		OnEntityKilledDelegate.Broadcast(this);
 	}
+}
+
+void UTeamEntity::Heal(float Amount)
+{
+	CurrentHP += Amount;
+	CurrentHP = FMath::Min(CurrentHP,TeamEntityData.HP);
+	
+	OnTeamEntityHPChanged.Broadcast(this);
+}
+
+void UTeamEntity::HealFull()
+{
+    CurrentHP = TeamEntityData.HP;
+    OnTeamEntityHPChanged.Broadcast(this);
+}
+
+float UTeamEntity::GetCurrentHP() const
+{
+	return CurrentHP;
 }
 
 
 float UTeamEntity::GetHPRatio() const
 {
-	float TotalHP;
-	
-	AActor* Owner = GetOwner();
-
-	if(const ABuilding* Building = Cast<ABuilding>(Owner))
-	{
-		TotalHP = Building->GetBuildingData().TeamEntityData.HP;
-	}
-	else if(const AUnit* Unit = Cast<AUnit>(Owner))
-	{
-		TotalHP = Unit->GetUnitData().TeamEntityData.HP;
-	}
-	else
-	{
-		UE_LOG(LogTemp,Error,TEXT("HP ratio cannot be found"));
-		return 0;
-	}
-	
-	return CurrentHP / TotalHP;
+	return CurrentHP / TeamEntityData.HP;
 }
 
 

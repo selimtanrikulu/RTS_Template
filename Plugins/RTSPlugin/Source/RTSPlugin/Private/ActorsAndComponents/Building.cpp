@@ -15,13 +15,16 @@ ABuilding::ABuilding()
 	PrimaryActorTick.bCanEverTick = true;
 
 	TeamEntity = CreateDefaultSubobject<UTeamEntity>(TEXT("Team Entity"));
+	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>("StaticMeshComponent");
+
+	SetRootComponent(StaticMeshComponent);
 }
 
 
 void ABuilding::Init(const FBuildingData& buildingData)
 {
 	BuildingData = buildingData;
-	TeamEntity->Init(BuildingData.TeamEntityData.HP);
+	TeamEntity->Init(BuildingData.TeamEntityData);
 }
 
 // Called when the game starts or when spawned
@@ -31,7 +34,6 @@ void ABuilding::BeginPlay()
 	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 	AssetManager = GameInstance->AssetManager;
-	StaticMeshComponent = FindComponentByClass<UStaticMeshComponent>();
 }
 
 
@@ -44,7 +46,8 @@ void ABuilding::Tick(float DeltaTime)
 
 	if(BuildingState == EBuildingState::Construction)
 	{
-		Progress();
+		//30 is the construction speed of a worker per second
+		Progress(Delta_Time*30);
 	}
 
 }
@@ -82,7 +85,7 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 		case EBuildingState::Located:
 			SetConstructedMesh();
 			StaticMeshComponent->SetCollisionProfileName(TEXT("BlockAll"));
-			
+			TeamEntity->HealFull();
 			break;
 
 		default:
@@ -91,7 +94,7 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 	}
 
 
-	OnBuildingChangedDelegate.Broadcast(this);
+	OnBuildingChangedDelegate.Broadcast(TeamEntity);
 	
 }
 
@@ -100,14 +103,9 @@ EBuildingState ABuilding::GetBuildingState() const
 	return BuildingState;
 }
 
-float ABuilding::GetProgress() const
+void ABuilding::Progress(float Amount)
 {
-	return CurrentWorkerEnergySeconds / BuildingData.ConstructionData.TotalWorkerEnergySeconds;
-}
-
-void ABuilding::Progress()
-{
-	const float BeforeProgress = GetProgress();
+	const float BeforeProgress = TeamEntity->GetHPRatio();
 	
 	if(BeforeProgress >= 1 || BuildingState != EBuildingState::Construction)
 	{
@@ -115,18 +113,17 @@ void ABuilding::Progress()
 		return;
 	}
 	
-	CurrentWorkerEnergySeconds += Delta_Time;
-
+	TeamEntity->Heal(Amount);
 	
-	const float AfterProgress = GetProgress();
+	const float AfterProgress = TeamEntity->GetHPRatio();
 	if(AfterProgress>=0.5f && BeforeProgress <0.5f)
 	{
 		SetConstructionMesh(2);
 	}
 	
-	OnBuildingChangedDelegate.Broadcast(this);
+	OnBuildingChangedDelegate.Broadcast(TeamEntity);
 
-	if(GetProgress() >= 1)
+	if(TeamEntity->GetHPRatio() >= 1)
 	{
 		SetBuildingState(EBuildingState::Located);
 	}
@@ -192,11 +189,6 @@ void ABuilding::SetConstructedMesh()
 	StaticMeshComponent->SetStaticMesh(ConstructedStaticMesh);
 }
 
-void ABuilding::FillProgress()
-{
-	CurrentWorkerEnergySeconds = BuildingData.ConstructionData.TotalWorkerEnergySeconds;
-	SetBuildingState(EBuildingState::Located);
-}
 
 FString ABuilding::GetInfo() const
 {
@@ -213,6 +205,7 @@ FBuildingData ABuilding::GetBuildingData() const
 
 void ABuilding::CacheMaterials()
 {
+	
 	for(int i=0;i<StaticMeshComponent->GetMaterials().Num();i++)
 	{
 		CachedMaterialsConstructed.Add(StaticMeshComponent->GetMaterial(i));

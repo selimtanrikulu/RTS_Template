@@ -7,6 +7,7 @@
 #include "..\Managers\SelectionManager.h"
 #include "SelectBox.generated.h"
 
+class ASource;
 class ABuilding;
 class ARTSPawn;
 
@@ -32,7 +33,7 @@ public:
 
 	TArray<ABuilding*> OverlappingBuildings;
 	TArray<AUnit*> OverlappingUnits;
-	TArray<USourceHolder*> OverlappingSourceHolders;
+	TArray<ASource*> OverlappingSources;
 	
 	UPROPERTY(BlueprintAssignable) FOnOverlapChanged OnOverlapChangedDelegate;
 

@@ -10,6 +10,7 @@
 class UEntityManager;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FEntityAction, URTSEntity*, Entity);
 
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API URTSEntity : public UActorComponent
 {
@@ -22,9 +23,7 @@ public:
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
-
-
-	void Kill();
+	
 
 public:	
 	// Called every frame
@@ -37,11 +36,12 @@ public:
 
 	FVector BoxExtent;
 	float Extent;
+
+	
 	virtual FEntityData GetEntityData() const;
 	virtual FString GetInfo() const;
 	virtual float GetProgress() const;
 
 private:
-	//Dependencies
-	UPROPERTY() UEntityManager* EntityManager;
+
 };

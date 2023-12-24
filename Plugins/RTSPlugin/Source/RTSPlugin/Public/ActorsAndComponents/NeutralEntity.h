@@ -17,6 +17,7 @@ class RTSPLUGIN_API UNeutralEntity : public URTSEntity
 public:	
 	// Sets default values for this component's properties
 	UNeutralEntity();
+	void Init(const FEntityData &entityData);
 	
 protected:
 	// Called when the game starts
@@ -26,6 +27,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+	
+	
 	//RTS Entity
 	virtual FEntityData GetEntityData() const override;
 	virtual FString GetInfo() const override;
@@ -34,4 +38,7 @@ public:
 
 private:
 
+	//Config
+	FEntityData EntityData;
+	
 };

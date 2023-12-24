@@ -72,6 +72,9 @@ struct FSourceData
 
 	UPROPERTY(EditDefaultsOnly)
 	FEntityData EntityData;
+
+	UPROPERTY(EditDefaultsOnly)
+	FString SourceName;
 	
 	UPROPERTY(EditDefaultsOnly)
 	int HoldAmount;
@@ -150,9 +153,6 @@ struct FConstructionData
 
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMesh* Level2;
-	
-	UPROPERTY(EditDefaultsOnly)
-	float TotalWorkerEnergySeconds;
 
 	FString GetInfo() const
 	{
@@ -205,25 +205,14 @@ struct FUnitData
 };
 
 
-
+/*
 USTRUCT(BlueprintType)
 struct FStoreManagerConfig
 {
 	GENERATED_BODY()
 	
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FBuildingData> BuildingsData;
-
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FUnitData> UnitsData;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FSourceData> SourcesData;
-
-	UPROPERTY(EditDefaultsOnly)
-	TArray<FSourceInfo> Sources;
-};
+	
+};*/
 
 
 USTRUCT(BlueprintType)

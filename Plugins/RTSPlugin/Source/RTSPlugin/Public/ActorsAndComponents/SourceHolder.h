@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RTSEntity.h"
 #include "Components/ActorComponent.h"
 #include "Utility/Util.h"
 #include "SourceHolder.generated.h"
 
 
+class UEntityManager;
 class UNeutralEntity;
 class USourceManager;
 
@@ -34,19 +36,19 @@ public:
 	//Components
 	UPROPERTY() UNeutralEntity* NeutralEntity;
 	
+	//Events
+	FEntityAction OnEntityChangedDelegate;
+	
+	
 	FSourceData GetSourceData() const;
 	void Collect();
-
 	float GetProgress() const;
-	
 	FString GetInfo() const;
 
 private:
 
 	//Dependencies
 	UPROPERTY() USourceManager* SourceManager;
-
-	
 	
 	//Config
 	FSourceData SourceData;

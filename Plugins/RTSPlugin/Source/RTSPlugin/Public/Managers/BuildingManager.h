@@ -7,6 +7,7 @@
 #include "Utility/Util.h"
 #include "BuildingManager.generated.h"
 
+class UEntityManager;
 class UPlayerManager;
 class ABuilding;
 class ARTSPawn;
@@ -37,6 +38,7 @@ public:
 private:
 	//Dependencies
 	UPROPERTY() UPlayerManager* PlayerManager;
+	UPROPERTY() UEntityManager* EntityManager;
 
 
 	//Input listeners

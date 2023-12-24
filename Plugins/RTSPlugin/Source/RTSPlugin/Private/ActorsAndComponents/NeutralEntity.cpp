@@ -9,6 +9,11 @@ UNeutralEntity::UNeutralEntity()
 {
 }
 
+void UNeutralEntity::Init(const FEntityData &entityData)
+{
+	EntityData = entityData;
+}
+
 void UNeutralEntity::BeginPlay()
 {
 	Super::BeginPlay();
@@ -21,20 +26,7 @@ void UNeutralEntity::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 
 FEntityData UNeutralEntity::GetEntityData() const
 {
-	const AActor* Owner = GetOwner();
-
-	if(const USourceHolder* SourceHolder = Owner->FindComponentByClass<USourceHolder>())
-	{
-		return SourceHolder->GetSourceData().EntityData;
-	}
-
-	UE_LOG(LogTemp,Error,TEXT("Entity Data cannot be found"));
-	FEntityData GarbageEntity;
-	GarbageEntity.Name = "Garbage";
-	GarbageEntity.BP = nullptr;
-	GarbageEntity.ImageMaterial = nullptr;
-	GarbageEntity.EntityID = -1;
-	return GarbageEntity;
+	return EntityData;
 }
 
 FString UNeutralEntity::GetInfo() const

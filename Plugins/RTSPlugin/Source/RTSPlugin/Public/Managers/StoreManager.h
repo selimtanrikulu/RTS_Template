@@ -8,6 +8,7 @@
 #include "Managers/ManagerBase.h"
 #include "StoreManager.generated.h"
 
+class UEntityManager;
 class UAsset_Manager;
 class UBuildingManager;
 
@@ -50,17 +51,16 @@ public:
 	void CancelDraftingObject();
 
 
-	FBuildingData* GetBuildingByName(const FString& BuildingName);
-	FUnitData *GetUnitByName(const FString& UnitName);
+	FBuildingData* GetBuildingByName(const FString& BuildingName) const;
+	FUnitData *GetUnitByName(const FString& UnitName) const;
 
 private:
 
-	UPROPERTY() FStoreManagerConfig StoreManagerConfig;
-	
 	
 	//Dependencies
 	UPROPERTY() UBuildingManager* BuildingManager;
 	UPROPERTY() UAsset_Manager* AssetManager;
+	UPROPERTY() UEntityManager* EntityManager;
 	
 
 	//Utility
@@ -69,13 +69,13 @@ private:
 	FBuildingData* DraftingBuilding;
 
 
-	void SetIDs();
-	void FindExistingEntities();
-	void CreateImagesOrthographic();
+	void SetIDs() const;
+	void FindExistingEntities() const;
 	void CreateImagesPerspective();
+	void CreateImagesOrthographic();
 	void CreateStoreTree();
 
-	TArray<FEntityData*> GetEntitiesData();
+	TArray<FEntityData*> GetEntitiesData() const;
 	
 
 	
