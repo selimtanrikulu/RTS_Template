@@ -3,21 +3,23 @@
 
 #include "Managers/RTSHUD.h"
 #include "Blueprint/UserWidget.h"
+#include "Managers/RTSGameInstance.h"
 #include "UObject/ConstructorHelpers.h"
 
 ARTSHUD::ARTSHUD()
 {
-	static ConstructorHelpers::FClassFinder<UUserWidget> WidgetAsset(TEXT("/RTSPlugin/Blueprints/Widget/WBP_Main") );
-	if(WidgetAsset.Succeeded())
+	static ConstructorHelpers::FClassFinder<UUserWidget> MainWidgetAsset(TEXT("/RTSPlugin/Blueprints/Widget/WBP_Main") );
+	if(MainWidgetAsset.Succeeded())
 	{
-		MainWidgetBP = WidgetAsset.Class;
+		MainWidgetBP = MainWidgetAsset.Class;
 	}
 }
 
 void ARTSHUD::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	GameInstance = Cast<URTSGameInstance>(GetGameInstance());
 }
 
 

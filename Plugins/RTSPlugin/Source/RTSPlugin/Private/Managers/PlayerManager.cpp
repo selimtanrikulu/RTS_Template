@@ -39,12 +39,20 @@ FHitResult UPlayerManager::LookForFloor() const
 	{
 		return RTSPawn->LookForFloor();
 	}
-	else
+
+	UE_LOG(LogTemp, Error, TEXT("Pawn is not set for look for floor"));
+	FHitResult Empty;
+	return Empty;
+}
+
+URTSEntity* UPlayerManager::LookForRTSEntity() const
+{
+	if(RTSPawn)
 	{
-		UE_LOG(LogTemp,Error,TEXT("Pawn is not set for look for floor"));
-		FHitResult Empty;
-		return Empty;
+		return RTSPawn->LookForRTSEntity();
 	}
+
+	return nullptr;
 }
 
 void UPlayerManager::OnMouseLeftClicked()

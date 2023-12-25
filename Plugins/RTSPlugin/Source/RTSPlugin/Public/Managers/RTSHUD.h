@@ -8,6 +8,8 @@
 #include "RTSHUD.generated.h"
 
 
+class URTSGameInstance;
+
 UENUM(BlueprintType)
 enum class EWidgetType : uint8
 {
@@ -34,9 +36,19 @@ public:
 	void SetWidget(EWidgetType WidgetType);
 	
 private:
+
+	//Dependencies
+	UPROPERTY() URTSGameInstance* GameInstance;
 	
 	TSubclassOf<UUserWidget> MainWidgetBP;
 
+
+	
+
+
+
+	
+	
 
 	UUserWidget* CurrentWidget;
 	

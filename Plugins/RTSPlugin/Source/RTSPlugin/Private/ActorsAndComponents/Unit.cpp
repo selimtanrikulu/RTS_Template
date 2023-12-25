@@ -40,8 +40,6 @@ void AUnit::BeginPlay()
 	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 
 	AssetManager = GameInstance->AssetManager;
-
-
 	
 	AIControllerClass = AssetManager->GetAIControllerBP();
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(AIControllerClass,FVector(),FRotator());
@@ -56,17 +54,20 @@ void AUnit::Tick(float DeltaTime)
 	
 }
 
-void AUnit::SetTargetLocation(FVector TargetLocation)
+void AUnit::SetTargetRTSEntity(const URTSEntity* Entity)
 {
-
+	const FVector TargetLocation = Entity->GetOwner()->GetActorLocation();
 	AAIController* AIController = Cast<AAIController>(GetController());
 	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
-
 	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
 }
 
-
-
+void AUnit::SetTargetLocation(const FVector& TargetLocation)
+{
+	AAIController* AIController = Cast<AAIController>(GetController());
+	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
+	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
+}
 
 FUnitData AUnit::GetUnitData() const
 {

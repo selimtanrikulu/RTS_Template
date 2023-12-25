@@ -51,8 +51,12 @@ void ASelectBox::UpdateLocationAndScale()
 	const FHitResult Hit = PlayerManager->LookForFloor();
     const FVector HitLocation = Hit.Location;
     FVector DeltaLocation = HitLocation-StartLocation;
-    
-    FVector Scale(FMath::Abs(DeltaLocation.X)/100,FMath::Abs(DeltaLocation.Y)/100,0.1f);
+
+	constexpr float MinScale = 0.0f;
+	float ScaleX = FMath::Max(FMath::Abs(DeltaLocation.X)/100,MinScale);
+	float ScaleY = FMath::Max(FMath::Abs(DeltaLocation.Y)/100,MinScale);
+	
+    FVector Scale(ScaleX,ScaleY,0.1f);
     SetActorScale3D(Scale);
 
     FVector NewLocation = StartLocation + (DeltaLocation/2);

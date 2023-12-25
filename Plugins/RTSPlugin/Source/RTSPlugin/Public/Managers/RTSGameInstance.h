@@ -7,6 +7,9 @@
 #include "Utility/Util.h"
 #include "RTSGameInstance.generated.h"
 
+class UUnitManager;
+class UCursorManager;
+class UGameManager;
 class USourceManager;
 class UEntityManager;
 class UPlayerManager;
@@ -43,9 +46,11 @@ public:
 	UPROPERTY() UPlayerManager* PlayerManager;
 	UPROPERTY() UEntityManager* EntityManager;
 	UPROPERTY() USourceManager* SourceManager;
-
+	UPROPERTY() UGameManager* GameManager;
+	UPROPERTY() UCursorManager* CursorManager;
+	UPROPERTY() UUnitManager* UnitManager;
+	
 	UPROPERTY() UWorld* World;
-
 	
 	//Store Manager Config
 	//UPROPERTY(EditDefaultsOnly)
@@ -63,6 +68,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<FSourceInfo> Sources;
+
+	UPROPERTY(EditDefaultsOnly)
+	FMouseCursorData MouseCursors;
 	//--------------------------
 
 	

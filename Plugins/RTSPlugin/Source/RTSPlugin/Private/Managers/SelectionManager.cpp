@@ -33,11 +33,9 @@ void USelectionManager::Init(URTSGameInstance* gameInstance)
     AssetManager = GameInstance->AssetManager;
 	PlayerManager = GameInstance->PlayerManager;
     //
-
 	
 	PlayerManager->OnMouseLeftClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftClicked);
 	PlayerManager->OnMouseLeftReleasedDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseLeftReleased);
-	PlayerManager->OnMouseRightClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnMouseRightClicked);
 	PlayerManager->OnDeleteClickDelegate.AddUniqueDynamic(this,&USelectionManager::OnDeleteClicked);
 }
 void USelectionManager::Begin()
@@ -63,22 +61,12 @@ void USelectionManager::OnMouseLeftReleased()
 {
 	if(!CurrentSelectBox)
 	{
-		LogManager->EditorLog
-		(FText::FromString(TEXT("Select box does not exist")),ELogVerbosity::Warning);
 		return;
 	}
 		
 	DestroySelectBox();
 }
-void USelectionManager::OnMouseRightClicked()
-{
-	const FHitResult Hit = PlayerManager->LookForFloor();
-	
-	for(AUnit* SelectedUnit : SelectedUnits)
-	{
-		SelectedUnit->SetTargetLocation(Hit.Location);
-	}
-}
+
 void USelectionManager::OnDeleteClicked()
 {
 	for(ABuilding* Building : SelectedBuildings)
@@ -105,7 +93,6 @@ void USelectionManager::OnOverlapChanged()
 	SelectedUnits = CurrentSelectBox->OverlappingUnits;
 	SelectedSources = CurrentSelectBox->OverlappingSources;
 	BindSelections();
-	
 	UpdateSelectionState();
 	
 	//Fire main delegate
@@ -349,13 +336,50 @@ void USelectionManager::UnbindSelections()
 }
 void USelectionManager::CreateSelectBox()
 {
-	const FHitResult Hit = PlayerManager->LookForFloor();
+	//Preselect entity under cursor (if not selected already)
+	if(const URTSEntity* Entity = PlayerManager->LookForRTSEntity())
+	{
+		UnbindSelections();
+		SelectedSources.Empty();
+		SelectedUnits.Empty();
+		SelectedBuildings.Empty();
+		if(ABuilding* Building = Cast<ABuilding>(Entity->GetOwner()))
+		{
+			if(!SelectedBuildings.Contains(Building))
+			{
+				SelectedBuildings.Add(Building);
+				
+			}
+		}
+		if(AUnit* Unit = Cast<AUnit>(Entity->GetOwner()))
+		{
+			if(!SelectedUnits.Contains(Unit))
+			{
+				SelectedUnits.Add(Unit);
+			}
+		}
+		if(ASource* Source = Cast<ASource>(Entity->GetOwner()))
+		{
+			if(!SelectedSources.Contains(Source))
+			{
+				SelectedSources.Add(Source);
+			}
+		}
 
+		BindSelections();
+		UpdateSelectionState();
+		OnSelectionChangedDelegate.Broadcast();
+		return;
+	}
+	//---------------------------------------------------------------
+
+
+	const FHitResult Hit = PlayerManager->LookForFloor();
 	const FVector Location = Hit.Location;
 	const FRotator Rotation(0);
-	
 	AActor* SpawnedActor = GameInstance->World->SpawnActor<AActor>(AssetManager->GetSelectBoxBP(),Location,Rotation);
 	CurrentSelectBox = Cast<ASelectBox>(SpawnedActor);
+
 	
 	//Load overlaps to select box
 	CurrentSelectBox->OverlappingBuildings = SelectedBuildings;

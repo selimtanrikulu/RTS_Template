@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Utility/Util.h"
 #include "SourceHolder.generated.h"
 
 
@@ -43,6 +42,7 @@ public:
 	void Collect();
 	float GetProgress() const;
 	FString GetInfo() const;
+
 	
 private:
 

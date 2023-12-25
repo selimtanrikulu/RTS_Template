@@ -7,6 +7,7 @@
 #include "UObject/NoExportTypes.h"
 #include "PlayerManager.generated.h"
 
+class URTSEntity;
 class ARTSPawn;
 
 
@@ -45,6 +46,7 @@ public:
 
 	//Pawn Functions
 	FHitResult LookForFloor() const;
+	URTSEntity* LookForRTSEntity() const;
 
 private:
 

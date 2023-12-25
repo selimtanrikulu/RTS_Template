@@ -86,7 +86,6 @@ private:
 	//Input listeners
 	UFUNCTION() void OnMouseLeftClicked();
 	UFUNCTION() void OnMouseLeftReleased();
-	UFUNCTION() void OnMouseRightClicked();
 	UFUNCTION() void OnDeleteClicked();
 
 	//Select Box Listeners

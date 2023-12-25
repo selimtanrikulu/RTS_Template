@@ -3,6 +3,7 @@
 
 #include "RTSPlugin/Public/Managers/RTSPawn.h"
 
+#include "ActorsAndComponents/RTSEntity.h"
 #include "Managers/PlayerManager.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -146,4 +147,14 @@ FHitResult ARTSPawn::LookForFloor() const
 	FHitResult Hit;
 	PlayerController->GetHitResultUnderCursor(ECC_GameTraceChannel1,false,Hit);
 	return Hit;
+}
+
+URTSEntity* ARTSPawn::LookForRTSEntity() const
+{
+	FHitResult Hit;
+	PlayerController->GetHitResultUnderCursor(ECC_WorldDynamic,false,Hit);
+
+	const AActor* HitActor = Hit.GetActor();
+	if(!HitActor) return nullptr;
+	return HitActor->FindComponentByClass<URTSEntity>(); 
 }

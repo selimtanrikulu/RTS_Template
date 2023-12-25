@@ -5,8 +5,6 @@
 #include "CoreMinimal.h"
 #include "TeamEntity.h"
 #include "GameFramework/Actor.h"
-#include "Managers/SelectionManager.h"
-#include "Utility/Util.h"
 #include "Building.generated.h"
 
 class UStoreManager;

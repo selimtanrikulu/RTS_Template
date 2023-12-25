@@ -7,6 +7,7 @@
 #include "RTSPawn.generated.h"
 
 
+class URTSEntity;
 class UBuildingManager;
 class USpringArmComponent;
 class ULogManager;
@@ -46,6 +47,7 @@ public:
 	
 	//LineTraces
 	FHitResult LookForFloor() const;
+	URTSEntity* LookForRTSEntity() const;
 
 	
 

@@ -7,6 +7,8 @@
 #include "Utility/Util.h"
 #include "Unit.generated.h"
 
+class URTSEntity;
+class UPlayerManager;
 class UTeamEntity;
 class UAsset_Manager;
 
@@ -30,10 +32,14 @@ public:
 
 	//Components
 	UPROPERTY() UTeamEntity* TeamEntity;
-	
-	void SetTargetLocation(FVector TargetLocation);
+
+
+	virtual void SetTargetRTSEntity(const URTSEntity* Entity);
+	virtual void SetTargetLocation(const FVector& TargetLocation);
+
 	FUnitData GetUnitData() const;
 
+	
 private:
 
 	//Dependencies

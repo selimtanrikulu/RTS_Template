@@ -11,8 +11,11 @@
 #include "Managers/RTSHud.h"
 #include "Managers/StoreManager.h"
 #include "..\..\Public\Managers\SelectionManager.h"
+#include "Managers/CursorManager.h"
 #include "Managers/EntityManager.h"
+#include "Managers/GameManager.h"
 #include "Managers/SourceManager.h"
+#include "Managers/UnitManager.h"
 
 void URTSGameInstance::Init()
 {
@@ -26,7 +29,9 @@ void URTSGameInstance::Init()
 	PlayerManager = NewObject<UPlayerManager>();
 	EntityManager = NewObject<UEntityManager>();
 	SourceManager = NewObject<USourceManager>();
-
+	GameManager = NewObject<UGameManager>();
+	CursorManager = NewObject<UCursorManager>();
+	UnitManager = NewObject<UUnitManager>();
 	
 	Managers.Add(LogManager);
 	Managers.Add(SelectionManager);
@@ -36,6 +41,9 @@ void URTSGameInstance::Init()
 	Managers.Add(PlayerManager);
 	Managers.Add(EntityManager);
 	Managers.Add(SourceManager);
+	Managers.Add(GameManager);
+	Managers.Add(CursorManager);
+	Managers.Add(UnitManager);
 
 	for(UManagerBase* ManagerBase : Managers)
 	{

@@ -10,6 +10,23 @@
 class AUnit;
 class ABuilding;
 
+
+USTRUCT(BlueprintType)
+struct FMouseCursorData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* DefaultCursorImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* HighlightCursorImage;
+
+	UPROPERTY(EditDefaultsOnly)
+	UTexture2D* AttackCursorImage;
+	
+};
+
 USTRUCT(BlueprintType)
 struct FCostData
 {
