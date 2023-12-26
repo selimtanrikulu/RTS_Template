@@ -51,7 +51,9 @@ void AUnit::BeginPlay()
 void AUnit::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
+
+	UpdateUnitAnimation();
 }
 
 void AUnit::SetTargetRTSEntity(const URTSEntity* Entity)
@@ -72,6 +74,11 @@ void AUnit::SetTargetLocation(const FVector& TargetLocation)
 FUnitData AUnit::GetUnitData() const
 {
 	return UnitData;
+}
+
+void AUnit::UpdateUnitAnimation()
+{
+	UnitAnimationState = EUnitAnimationState::Idle;	
 }
 
 

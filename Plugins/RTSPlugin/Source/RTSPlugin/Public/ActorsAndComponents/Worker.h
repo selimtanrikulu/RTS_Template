@@ -10,6 +10,9 @@ class USourceHolder;
 /**
  * 
  */
+
+
+
 UCLASS()
 class RTSPLUGIN_API AWorker : public AUnit
 {
@@ -25,21 +28,39 @@ public:
 	virtual void SetTargetRTSEntity(const URTSEntity* Entity) override;
 	virtual void SetTargetLocation(const FVector& TargetLocation) override;
 	//---------------
+
+
+	
+	
 	
 private:
 
 	//Config
-	float CollectRange = 100;
+	float WorkerRange = 100;
 
-	//State
+	//Collect & Construct
 	UPROPERTY() USourceHolder* CollectingSource;
+	UPROPERTY() ABuilding* ConstructingBuilding;
+
+	//Worker Animation State
+	virtual void UpdateUnitAnimation() override;
 
 	//Event Listeners
+	//Source Holder
 	UFUNCTION() void OnCollectingSourceFinished(USourceHolder* SourceHolder);
 	void BindSource(USourceHolder* SourceHolder);
 	void UnbindSource();
 
+	//Building
+	UFUNCTION() void OnBuildingChanged(UTeamEntity* teamEntity2);
+	UFUNCTION() void OnBuildingKilled(UTeamEntity* teamEntity2);
+	void BindBuilding(ABuilding* Building);
+	void UnbindBuilding();
+	
 	//Utility
-	bool IsCollectingSourceInRange() const;
+	bool IsInRange(const URTSEntity* Entity) const;
+	bool IsCollectingSource() const;
+	bool IsConstructingBuilding() const;
+
 	
 };

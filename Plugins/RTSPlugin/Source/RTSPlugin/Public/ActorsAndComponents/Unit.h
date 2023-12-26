@@ -12,6 +12,18 @@ class UPlayerManager;
 class UTeamEntity;
 class UAsset_Manager;
 
+UENUM(BlueprintType)
+enum class EUnitAnimationState : uint8
+{
+	Idle,
+	Run,
+	Attack,
+
+	//Worker specific
+	Collect,
+	Construct,
+};
+
 UCLASS()
 class RTSPLUGIN_API AUnit : public ACharacter
 {
@@ -39,6 +51,11 @@ public:
 
 	FUnitData GetUnitData() const;
 
+protected:
+	//Worker Animation State
+	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess))
+	EUnitAnimationState UnitAnimationState;
+	virtual void UpdateUnitAnimation();
 	
 private:
 

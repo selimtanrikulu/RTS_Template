@@ -43,13 +43,6 @@ void ABuilding::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	Delta_Time = DeltaTime;
-
-	if(BuildingState == EBuildingState::Construction)
-	{
-		//30 is the construction speed of a worker per second
-		Progress(Delta_Time*30);
-	}
-
 }
 
 
