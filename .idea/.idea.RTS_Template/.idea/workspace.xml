@@ -9,16 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="11dfa442-1f59-4ef9-9221-185ef5d8e49a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.RTS_Template/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Stable.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Buildings/BP_Building_Stable.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Units/BP_Unit_Worker.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Units/BP_Unit_Worker.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Game/BP_RTSGameInstance.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Game/BP_RTSGameInstance.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Utility/BP_UnitAI.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Utility/BP_UnitAI.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Utility/UnitBehavior.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Blueprints/Utility/UnitBehavior.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Maps/RTS.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Content/Maps/RTS.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Building.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Building.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Unit.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Unit.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Worker.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Private/ActorsAndComponents/Worker.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Unit.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Unit.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Worker.h" beforeDir="false" afterPath="$PROJECT_DIR$/Plugins/RTSPlugin/Source/RTSPlugin/Public/ActorsAndComponents/Worker.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -159,6 +154,7 @@
       <workItem from="1703430689473" duration="21385000" />
       <workItem from="1703533428093" duration="8941000" />
       <workItem from="1703609778222" duration="6663000" />
+      <workItem from="1703696316655" duration="2126000" />
     </task>
     <servers />
   </component>

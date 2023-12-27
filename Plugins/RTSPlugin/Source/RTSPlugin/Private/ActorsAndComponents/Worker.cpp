@@ -5,6 +5,7 @@
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/RTSEntity.h"
 #include "ActorsAndComponents/SourceHolder.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 void AWorker::BeginPlay()
 {
@@ -18,12 +19,14 @@ void AWorker::Tick(float DeltaSeconds)
 
 	if(IsCollectingSource())
 	{
+		BlackboardComponent->ClearValue("TargetLocation");
 		CollectingSource->Collect();
 	}
 	
 
 	if(IsConstructingBuilding())
 	{
+		BlackboardComponent->ClearValue("TargetLocation");
 		ConstructingBuilding->Progress(DeltaSeconds*30);
 	}
 }
@@ -92,6 +95,8 @@ void AWorker::OnCollectingSourceFinished(USourceHolder* SourceHolder)
 	}
 	
 	CollectingSource = nullptr;
+
+	BlackboardComponent->ClearValue("TargetLocation");
 }
 
 void AWorker::BindSource(USourceHolder* SourceHolder)
@@ -134,6 +139,7 @@ void AWorker::OnBuildingChanged(UTeamEntity* teamEntity)
 	{
 		//Construction finished
 		UnbindBuilding();
+		BlackboardComponent->ClearValue("TargetLocation");
 	}
 }
 

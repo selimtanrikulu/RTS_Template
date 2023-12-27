@@ -56,6 +56,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly,meta=(AllowPrivateAccess))
 	EUnitAnimationState UnitAnimationState;
 	virtual void UpdateUnitAnimation();
+
+
+	UPROPERTY() UBlackboardComponent* BlackboardComponent;
 	
 private:
 

@@ -45,6 +45,8 @@ void AUnit::BeginPlay()
 	AActor* SpawnedActor = GetWorld()->SpawnActor<AActor>(AIControllerClass,FVector(),FRotator());
 	AAIController* SpawnedAIController = Cast<AAIController>(SpawnedActor);
 	SpawnedAIController->Possess(this);
+
+	BlackboardComponent = SpawnedAIController->GetBlackboardComponent();
 }
 
 // Called every frame
@@ -59,15 +61,11 @@ void AUnit::Tick(float DeltaTime)
 void AUnit::SetTargetRTSEntity(const URTSEntity* Entity)
 {
 	const FVector TargetLocation = Entity->GetOwner()->GetActorLocation();
-	AAIController* AIController = Cast<AAIController>(GetController());
-	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
 	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
 }
 
 void AUnit::SetTargetLocation(const FVector& TargetLocation)
 {
-	AAIController* AIController = Cast<AAIController>(GetController());
-	UBlackboardComponent* BlackboardComponent = AIController->GetBlackboardComponent();
 	BlackboardComponent->SetValueAsVector("TargetLocation",TargetLocation);
 }
 
