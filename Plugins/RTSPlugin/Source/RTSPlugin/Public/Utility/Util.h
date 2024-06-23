@@ -194,6 +194,9 @@ struct FUnitData
 	UPROPERTY(EditDefaultsOnly)
 	FTeamEntityData TeamEntityData;
 
+	UPROPERTY(EditDefaultsOnly)
+	float GenerationTime;
+
 	FString GetInfo() const
 	{
 		return TeamEntityData.GetInfo();

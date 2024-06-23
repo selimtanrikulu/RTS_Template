@@ -97,7 +97,7 @@ private:
 
 	//Config
 	float MovementSpeed = 1000;
-	int MaxZoomLevel = 25;
+	int MaxZoomLevel = 50;
 	int ZoomInterval = 40;
 	
 	

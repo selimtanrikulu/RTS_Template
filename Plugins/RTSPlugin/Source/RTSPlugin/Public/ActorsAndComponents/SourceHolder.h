@@ -12,7 +12,7 @@ class UNeutralEntity;
 class USourceManager;
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSourceAction, USourceHolder*, SourceHolder);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSourceHolderAction, USourceHolder*, SourceHolder);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API USourceHolder : public UActorComponent
@@ -35,8 +35,8 @@ public:
 	
 	
 	//Events
-	FSourceAction OnSourceCollectedDelegate;
-	FSourceAction OnSourceFinishedDelegate;
+	FSourceHolderAction OnSourceCollectedDelegate;
+	FSourceHolderAction OnSourceFinishedDelegate;
 	
 
 	void Collect();

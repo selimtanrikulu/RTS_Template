@@ -24,6 +24,7 @@ ABuilding::ABuilding()
 void ABuilding::Init(const FBuildingData& buildingData)
 {
 	BuildingData = buildingData;
+	
 	TeamEntity->Init(BuildingData.TeamEntityData);
 }
 
@@ -87,8 +88,7 @@ void ABuilding::SetBuildingState(EBuildingState buildingState)
 	}
 
 
-	OnBuildingChangedDelegate.Broadcast(TeamEntity);
-	
+	OnBuildingStateChangedDelegate.Broadcast(this);
 }
 
 EBuildingState ABuilding::GetBuildingState() const
@@ -113,8 +113,6 @@ void ABuilding::Progress(float Amount)
 	{
 		SetConstructionMesh(2);
 	}
-	
-	OnBuildingChangedDelegate.Broadcast(TeamEntity);
 
 	if(TeamEntity->GetHPRatio() >= 1)
 	{

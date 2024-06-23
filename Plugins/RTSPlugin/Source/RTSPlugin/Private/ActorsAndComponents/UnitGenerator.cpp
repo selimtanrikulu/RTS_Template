@@ -31,7 +31,7 @@ void UUnitGenerator::BeginPlay()
 	// ...
 
 	const APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	const URTSGameInstance* GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
+	GameInstance = Cast<URTSGameInstance>(PlayerController->GetGameInstance());
 
 
 	StoreManager = GameInstance->StoreManager;
@@ -48,6 +48,13 @@ void UUnitGenerator::TickComponent(float DeltaTime, ELevelTick TickType, FActorC
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	Delta_Time = DeltaTime;
+
+	if(UnitQueue.Num() > 0)
+	{
+		ProgressGeneration(DeltaTime);
+	} 
 }
 
 TArray<FUnitData>& UUnitGenerator::GetUnits()
@@ -69,6 +76,74 @@ TArray<FUnitData>& UUnitGenerator::GetUnits()
 	return Units;
 }
 
+void UUnitGenerator::AddUnitToQueue(const FUnitData& UnitData)
+{
+	if(!SourceManager->CheckBalance(UnitData.TeamEntityData))
+	{
+		//Not enough money
+		return;
+	}
+	
+	if(UnitQueue.Num() < GameInstance->MaxUnitGenerationQueue)
+	{
+		SourceManager->Buy(UnitData.TeamEntityData);
+		UnitQueue.Add(UnitData);
+
+		OnUnitQueueChanged.Broadcast();
+	}
+	else
+	{
+		//Queue is max
+	}
+}
+
+void UUnitGenerator::PopUnitFromQueue(int Index)
+{
+	if(UnitQueue.Num() > Index && Index >= 0)
+	{
+		//TODO : add cost back to sources
+		UnitQueue.RemoveAt(Index);
+
+		GenerationTime = 0;
+		OnProgressUpdated.Broadcast();
+		OnUnitQueueChanged.Broadcast();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Trying to pop index out of boundary"));
+	}
+}
+
+float UUnitGenerator::GetProgress() const
+{
+	if(UnitQueue.Num() > 0)
+	{
+		return GenerationTime / UnitQueue[0].GenerationTime;
+	}
+
+	return 0;
+}
+
+TArray<FUnitData> UUnitGenerator::GetUnitQueue() const
+{
+	return UnitQueue;
+}
+
+
+void UUnitGenerator::ProgressGeneration(float Batch)
+{
+	GenerationTime += Batch;
+
+	if(GetProgress() >= 1)
+	{
+		GenerationTime = 0;
+		SpawnUnit();
+		PopUnitFromQueue(0);
+		OnUnitQueueChanged.Broadcast();
+	}
+	
+	OnProgressUpdated.Broadcast();
+}
 
 // Function to check if a location is occupied
 bool UUnitGenerator::IsLocationOccupied(const FVector& Location, float Radius) const
@@ -86,6 +161,7 @@ bool UUnitGenerator::IsLocationOccupied(const FVector& Location, float Radius) c
 		FCollisionShape::MakeSphere(Radius),
 		CollisionParams);
 }
+
 
 // Function to find the closest empty location near a building
 FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent) const
@@ -127,16 +203,18 @@ FVector UUnitGenerator::FindClosestEmptyLocation(const float UnitExtent) const
 	return FVector(-1000,-1000,-1000);
 }
 
+
+
 // Function to spawn a unit at the closest empty location
-void UUnitGenerator::SpawnUnit(const FUnitData& UnitData) const
+void UUnitGenerator::SpawnUnit() const
 {
-	if(!SourceManager->CheckBalance(UnitData.TeamEntityData))
+	if(UnitQueue.Num() == 0)
 	{
+		UE_LOG(LogTemp,Error,TEXT("Cannot spawn unit, queue is empty"));
 		return;
 	}
-	
-	SourceManager->Buy(UnitData.TeamEntityData);
 
+	const FUnitData UnitData = UnitQueue[0];
 	
 	constexpr float UnitExtent = 100;
 	const TSubclassOf<AActor> UnitBP = UnitData.TeamEntityData.EntityData.BP;

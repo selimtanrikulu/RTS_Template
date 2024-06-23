@@ -5,7 +5,6 @@
 
 #include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/Source.h"
-#include "ActorsAndComponents/SourceHolder.h"
 #include "ActorsAndComponents/Unit.h"
 #include "Managers/PlayerManager.h"
 #include "Managers/RTSGameInstance.h"

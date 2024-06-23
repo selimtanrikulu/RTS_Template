@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "ActorsAndComponents/TeamEntity.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Managers/Asset_Manager.h"
 #include "Managers/RTSGameInstance.h"
@@ -22,6 +24,10 @@ AUnit::AUnit()
 	
 
 	AutoPossessAI = EAutoPossessAI::Disabled;
+
+
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
 }
 
 void AUnit::Init(const FUnitData& unitData)
@@ -47,6 +53,8 @@ void AUnit::BeginPlay()
 	SpawnedAIController->Possess(this);
 
 	BlackboardComponent = SpawnedAIController->GetBlackboardComponent();
+
+	
 }
 
 // Called every frame

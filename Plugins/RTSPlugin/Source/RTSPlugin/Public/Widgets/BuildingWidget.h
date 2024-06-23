@@ -25,6 +25,7 @@ class UBuildingWidget : public UUserWidget
 public:
 
 	virtual void NativeConstruct() override;
+	virtual void NativeDestruct() override;
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Building Widget")
 	UImage* PanelBackground;
@@ -32,6 +33,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Building Widget")
 	UTileView* UnitsTileView;
 
+
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Building Widget")
+	UProgressBar* GenerationProgressBar;
+
+	UPROPERTY(BlueprintReadOnly, meta=(BindWidget),Category="Building Widget")
+	UTileView* UnitQueueTileView;
+	
+	
 private:
 
 	//Dependencies
@@ -39,10 +48,15 @@ private:
 	UPROPERTY() USelectionManager* SelectionManager;
 
 	//Selection Manager Listener
-	UFUNCTION() void OnSelectionChanged();
+	UFUNCTION() void OnSelectedEntitiesChanged();
+	UFUNCTION() void OnBuildingStateChanged(ABuilding* Building);
+	UFUNCTION() void OnUnitGenerationProgressUpdated();
+	UFUNCTION() void OnUnitQueueUpdated();
 
 	void CreateUnitEntries(TArray<FUnitData> &UnitsData,UUnitGenerator* UnitGenerator) const;
-	
-	void ClearWidget() const;
+	void CreateQueueEntries(TArray<FUnitData> &UnitQueue,UUnitGenerator* UnitGenerator) const;
+
+
+	void HardReset();
 	
 };

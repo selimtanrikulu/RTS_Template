@@ -45,10 +45,14 @@ private:
 	UPROPERTY() USelectionManager* SelectionManager;
 
 	//Selection Manager Listener
-	UFUNCTION() void OnSelectionChanged();
+	UFUNCTION() void OnSelectedEntitiesChanged();
+	UFUNCTION() void OnTeamEntityHPChangedDelegate(UTeamEntity* TeamEntity);
 
-	void CreateSelectionEntries() const;
 
-	void ClearWidget() const;
+
+	void UpdateProgressBar() const;
+	void UpdateInfoText() const;
+	void UpdateSelectionEntries() const;
+	
 	
 };

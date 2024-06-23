@@ -24,19 +24,39 @@ void USelectionWidget::NativeConstruct()
 	SelectionManager = GameInstance->SelectionManager;
 	StoreManager = GameInstance->StoreManager;
 	
-	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&USelectionWidget::OnSelectionChanged);
+	SelectionManager->OnSelectedEntitiesChangedDelegate.AddUniqueDynamic(this,&USelectionWidget::OnSelectedEntitiesChanged);
+	SelectionManager->OnTeamEntityHPChangedDelegate.AddUniqueDynamic(this,&USelectionWidget::OnTeamEntityHPChangedDelegate);
 
-	ClearWidget();
+	
+	//Clear widget
+	InfoText->SetText(FText::FromString(""));
+	ProgressBar->SetPercent(0);
+	SelectionTileView->ClearListItems();
+
+	InfoText->SetVisibility(ESlateVisibility::Hidden);
+	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
+	SelectionTileView->SetVisibility(ESlateVisibility::Hidden);
+	PanelBackground->SetVisibility(ESlateVisibility::Hidden);
 }
 
-void USelectionWidget::OnSelectionChanged()
+void USelectionWidget::OnSelectedEntitiesChanged()
 {
-	ClearWidget();
-	CreateSelectionEntries();
+	UpdateProgressBar();
+	UpdateInfoText();
+	UpdateSelectionEntries();
 }
 
-void USelectionWidget::CreateSelectionEntries() const
+void USelectionWidget::OnTeamEntityHPChangedDelegate(UTeamEntity* TeamEntity)
 {
+	UpdateProgressBar();
+}
+
+
+void USelectionWidget::UpdateProgressBar() const
+{
+	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
+	ProgressBar->SetPercent(0);
+	
 	TArray<URTSEntity*> SelectedEntities = SelectionManager->GetSelectedRTSEntities();
 	
 	if(SelectedEntities.Num() == 0)
@@ -51,6 +71,20 @@ void USelectionWidget::CreateSelectionEntries() const
 		ProgressBar->SetPercent(Progress);
 		ProgressBar->SetVisibility(ESlateVisibility::Visible);
 	}
+}
+
+void USelectionWidget::UpdateInfoText() const
+{
+	InfoText->SetText(FText::FromString(""));
+	InfoText->SetVisibility(ESlateVisibility::Hidden);
+	
+	TArray<URTSEntity*> SelectedEntities = SelectionManager->GetSelectedRTSEntities();
+	
+	if(SelectedEntities.Num() == 0)
+	{
+		return;
+	}
+	
 
 	const ESelectionState SelectionState = SelectionManager->GetSelectionState();
 	if(SelectionState == ESelectionState::BuildingMass ||
@@ -64,6 +98,19 @@ void USelectionWidget::CreateSelectionEntries() const
 		const FString Info = RTSEntity->GetInfo();
 		InfoText->SetText(FText::FromString(Info));
 		InfoText->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void USelectionWidget::UpdateSelectionEntries() const
+{
+	SelectionTileView->ClearListItems();
+	SelectionTileView->SetVisibility(ESlateVisibility::Hidden);
+	
+	TArray<URTSEntity*> SelectedEntities = SelectionManager->GetSelectedRTSEntities();
+	
+	if(SelectedEntities.Num() == 0)
+	{
+		return;
 	}
 	
 	while(SelectedEntities.Num() > 0)
@@ -90,14 +137,3 @@ void USelectionWidget::CreateSelectionEntries() const
 	PanelBackground->SetVisibility(ESlateVisibility::Visible);
 }
 
-void USelectionWidget::ClearWidget() const
-{
-	InfoText->SetText(FText::FromString(""));
-	ProgressBar->SetPercent(0);
-	SelectionTileView->ClearListItems();
-
-	InfoText->SetVisibility(ESlateVisibility::Hidden);
-	ProgressBar->SetVisibility(ESlateVisibility::Hidden);
-	SelectionTileView->SetVisibility(ESlateVisibility::Hidden);
-	PanelBackground->SetVisibility(ESlateVisibility::Hidden);
-}

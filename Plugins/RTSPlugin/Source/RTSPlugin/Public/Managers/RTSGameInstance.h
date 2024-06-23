@@ -79,6 +79,10 @@ public:
 	FAssetManagerConfig AssetManagerConfig;
 
 
+	//Other
+	UPROPERTY(EditDefaultsOnly)
+	int MaxUnitGenerationQueue;
+
 	
 private:
 	

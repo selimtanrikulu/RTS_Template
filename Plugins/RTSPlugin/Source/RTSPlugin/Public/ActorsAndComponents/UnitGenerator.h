@@ -8,9 +8,12 @@
 #include "UnitGenerator.generated.h"
 
 
+class URTSGameInstance;
 class USourceManager;
 class UEntityManager;
 class UStoreManager;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnUnitGenerationAction);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class RTSPLUGIN_API UUnitGenerator : public UActorComponent
@@ -32,15 +35,25 @@ public:
 
 	TArray<FUnitData>& GetUnits();
 	
-	void SpawnUnit(const FUnitData& UnitData) const;
+	
+	void AddUnitToQueue(const FUnitData& UnitData);
+	void PopUnitFromQueue(int Index);
+	float GetProgress() const;
 
+
+	TArray<FUnitData> GetUnitQueue() const;
+
+	UPROPERTY(BlueprintAssignable) FOnUnitGenerationAction OnUnitQueueChanged;
+	UPROPERTY(BlueprintAssignable) FOnUnitGenerationAction OnProgressUpdated;
+
+	
 
 private:
 	//Dependencies
+	UPROPERTY() URTSGameInstance* GameInstance;
 	UPROPERTY() UStoreManager* StoreManager;
 	UPROPERTY() UEntityManager* EntityManager;
 	UPROPERTY() USourceManager* SourceManager;
-
 	UPROPERTY() ABuilding* OwnerBuilding;
 	
 
@@ -53,7 +66,14 @@ private:
 	bool IsLocationOccupied(const FVector& Location, float Radius) const;
 	FVector FindClosestEmptyLocation(float UnitExtent) const;
 
-	
 
+	//Utility
+	float Delta_Time;
+
+	void ProgressGeneration(float Batch);
+	TArray<FUnitData> UnitQueue;
+	void SpawnUnit() const;
+	float GenerationTime;
+	
 	
 };

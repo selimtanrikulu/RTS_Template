@@ -10,6 +10,7 @@
 void AWorker::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void AWorker::Tick(float DeltaSeconds)
@@ -20,7 +21,15 @@ void AWorker::Tick(float DeltaSeconds)
 	if(IsCollectingSource())
 	{
 		BlackboardComponent->ClearValue("TargetLocation");
-		CollectingSource->Collect();
+		if(CollectDelayCounter <= 0)
+		{
+			CollectingSource->Collect();
+			CollectDelayCounter = CollectDelay;
+		}
+		else
+		{
+			CollectDelayCounter-=DeltaSeconds;
+		}
 	}
 	
 
@@ -95,7 +104,6 @@ void AWorker::OnCollectingSourceFinished(USourceHolder* SourceHolder)
 	}
 	
 	CollectingSource = nullptr;
-
 	BlackboardComponent->ClearValue("TargetLocation");
 }
 
@@ -109,6 +117,7 @@ void AWorker::BindSource(USourceHolder* SourceHolder)
 	
 	CollectingSource = SourceHolder;
 	CollectingSource->OnSourceFinishedDelegate.AddUniqueDynamic(this,&AWorker::OnCollectingSourceFinished);
+	CollectDelayCounter = CollectDelay;
 }
 
 void AWorker::UnbindSource()
@@ -120,7 +129,7 @@ void AWorker::UnbindSource()
 	}
 }
 
-void AWorker::OnBuildingChanged(UTeamEntity* teamEntity)
+void AWorker::OnBuildingStateChanged(ABuilding* Building)
 {
 	if(!ConstructingBuilding)
 	{
@@ -128,7 +137,7 @@ void AWorker::OnBuildingChanged(UTeamEntity* teamEntity)
 		return;
 	}
 
-	if(ConstructingBuilding->TeamEntity != teamEntity)
+	if(ConstructingBuilding != Building)
 	{
 		UE_LOG(LogTemp,Error,TEXT("Changed building is not constructing building"));
 		return;
@@ -169,7 +178,7 @@ void AWorker::BindBuilding(ABuilding* Building)
 	}
 	
 	ConstructingBuilding = Building;
-	ConstructingBuilding->OnBuildingChangedDelegate.AddUniqueDynamic(this,&AWorker::OnBuildingChanged);
+	ConstructingBuilding->OnBuildingStateChangedDelegate.AddUniqueDynamic(this,&AWorker::OnBuildingStateChanged);
 	ConstructingBuilding->TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&AWorker::OnBuildingKilled);
 }
 
@@ -177,7 +186,7 @@ void AWorker::UnbindBuilding()
 {
 	if(ConstructingBuilding)
 	{
-		ConstructingBuilding->OnBuildingChangedDelegate.RemoveDynamic(this,&AWorker::OnBuildingChanged);
+		ConstructingBuilding->OnBuildingStateChangedDelegate.RemoveDynamic(this,&AWorker::OnBuildingStateChanged);
 		ConstructingBuilding->TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&AWorker::OnBuildingKilled);
 		ConstructingBuilding = nullptr;
 	}

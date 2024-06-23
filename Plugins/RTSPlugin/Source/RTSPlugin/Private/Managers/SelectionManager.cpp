@@ -14,6 +14,7 @@
 #include "ActorsAndComponents/NeutralEntity.h"
 #include "ActorsAndComponents/Source.h"
 #include "ActorsAndComponents/Unit.h"
+#include "ActorsAndComponents/UnitGenerator.h"
 #include "Managers/Asset_Manager.h"
 
 USelectionManager::USelectionManager()
@@ -44,7 +45,7 @@ void USelectionManager::Begin()
 }
 void USelectionManager::Tick(float DeltaTime)
 {
-	UpdateCircles();
+	//UpdateCircles();
 }
 void USelectionManager::OnMouseLeftClicked()
 {
@@ -82,8 +83,6 @@ void USelectionManager::OnDeleteClicked()
 	SelectedUnits.Empty();
 
 	UpdateSelectionState();
-
-	OnSelectionChangedDelegate.Broadcast();
 }
 void USelectionManager::OnOverlapChanged()
 {
@@ -94,9 +93,6 @@ void USelectionManager::OnOverlapChanged()
 	SelectedSources = CurrentSelectBox->OverlappingSources;
 	BindSelections();
 	UpdateSelectionState();
-	
-	//Fire main delegate
-	OnSelectionChangedDelegate.Broadcast();
 }
 void USelectionManager::UpdateCircles()
 {
@@ -251,6 +247,9 @@ void USelectionManager::UpdateSelectionState()
 		}
 		
 	}
+	
+	
+	OnSelectedEntitiesChangedDelegate.Broadcast();
 }
 void USelectionManager::OnTeamEntityKilled(UTeamEntity* TeamEntity)
 {
@@ -263,15 +262,20 @@ void USelectionManager::OnTeamEntityKilled(UTeamEntity* TeamEntity)
 	
 	
 	UpdateSelectionState();
-	OnSelectionChangedDelegate.Broadcast();
 }
-void USelectionManager::OnTeamEntityChanged(UTeamEntity* TeamEntity)
+void USelectionManager::OnTeamEntityHPChanged(UTeamEntity* TeamEntity)
 {
-	OnSelectionChangedDelegate.Broadcast();
+	OnTeamEntityHPChangedDelegate.Broadcast(TeamEntity);
 }
+
+void USelectionManager::OnBuildingStateChanged(ABuilding* Building)
+{
+	OnBuildingStateChangedDelegate.Broadcast(Building);
+}
+
 void USelectionManager::OnSourceCollected(USourceHolder* SourceHolder)
 {
-	OnSelectionChangedDelegate.Broadcast();
+	OnSourceCollectedDelegate.Broadcast(SourceHolder);
 }
 void USelectionManager::OnSourceFinished(USourceHolder* SourceHolder)
 {
@@ -282,56 +286,90 @@ void USelectionManager::OnSourceFinished(USourceHolder* SourceHolder)
 		{ return Element->FindComponentByClass<USourceHolder>() == SourceHolder; });
 	
 	UpdateSelectionState();
-	OnSelectionChangedDelegate.Broadcast();
 }
+
+void USelectionManager::OnUnitGenerationProgressUpdated()
+{
+	OnUnitGenerationProgressUpdatedDelegate.Broadcast();
+}
+
+void USelectionManager::OnUnitQueueChanged()
+{
+	OnUnitQueueUpdatedDelegate.Broadcast();
+}
+
 void USelectionManager::BindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->OnBuildingStateChangedDelegate.AddUniqueDynamic(this,&USelectionManager::OnBuildingStateChanged);
 		Building->TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityKilled);
-		Building->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityHPChanged);
 
 		if(USourceHolder* SourceHolder = Building->FindComponentByClass<USourceHolder>())
 		{
 			SourceHolder->OnSourceCollectedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceCollected);
 			SourceHolder->OnSourceFinishedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceFinished);
 		}
+
+		if(UUnitGenerator* UnitGenerator = Building->FindComponentByClass<UUnitGenerator>())
+		{
+			UnitGenerator->OnProgressUpdated.AddUniqueDynamic(this,&USelectionManager::OnUnitGenerationProgressUpdated);
+			UnitGenerator->OnUnitQueueChanged.AddUniqueDynamic(this,&USelectionManager::OnUnitQueueChanged);
+		}
+
+		Building->TeamEntity->SetSelected();
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
 		Unit->TeamEntity->OnTeamEntityKilledDelegate.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityKilled);
-		Unit->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Unit->TeamEntity->OnTeamEntityHPChanged.AddUniqueDynamic(this,&USelectionManager::OnTeamEntityHPChanged);
+
+		Unit->TeamEntity->SetSelected();
 	}
 	for(const ASource* Source : SelectedSources)
 	{
 		Source->SourceHolder->OnSourceCollectedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceCollected);
 		Source->SourceHolder->OnSourceFinishedDelegate.AddUniqueDynamic(this,&USelectionManager::OnSourceFinished);
+
+		Source->NeutralEntity->SetSelected();
 	}
 }
 void USelectionManager::UnbindSelections()
 {
 	for(ABuilding* Building : SelectedBuildings)
 	{
-		Building->OnBuildingChangedDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->OnBuildingStateChangedDelegate.RemoveDynamic(this,&USelectionManager::OnBuildingStateChanged);
 		Building->TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityKilled);
-		Building->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Building->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityHPChanged);
 
 		if(USourceHolder* SourceHolder = Building->FindComponentByClass<USourceHolder>())
 		{
 			SourceHolder->OnSourceCollectedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceCollected);
 			SourceHolder->OnSourceFinishedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceFinished);
 		}
+
+		if(UUnitGenerator* UnitGenerator = Building->FindComponentByClass<UUnitGenerator>())
+		{
+			UnitGenerator->OnProgressUpdated.RemoveDynamic(this,&USelectionManager::OnUnitGenerationProgressUpdated);
+			UnitGenerator->OnUnitQueueChanged.RemoveDynamic(this,&USelectionManager::OnUnitQueueChanged);
+		}
+
+		Building->TeamEntity->SetUnSelected();
 	}
 	for(const AUnit* Unit : SelectedUnits)
 	{
 		Unit->TeamEntity->OnTeamEntityKilledDelegate.RemoveDynamic(this,&USelectionManager::OnTeamEntityKilled);
-		Unit->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityChanged);
+		Unit->TeamEntity->OnTeamEntityHPChanged.RemoveDynamic(this,&USelectionManager::OnTeamEntityHPChanged);
+
+		Unit->TeamEntity->SetUnSelected();
 	}
 	for(const ASource* Source : SelectedSources)
 	{
 		Source->SourceHolder->OnSourceCollectedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceCollected);
 		Source->SourceHolder->OnSourceFinishedDelegate.RemoveDynamic(this,&USelectionManager::OnSourceFinished);
+
+		Source->NeutralEntity->SetUnSelected();
 	}
 }
 void USelectionManager::CreateSelectBox()
@@ -348,7 +386,6 @@ void USelectionManager::CreateSelectBox()
 			if(!SelectedBuildings.Contains(Building))
 			{
 				SelectedBuildings.Add(Building);
-				
 			}
 		}
 		if(AUnit* Unit = Cast<AUnit>(Entity->GetOwner()))
@@ -368,7 +405,7 @@ void USelectionManager::CreateSelectBox()
 
 		BindSelections();
 		UpdateSelectionState();
-		OnSelectionChangedDelegate.Broadcast();
+		
 		return;
 	}
 	//---------------------------------------------------------------

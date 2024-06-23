@@ -36,6 +36,8 @@ public:
 private:
 
 	//Config
+	float CollectDelay = 1.0f;
+	float CollectDelayCounter;
 	float WorkerRange = 100;
 
 	//Collect & Construct
@@ -52,7 +54,7 @@ private:
 	void UnbindSource();
 
 	//Building
-	UFUNCTION() void OnBuildingChanged(UTeamEntity* teamEntity2);
+	UFUNCTION() void OnBuildingStateChanged(ABuilding* Building);
 	UFUNCTION() void OnBuildingKilled(UTeamEntity* teamEntity2);
 	void BindBuilding(ABuilding* Building);
 	void UnbindBuilding();

@@ -30,7 +30,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//Components
-	UPROPERTY() UMeshComponent* MeshComponent;
+	UPROPERTY(EditDefaultsOnly) UMeshComponent* MeshComponent;
 
 	
 
@@ -42,6 +42,13 @@ public:
 	virtual FString GetInfo() const;
 	virtual float GetProgress() const;
 
+
+	void SetSelected();
+	void SetUnSelected();
+
 private:
 
+	//Components
+	UPROPERTY(EditDefaultsOnly) UStaticMeshComponent* SelectedMesh;
+	
 };

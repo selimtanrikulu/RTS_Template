@@ -5,10 +5,15 @@
 
 
 #include "CoreMinimal.h"
+#include "ActorsAndComponents/Building.h"
 #include "ActorsAndComponents/RTSEntity.h"
+#include "ActorsAndComponents/SourceHolder.h"
+#include "ActorsAndComponents/TeamEntity.h"
+#include "ActorsAndComponents/UnitGenerator.h"
 #include "Managers/ManagerBase.h"
 #include "SelectionManager.generated.h"
 
+class FSourceHolderAction;
 class ASource;
 class USourceHolder;
 class UTeamEntity;
@@ -73,8 +78,15 @@ public:
 	ESelectionState GetSelectionState() const;
 	
 
-	UPROPERTY(BlueprintAssignable) FSelectionAction OnSelectionChangedDelegate;
-
+	//Events
+	FSelectionAction OnSelectedEntitiesChangedDelegate;
+	FTeamEntityAction OnTeamEntityHPChangedDelegate;
+	FBuildingAction OnBuildingStateChangedDelegate;
+	FSourceHolderAction OnSourceCollectedDelegate;
+	FOnUnitGenerationAction OnUnitGenerationProgressUpdatedDelegate;
+	FOnUnitGenerationAction OnUnitQueueUpdatedDelegate;
+	//------------------
+	
 private:
 
 	//Dependencies
@@ -91,9 +103,12 @@ private:
 	//Select Box Listeners
 	UFUNCTION() void OnOverlapChanged();
 	UFUNCTION() void OnTeamEntityKilled(UTeamEntity* TeamEntity);
-	UFUNCTION() void OnTeamEntityChanged(UTeamEntity* TeamEntity);
+	UFUNCTION() void OnTeamEntityHPChanged(UTeamEntity* TeamEntity);
+	UFUNCTION() void OnBuildingStateChanged(ABuilding* Building);
 	UFUNCTION() void OnSourceCollected(USourceHolder* SourceHolder);
 	UFUNCTION() void OnSourceFinished(USourceHolder* SourceHolder);
+	UFUNCTION() void OnUnitGenerationProgressUpdated();
+	UFUNCTION() void OnUnitQueueChanged();
 
 	void UpdateCircles();
 	void UpdateSelectionState();

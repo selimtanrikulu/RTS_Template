@@ -22,7 +22,7 @@ void UWorkerWidget::NativeConstruct()
 	SelectionManager = GameInstance->SelectionManager;
 	StoreManager = GameInstance->StoreManager;
 	
-	SelectionManager->OnSelectionChangedDelegate.AddUniqueDynamic(this,&UWorkerWidget::OnSelectionChanged);
+	SelectionManager->OnSelectedEntitiesChangedDelegate.AddUniqueDynamic(this,&UWorkerWidget::OnSelectionChanged);
 
 	ClearWidget();
 }

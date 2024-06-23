@@ -23,7 +23,7 @@ enum class EBuildingState : uint8
 };
 
 
-
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FBuildingAction, ABuilding*, Building);
 
 UCLASS()
 class RTSPLUGIN_API ABuilding : public AActor
@@ -45,10 +45,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	//Events
-	UPROPERTY(BlueprintAssignable) FTeamEntityAction OnBuildingChangedDelegate;
+	FBuildingAction OnBuildingStateChangedDelegate;
 	
 	//Components
-	UPROPERTY() UTeamEntity* TeamEntity;
+	UPROPERTY(EditDefaultsOnly) UTeamEntity* TeamEntity;
 	
 	
 	void SetBuildingState(EBuildingState buildingState);
